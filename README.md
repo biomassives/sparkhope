@@ -1,14 +1,15 @@
-# Mealworm
+# Food Security and Foundational Sustainable Solutions
 
 
+## Project goals
 
-## Getting started
+Our open core
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## Providing change request suggestions, edits, translations, and art
 
-## Add your files
+
+## using gitlab
 
 - [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
 - [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
