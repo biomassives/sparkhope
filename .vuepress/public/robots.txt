@@ -1,0 +1,7 @@
+# docs/.vuepress/public/robots.txt
+User-agent: *
+Allow: /
+Sitemap: https://spark-food-security.vercel.app/sitemap.xml
+
+
+~                                       

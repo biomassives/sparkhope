@@ -1,0 +1,5 @@
+# docs/.vuepress/public/robots.txt
+User-agent: *
+Allow: /
+Sitemap: https://<your-pages-domain>/sitemap.xml
+
