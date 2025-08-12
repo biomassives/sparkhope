@@ -1,16 +1,20 @@
-# Dependencies
-/node_modules
+# dependencies
+node_modules/
+pnpm-lock.yaml
+yarn.lock
 
-# VuePress cache and temp files
-.temp
-.cache
-/.vuepress/.temp
-/.vuepress/.cache
+# build output
+dist/
+.temp/
+.tempdir/
+.cache/
+.temp_assets/
 
-# Build output
-/.vuepress/dist
+# VuePress v2
+docs/.vuepress/.cache/
+docs/.vuepress/dist/
 
-# IDE / OS files
-.vscode
-.idea
-*.DS_Store
+# misc
+.DS_Store
+.env
+
