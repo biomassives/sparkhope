@@ -1,94 +1,200 @@
 # Food Security and Foundational Sustainable Solutions
 
+Documentation & workshops for biodiversity-positive, community-owned solutions — published with VuePress 2 + Theme Hope and deployed on Vercel.
 
-## Project goals
+## Project Goals
 
-Our open core
-i
+- **Open, multi-lingual documentation** (EN / NL, more welcome)
+- **Practical, workshop-first content** (events, guides, standards)
+- **Transparency**: clear versioning, reproducible builds, and open contributions
 
-## Providing change request suggestions, edits, translations, and art
-
-
-## using gitlab
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+## Repository Structure
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/approlearninghub/mealworm.git
-git branch -M main
-git push -uf origin main
+docs/
+  ├─ events/            # workshops, announcements, posts
+  ├─ guide/             # how-to guides
+  ├─ standards/         # standards & references
+  ├─ nl/ ...            # Dutch locale (mirrors structure)
+  └─ .vuepress/
+      ├─ config.ts      # VuePress + Theme Hope config
+      ├─ public/        # manifest.webmanifest, icons, static assets
+      └─ sidebar.js     # AUTO-GENERATED (do not hand-edit)
+scripts/
+  ├─ gen-sidebars.mjs   # generates sidebar.js from folder structure
+  └─ gen-sitemap.mjs    # generates sitemap.xml after build
 ```
 
-## Integrate with your tools
+## Requirements
 
-- [ ] [Set up project integrations](https://gitlab.com/approlearninghub/mealworm/-/settings/integrations)
+- **Node 20.x** (use `nvm use 20`)
+- **npm** (comes with Node)
+- **Git**
 
-## Collaborate with your team
+### Pinned Dependencies
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+For reproducible builds:
 
-## Test and Deploy
+- `vuepress@2.0.0-rc.24`
+- `@vuepress/bundler-webpack@2.0.0-rc.24`
+- `vuepress-theme-hope@2.0.0-rc.94`
+- `@vuepress/plugin-search@2.0.0-rc.112`
+- `@vuepress/plugin-catalog@2.0.0-rc.112`
+- `@vuepress/plugin-feed@2.0.0-rc.112`
+- **Build deps**: sass-loader, sass-embedded, mermaid
+- **Post-build**: sitemap, globby
 
-Use the built-in continuous integration in GitLab.
+## Quick Start (Local)
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+```bash
+# 1) Node 20
+nvm use 20
 
-***
+# 2) Install deps (also runs postinstall → generates sidebar)
+npm install
 
-# Editing this README
+# 3) Dev server
+npm run docs:dev          # http://localhost:8080
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+# 4) Production build (+ sitemap.xml)
+npm run docs:build
 
-## Suggestions for a good README
+# 5) Preview the static output (optional)
+npx http-server docs/.vuepress/dist -p 4173
+```
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+## Scripts
 
-## Name
-Choose a self-explaining name for your project.
+- `npm run gen:sidebars` — regenerate `docs/.vuepress/sidebar.js` from the folder tree
+- `npm run docs:dev` — run local dev server
+- `npm run docs:build` — build static site then generate sitemap.xml
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+## Authoring Content
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+### Adding Content
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+Add Markdown under the correct locale:
+- **English**: `docs/...`
+- **Dutch**: `docs/nl/...`
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+### Workshop/Event Content
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+For workshops/events, drop files in `docs/events/` (mirrored under locales) with frontmatter:
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+```yaml
+---
+title: "Solflare 101 & Web3 Safety"
+date: 2025-09-10
+event: true
+summary: Short description here.
+tags: ["workshop", "solana", "safety"]
+---
+```
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+### Updating Sidebars
+
+After adding/removing folders, run:
+
+```bash
+npm run gen:sidebars
+```
+
+> **Note**: Sidebars are auto-generated: don't hand-edit `docs/.vuepress/sidebar.js`.
 
 ## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+We welcome change requests, edits, translations, and art.
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+1. **Fork the repo** → create a feature branch
+2. **Make changes** (docs or assets)
+3. **Run locally** (see Quick start)
+4. **Commit** with a clear message and open a Pull Request
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+### Translations
+
+Mirror the English path under `/nl/`. If adding a new language later, mirror the folder structure and open a PR titled `feat(i18n): add <lang>`.
+
+### Art/Diagrams
+
+Add to `docs/.vuepress/public/assets/<topic>/` and reference with `/assets/...` paths.
+
+## CI/CD on Vercel (GitHub Integration)
+
+This project deploys automatically via Vercel when you push to GitHub.
+
+### Setup
+
+1. **Connect the repo** in Vercel → "New Project" → import from GitHub
+
+2. **Project settings**:
+   - **Node.js**: 20.x
+   - **Install Command**: `npm ci` (or `npm install` if you don't use a lockfile)
+   - **Build Command**: `npm run docs:build`
+   - **Output Directory**: `docs/.vuepress/dist`
+   - **Env vars**: `SITE_URL = https://sparkhope.vercel.app` (used by gen-sitemap.mjs)
+
+3. **Deployment**:
+   - **Preview Deployments**: every PR gets its own preview URL
+   - **Production**: merges to main deploy to production domain
+
+### Optional vercel.json
+
+Place at repo root for cache & clean URLs:
+
+```json
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/(.*)\\.(css|js|woff2|png|jpg|jpeg|webp|svg)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    },
+    {
+      "source": "/(sitemap\\.xml|rss\\.xml|feed\\.json)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=600" }]
+    }
+  ]
+}
+```
+
+The build also writes `sitemap.xml` and `robots.txt`. Ensure `SITE_URL` is set in Vercel so sitemap links are absolute.
+
+## Using GitHub
+
+### Initialize/Push Existing Repo
+
+```bash
+git init
+git remote add origin https://github.com/biomassives/sparkhope.git
+git branch -M main
+git add -A
+git commit -m "chore: initial import"
+git push -u origin main
+```
+
+### Issues and Pull Requests
+
+- **Open issues** → propose enhancements, report bugs, or request new workshop topics
+- **Open PRs** → edits, translations, art, config tweaks
+
+## Support
+
+- **Open an Issue** for help/questions
+- **Tag PRs** with `docs`, `i18n`, `build`, or `workshop` labels if applicable
+
+## Roadmap
+
+- [ ] Expand multi-chain workshop appendix (ETH, Tezos, Tron, Polygon, Celo, Algorand, Chainlink, L2s)
+- [ ] Add more locales (starting with EN/NL)
+- [ ] Optional PWA (once plugin versions align)
+- [ ] More event templates + printable handouts
 
 ## License
-For open source projects, say how it is licensed.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Specify your license in `LICENSE` (e.g., MIT).  
+If none yet, contributions default to the repository's future license once added.
+
+## Acknowledgments
+
+Thanks to the open-source maintainers behind VuePress, Theme Hope, and the multi-chain tooling ecosystems — and to all contributors who make food security & biodiversity literacy accessible.
