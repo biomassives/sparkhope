@@ -39,6 +39,17 @@ export default defineUserConfig({
           '/nl/': { placeholder: 'Zoeken' },
           '/ar/': { placeholder: 'ابحث' },
         },
+        filter: (item) => {
+          const currentLang = window.location.pathname.split('/')[1]; // Get current language from URL
+          
+          // Handle the case for English (root path)
+          if (currentLang === '') {
+            return item.path === '/'; // Show only the root path for English
+          }
+          
+          // For other languages, check if the item path starts with the current language prefix
+          return item.path.startsWith(`/${currentLang}`) || item.path === `/${currentLang}/`;
+        },
       },
       catalog: {},
       icon: { assets: 'fontawesome-with-brands' },
