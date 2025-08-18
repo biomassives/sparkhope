@@ -1,6 +1,6 @@
-# Native Mushroom Species in the Palestine Region
+# Native Mushroom Species in the Mideast Region
 
-In the Palestine region, several native mushroom species are likely to be found in the wild and on debris. Here are a few notable examples:
+In the Mideast, several native mushroom species are likely to be found in the wild and on debris. Here are a few notable examples:
 
 ## 1. Agaricus bisporus (Common Button Mushroom)
 - **Identification**: Look for small to medium-sized mushrooms with a smooth, white to light brown cap. The gills are free and white, turning brown as they mature.
