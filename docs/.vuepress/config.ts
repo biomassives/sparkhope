@@ -4,14 +4,14 @@ import { hopeTheme } from 'vuepress-theme-hope'
 import { enNavbar, nlNavbar, arNavbar } from './navbar.js'
 import { enSidebar, nlSidebar, arSidebar } from './sidebar.js'
 
-const HOSTNAME = 'https://sparkhope.vercel.app'
+const HOSTNAME = 'https://sparkhope.space'
 
 export default defineUserConfig({
   bundler: webpackBundler(),
   base: '/',
   lang: 'en-US',
-  title: 'Biodiversity Token Transparency',
-  description: 'Documentation for biodiversity token standards and practices.',
+  title: 'Spark Hope Institute\'s Online Empowerment Space',
+  description: 'Foundational technologies for food security, health, energy, shelter and social wellbeing.',
   shouldPrefetch: false,
   head: [
     ['link', { rel: 'manifest', href: '/manifest.webmanifest' }],
