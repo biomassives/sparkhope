@@ -1,5 +1,4 @@
-```markdown
-## Cultivating Medicinal and Culinary Mushrooms
+# Cultivating Medicinal and Culinary Mushrooms
 This guide provides an overview of optimal conditions for cultivating various mushroom species, focusing on liquid culture methods to enhance growth and nutritional value.
 
 ---
