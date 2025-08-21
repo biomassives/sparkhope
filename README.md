@@ -1,200 +1,176 @@
-# Food Security and Foundational Sustainable Solutions
+# SparkHope Documentation
 
-Documentation & workshops for biodiversity-positive, community-owned solutions — published with VuePress 2 + Theme Hope and deployed on Vercel.
+Modern multi-language documentation site built with Astro and Starlight theme.
 
-## Project Goals
+## 🌟 Features
 
-- **Open, multi-lingual documentation** (EN / NL, more welcome)
-- **Practical, workshop-first content** (events, guides, standards)
-- **Transparency**: clear versioning, reproducible builds, and open contributions
+- **Multi-language Support**: 7 languages - English, Dutch, Arabic, Swahili, Hindi, Farsi/Persian, and Tamil
+- **Automatic Language Detection**: Detects browser language and redirects automatically
+- **RTL Support**: Full right-to-left support for Arabic and Farsi
+- **Dark/Light Mode**: Automatic theme switching with user preference persistence
+- **Fast Search**: Language-aware search powered by Pagefind
+- **Mobile Responsive**: Works perfectly on all devices
+- **Fast Build Times**: Built on Astro 5.0 for lightning-fast performance
+- **SEO Optimized**: Automatic sitemap, meta tags, and structured data
 
-## Repository Structure
+## 🚀 Quick Start
 
-```
-docs/
-  ├─ events/            # workshops, announcements, posts
-  ├─ guide/             # how-to guides
-  ├─ standards/         # standards & references
-  ├─ nl/ ...            # Dutch locale (mirrors structure)
-  └─ .vuepress/
-      ├─ config.ts      # VuePress + Theme Hope config
-      ├─ public/        # manifest.webmanifest, icons, static assets
-      └─ sidebar.js     # AUTO-GENERATED (do not hand-edit)
-scripts/
-  ├─ gen-sidebars.mjs   # generates sidebar.js from folder structure
-  └─ gen-sitemap.mjs    # generates sitemap.xml after build
-```
+### Prerequisites
 
-## Requirements
+- Node.js 20.0.0 or higher
+- npm or yarn
 
-- **Node 20.x** (use `nvm use 20`)
-- **npm** (comes with Node)
-- **Git**
-
-### Pinned Dependencies
-
-For reproducible builds:
-
-- `vuepress@2.0.0-rc.24`
-- `@vuepress/bundler-webpack@2.0.0-rc.24`
-- `vuepress-theme-hope@2.0.0-rc.94`
-- `@vuepress/plugin-search@2.0.0-rc.112`
-- `@vuepress/plugin-catalog@2.0.0-rc.112`
-- `@vuepress/plugin-feed@2.0.0-rc.112`
-- **Build deps**: sass-loader, sass-embedded, mermaid
-- **Post-build**: sitemap, globby
-
-## Quick Start (Local)
+### Installation
 
 ```bash
-# 1) Node 20
-nvm use 20
-
-# 2) Install deps (also runs postinstall → generates sidebar)
+# Install dependencies
 npm install
 
-# 3) Dev server
-npm run docs:dev          # http://localhost:8080
+# Start development server
+npm run dev
 
-# 4) Production build (+ sitemap.xml)
-npm run docs:build
+# Build for production
+npm run build
 
-# 5) Preview the static output (optional)
-npx http-server docs/.vuepress/dist -p 4173
+# Preview production build
+npm run preview
 ```
 
-## Scripts
+## 📁 Project Structure
 
-- `npm run gen:sidebars` — regenerate `docs/.vuepress/sidebar.js` from the folder tree
-- `npm run docs:dev` — run local dev server
-- `npm run docs:build` — build static site then generate sitemap.xml
+```
+.
+├── src/
+│   ├── content/
+│   │   ├── docs/
+│   │   │   ├── guide/         # English guide content
+│   │   │   ├── events/        # English events content
+│   │   │   ├── resources/     # English resources content
+│   │   │   ├── nl/           # Dutch content
+│   │   │   │   ├── guide/
+│   │   │   │   ├── events/
+│   │   │   │   └── resources/
+│   │   │   ├── ar/           # Arabic content
+│   │   │   │   ├── guide/
+│   │   │   │   ├── events/
+│   │   │   │   └── resources/
+│   │   │   ├── sw/           # Swahili content
+│   │   │   ├── hi/           # Hindi content
+│   │   │   ├── fa/           # Farsi/Persian content
+│   │   │   └── ta/           # Tamil content
+│   │   └── config.ts
+│   ├── middleware/            # Language detection middleware
+│   └── styles/               # Custom CSS and RTL overrides
+├── astro.config.mjs          # Astro configuration
+├── package.json
+└── README.md
+```
 
-## Authoring Content
+## 🌍 Language Configuration
+
+### Supported Languages
+
+1. **English** (en) - Default language
+2. **Dutch** (nl) - Nederlands
+3. **Arabic** (ar) - العربية (RTL)
+4. **Swahili** (sw) - Kiswahili
+5. **Hindi** (hi) - हिन्दी
+6. **Farsi/Persian** (fa) - فارسی (RTL)
+7. **Tamil** (ta) - தமிழ்
 
 ### Adding Content
 
-Add Markdown under the correct locale:
-- **English**: `docs/...`
-- **Dutch**: `docs/nl/...`
+1. **English**: Add markdown files directly in `src/content/docs/[section]/`
+2. **Other languages**: Add markdown files in `src/content/docs/[lang]/[section]/`
 
-### Workshop/Event Content
+Example:
+- English guide: `src/content/docs/guide/getting-started.md`
+- Dutch guide: `src/content/docs/nl/guide/getting-started.md`
+- Arabic guide: `src/content/docs/ar/guide/getting-started.md`
 
-For workshops/events, drop files in `docs/events/` (mirrored under locales) with frontmatter:
+### Automatic Language Detection
 
-```yaml
----
-title: "Solflare 101 & Web3 Safety"
-date: 2025-09-10
-event: true
-summary: Short description here.
-tags: ["workshop", "solana", "safety"]
----
-```
+The site automatically detects the user's browser language and redirects them to the appropriate version:
 
-### Updating Sidebars
+- Browser language detection via `Accept-Language` header
+- User preference persistence via cookies
+- Manual language switching available in the UI
 
-After adding/removing folders, run:
+### Language Switcher
 
-```bash
-npm run gen:sidebars
-```
+Users can manually switch languages using the language selector in the navigation bar. Their preference is saved for future visits.
 
-> **Note**: Sidebars are auto-generated: don't hand-edit `docs/.vuepress/sidebar.js`.
+## 🎨 Customization
 
-## Contributing
+### Styling
 
-We welcome change requests, edits, translations, and art.
+- Edit `src/styles/custom.css` for general styles
+- Edit `src/styles/rtl-overrides.css` for RTL-specific styles
+- Modify theme colors in `astro.config.mjs`
 
-1. **Fork the repo** → create a feature branch
-2. **Make changes** (docs or assets)
-3. **Run locally** (see Quick start)
-4. **Commit** with a clear message and open a Pull Request
+### Navigation
 
-### Translations
+Edit the sidebar configuration in `astro.config.mjs`:
 
-Mirror the English path under `/nl/`. If adding a new language later, mirror the folder structure and open a PR titled `feat(i18n): add <lang>`.
-
-### Art/Diagrams
-
-Add to `docs/.vuepress/public/assets/<topic>/` and reference with `/assets/...` paths.
-
-## CI/CD on Vercel (GitHub Integration)
-
-This project deploys automatically via Vercel when you push to GitHub.
-
-### Setup
-
-1. **Connect the repo** in Vercel → "New Project" → import from GitHub
-
-2. **Project settings**:
-   - **Node.js**: 20.x
-   - **Install Command**: `npm ci` (or `npm install` if you don't use a lockfile)
-   - **Build Command**: `npm run docs:build`
-   - **Output Directory**: `docs/.vuepress/dist`
-   - **Env vars**: `SITE_URL = https://sparkhope.vercel.app` (used by gen-sitemap.mjs)
-
-3. **Deployment**:
-   - **Preview Deployments**: every PR gets its own preview URL
-   - **Production**: merges to main deploy to production domain
-
-### Optional vercel.json
-
-Place at repo root for cache & clean URLs:
-
-```json
-{
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "headers": [
-    {
-      "source": "/(.*)\\.(css|js|woff2|png|jpg|jpeg|webp|svg)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+```javascript
+sidebar: [
+  {
+    label: 'Your Section',
+    translations: {
+      nl: 'Jouw Sectie',
+      ar: 'قسمك',
+      sw: 'Sehemu Yako',
+      hi: 'आपका अनुभाग',
+      fa: 'بخش شما',
+      ta: 'உங்கள் பிரிவு',
     },
-    {
-      "source": "/(sitemap\\.xml|rss\\.xml|feed\\.json)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=600" }]
-    }
-  ]
-}
+    autogenerate: { directory: 'your-section' },
+  },
+]
 ```
 
-The build also writes `sitemap.xml` and `robots.txt`. Ensure `SITE_URL` is set in Vercel so sitemap links are absolute.
+## 🌐 Language Coverage
 
-## Using GitHub
+This configuration provides documentation access to approximately:
 
-### Initialize/Push Existing Repo
+- **English**: 2+ billion speakers (L1 + L2)
+- **Dutch**: 24 million native speakers
+- **Arabic**: 422 million speakers across MENA region
+- **Swahili**: 200+ million speakers in East Africa
+- **Hindi**: 600+ million speakers in India and diaspora
+- **Farsi/Persian**: 110 million speakers in Iran, Afghanistan, Tajikistan
+- **Tamil**: 78 million speakers in Tamil Nadu, Sri Lanka, Singapore, Malaysia
+
+Total potential reach: **3.5+ billion people** 🌍
+
+## 🚀 Deployment
+
+### Vercel
 
 ```bash
-git init
-git remote add origin https://github.com/biomassives/sparkhope.git
-git branch -M main
-git add -A
-git commit -m "chore: initial import"
-git push -u origin main
+npm run build
+# Deploy dist folder
 ```
 
-### Issues and Pull Requests
+### Netlify
 
-- **Open issues** → propose enhancements, report bugs, or request new workshop topics
-- **Open PRs** → edits, translations, art, config tweaks
+```bash
+npm run build
+# Deploy dist folder
+```
 
-## Support
+### GitHub Pages
 
-- **Open an Issue** for help/questions
-- **Tag PRs** with `docs`, `i18n`, `build`, or `workshop` labels if applicable
+GitHub Actions workflow is included for automatic deployment.
 
-## Roadmap
+## 📄 License
 
-- [ ] Expand multi-chain workshop appendix (ETH, Tezos, Tron, Polygon, Celo, Algorand, Chainlink, L2s)
-- [ ] Add more locales (starting with EN/NL)
-- [ ] Optional PWA (once plugin versions align)
-- [ ] More event templates + printable handouts
+MIT
 
-## License
+## 🤝 Contributing
 
-Specify your license in `LICENSE` (e.g., MIT).  
-If none yet, contributions default to the repository's future license once added.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## Acknowledgments
+## 📞 Support
 
-Thanks to the open-source maintainers behind VuePress, Theme Hope, and the multi-chain tooling ecosystems — and to all contributors who make food security & biodiversity literacy accessible.
+For issues and questions, please open an issue on GitHub.

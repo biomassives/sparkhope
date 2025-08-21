@@ -1,0 +1,70 @@
+/* RTL overrides for Arabic and Farsi/Persian */
+
+[dir="rtl"] {
+  text-align: right;
+}
+
+[dir="rtl"] .sidebar {
+  border-left: none;
+  border-right: 1px solid var(--sl-color-gray-6);
+}
+
+[dir="rtl"] .breadcrumb {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .breadcrumb-separator {
+  transform: rotate(180deg);
+}
+
+[dir="rtl"] code {
+  direction: ltr;
+  text-align: left;
+}
+
+[dir="rtl"] .table-of-contents {
+  padding-right: 0;
+  padding-left: 1rem;
+}
+
+[dir="rtl"] .nav-link {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .card {
+  text-align: right;
+}
+
+/* Ensure code blocks remain LTR even in RTL context */
+[dir="rtl"] pre,
+[dir="rtl"] .code-block {
+  direction: ltr;
+  text-align: left;
+}
+
+/* Better typography for Arabic */
+[lang="ar-SA"] {
+  font-family: 'Noto Sans Arabic', 'Segoe UI', system-ui, sans-serif;
+  line-height: 1.8;
+}
+
+/* Better typography for Farsi/Persian */
+[lang="fa-IR"] {
+  font-family: 'Vazirmatn', 'Noto Sans Persian', system-ui, sans-serif;
+  line-height: 1.8;
+}
+
+/* Better typography for Hindi */
+[lang="hi-IN"] {
+  font-family: 'Noto Sans Devanagari', system-ui, sans-serif;
+}
+
+/* Better typography for Tamil */
+[lang="ta-IN"] {
+  font-family: 'Noto Sans Tamil', system-ui, sans-serif;
+}
+
+/* Better typography for Swahili (uses Latin script but benefits from specific fonts) */
+[lang="sw-KE"] {
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
