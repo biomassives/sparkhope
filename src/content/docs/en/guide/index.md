@@ -3,10 +3,6 @@ title: Getting Started
 description: Learn how to use our platform
 ---
 
-# Getting Started
-
-Learn how to use our platform
-
 ## Overview
 
 This is sample content for the guide section in English.

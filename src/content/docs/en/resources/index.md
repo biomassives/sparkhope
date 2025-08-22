@@ -3,10 +3,6 @@ title: Resources
 description: Helpful resources and documentation
 ---
 
-# Resources
-
-Helpful resources and documentation
-
 ## Overview
 
 This is sample content for the resources section in English.

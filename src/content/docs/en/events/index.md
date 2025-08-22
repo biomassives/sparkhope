@@ -3,10 +3,6 @@ title: Upcoming Events
 description: Join our community events
 ---
 
-# Upcoming Events
-
-Join our community events
-
 ## Overview
 
 This is sample content for the events section in English.
