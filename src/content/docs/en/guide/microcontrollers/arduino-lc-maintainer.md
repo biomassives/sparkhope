@@ -9,13 +9,7 @@ version: "1.0"
 heroImage: "/images/hydroponics-controller.jpg"
 ---
 
-import { Image } from 'astro:assets';
-
-# Automated Nutrient and pH Controller for Mycology & Food Security
-
-<div class="download-section">
-  📄 **[Download Technical Documentation PDF](/assets/automated-nutrient-ph-controller.pdf)**
-</div>
+📄 [Download Technical Documentation PDF](/assets/automated-nutrient-ph-controller.pdf)
 
 ## Overview
 
