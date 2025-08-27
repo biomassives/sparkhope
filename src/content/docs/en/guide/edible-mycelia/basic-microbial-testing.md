@@ -11,6 +11,7 @@ language: en-US
 
 Designed for small-scale, food‑grade mycelial production and prototyping in low-resource settings
 
+<pre><code class="language-mermaid">
 flowchart TD
   A[Plan & Source materials] --> B[Prepare media]
   B --> B1[Liquid cultures]
@@ -28,6 +29,7 @@ flowchart TD
   K -->|Yes| H
   K -->|No| L[Discard & sanitize]
   L --> M[Send to accredited lab if needed]
+</code></pre>
 
 
 
