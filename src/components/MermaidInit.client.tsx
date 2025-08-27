@@ -22,8 +22,8 @@ export default function MermaidInit() {
     try {
       // 1) convert <code class="language-mermaid"> inside <pre> into .mermaid divs so mermaid.run() picks them up
       const codeBlocks = Array.from(
-        document.querySelectorAll("pre code.language-mermaid")
-      ) as HTMLCodeElement[];
+        document.querySelectorAll<HTMLElement>("pre code.language-mermaid")
+      );
       codeBlocks.forEach((code) => {
         const parentPre = code.parentElement;
         if (!parentPre) return;
