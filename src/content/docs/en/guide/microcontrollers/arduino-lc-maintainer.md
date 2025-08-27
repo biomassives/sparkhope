@@ -17,15 +17,6 @@ This document details the design, implementation, and operation of a cutting-edg
 
 ---
 
-## Revision History
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | 2025-08-24 | Initial Release |
-
-**Author:** G Dub  
-**License:** Open Source, MIT License
-
 ## 1.0 Introduction
 
 This document describes the design, implementation, and operation of an automated nutrient and pH controller for hydroponic and liquid culture systems. The system is built on the Arduino Due platform and is designed for applications in mycology and food security, ensuring optimal environmental conditions for cultivation. 
