@@ -1,22 +1,40 @@
 ---
-title: Matukio Yanayokuja
-description: Jiunge na matukio ya jamii yetu
+title: Karibu SparkHope
+description: Hifadhi za Usalama wa Chakula na Rasilimali
+template: splash
+hero:
+  tagline: Kujenga suluhisho endelevu za usalama wa chakula kwa jamii duniani kote
+  actions:
+    - text: Anza
+      link: /en/guide/
+      icon: right-arrow
+      variant: primary
+    - text: Ona kwenye GitHub
+      link: https://github.com/biomassives/sparkhope
+      icon: external
+banner:
+  content: |
+    Tumezindua tovuti yetu mpya ya hati! 
+    <a href="/en/events/">Angalia matukio yajayo →</a>
 ---
+import { Card, CardGrid } from '@astrojs/starlight/components';
 
-# Matukio Yanayokuja
+## Utafiti wa Usalama wa Chakula
 
-Jiunge na matukio ya jamii yetu
-
-## Overview
-
-This is sample content for the events section in Kiswahili.
-
-### Features
-
-- Feature 1
-- Feature 2
-- Feature 3
-
-## Next Steps
-
-Continue exploring our documentation to learn more.
+<CardGrid stagger>
+  <Card title="Uzalishaji wa Keki ya Mycelial" icon="translate">
+    Mycelial za Uyoga zinaweza kupanuliwa kwa usalama wa chakula na matumizi ya moja kwa moja kama chanzo cha kutegemewa cha protini na kabohaidreti
+  </Card>
+  <Card title="Utambuzi wa Aina za Muhimu Shambani" icon="moon">
+    Tunatafuta kusaidia kutoa nyenzo za mafunzo na msaada wa moja kwa moja kwa watu binafsi kwa ajili ya kamili
+  </Card>
+  <Card title="Ushirikiano wa Jamii" icon="magnifier">
+    Miradi kwenye iNaturalist na Mushroom Observer kwa mapitio muhimu, ufahamu wa jamii, na ushirikiano
+  </Card>
+  <Card title="Mfumo wa Uzalishaji Unaolegea" icon="mobile">
+    Kazi yetu inaangazia kupima ufanisi wa njia mbalimbali za rasilimali zilizopungua za kuzalisha kwa usalama keki ya mycelial inayoweza kuliwa moja kwa moja kutoka kwenye utamaduni wa kimvya. Hii ni pamoja na kupunguza uchafuzi, utambuzi wa aina, kuongeza kwa usalama uzalishaji wa sahani za agar na majaribio ya utamaduni wa mycelial wa kimvya kwenye agar.
+  </Card>
+  <Card title="Mbinu ya GNU / GPL" icon="mobile">
+    Utafiti wetu, miundombinu ya wavuti, mbinu za maabara, na mapishi yanashirikiwa bure na yanaweza kuchapishwa upya kwa au bila kututambua.
+  </Card>
+</CardGrid>
