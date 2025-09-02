@@ -13,3 +13,4 @@ description: نهج عملي لإظهار تقنيات الأمن الغذائي
 
 ## إدارة المزرعة وحلقة المزرعة السائلة
 استخدام المختبر لـ Pleurotus Ostreatus، Pleurotus Pulmonarius، Hericium Erinaceus، و Inonotus Obliquus (فطر المحار، فطر المحار عالي البروتين، عرف الأسد، والتشاغا على التوالي)
+
