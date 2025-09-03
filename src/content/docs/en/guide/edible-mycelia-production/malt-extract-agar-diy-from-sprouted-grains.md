@@ -14,8 +14,6 @@ sidebar:
   order: 6
 ---
 
-# DIY Malt Extract Agar from Sprouted Grains
-
 Malt Extract Agar (MEA) is one of the most effective general-purpose media for cultivating fungi, providing rich carbohydrates, proteins, and growth factors. By producing your own malt extract from sprouted grains, you can create high-quality growing medium while maintaining complete control over ingredients and costs.
 
 ## Understanding Malt Extract
