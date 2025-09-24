@@ -5,7 +5,7 @@ import { loadEnv } from 'vite';
 const { SITE_URL } = loadEnv(import.meta.env.MODE, process.cwd(), '');
 
 export default defineConfig({
-  site: SITE_URL || 'https://spark-food-security.vercel.app',
+  site: SITE_URL || 'https://sparkhope.space',
   
   integrations: [
     starlight({
