@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circular Economy Liquid Culture Reference - hub.approvideo.org</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.125rem;
+            opacity: 0.9;
+        }
+
+        .rating-legend {
+            background: #1e293b;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #334155;
+        }
+
+        .legend-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #f8fafc;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: #0f172a;
+            border-radius: 0.5rem;
+            border: 1px solid #334155;
+        }
+
+        .score-indicator {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: white;
+        }
+
+        .score-excellent { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .score-high { background: linear-gradient(135deg, #059669, #10b981); }
+        .score-medium { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .score-low { background: linear-gradient(135deg, #6b7280, #9ca3af); }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .category-section {
+            background: #1e293b;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            border: 1px solid #334155;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #334155;
+        }
+
+        .category-icon {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .category-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+
+        .category-description {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-left: 1.5rem;
+        }
+
+        .ingredients-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .ingredient-card {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .ingredient-card:hover {
+            border-color: #10b981;
+            transform: translateX(4px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .ingredient-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .ingredient-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #f8fafc;
+        }
+
+        .ingredient-score {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .score-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .ingredient-source {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+        }
+
+        .ingredient-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+
+        .tag {
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+            font-size: 0.625rem;
+            font-weight: 600;
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        /* Category Colors */
+        .water { --category-color: #3b82f6; }
+        .carbon { --category-color: #d97706; }
+        .nitrogen { --category-color: #16a34a; }
+        .minerals { --category-color: #a16207; }
+        .vitamins { --category-color: #a855f7; }
+        .specialty { --category-color: #f97316; }
+
+        .water .category-icon { background: #3b82f6; }
+        .carbon .category-icon { background: #d97706; }
+        .nitrogen .category-icon { background: #16a34a; }
+        .minerals .category-icon { background: #a16207; }
+        .vitamins .category-icon { background: #a855f7; }
+        .specialty .category-icon { background: #f97316; }
+
+        .water .ingredient-card { border-left-color: #3b82f6; }
+        .carbon .ingredient-card { border-left-color: #d97706; }
+        .nitrogen .ingredient-card { border-left-color: #16a34a; }
+        .minerals .ingredient-card { border-left-color: #a16207; }
+        .vitamins .ingredient-card { border-left-color: #a855f7; }
+        .specialty .ingredient-card { border-left-color: #f97316; }
+
+        /* Ingredient Details Overlay */
+        .ingredient-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 2rem;
+        }
+
+        .ingredient-overlay.visible {
+            display: flex;
+        }
+
+        .overlay-content {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid #475569;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .overlay-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #475569;
+        }
+
+        .overlay-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .overlay-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+
+        .overlay-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+
+        .close-btn {
+            background: #475569;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-size: 1.125rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #6b7280;
+        }
+
+        .overlay-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .overlay-section h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #10b981;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .overlay-section p {
+            font-size: 0.875rem;
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-bottom: 0.75rem;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .benefit-tag {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .nutrition-bars {
+            margin-top: 0.75rem;
+        }
+
+        .nutrition-item {
+            margin-bottom: 0.75rem;
+        }
+
+        .nutrition-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
+            color: #cbd5e1;
+        }
+
+        .nutrition-bar {
+            background: #334155;
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .nutrition-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+            border-radius: 3px;
+        }
+
+        .status-bar {
+            background: #1f2937;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            border-top: 1px solid #374151;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .legend-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .overlay-content {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🍄 Liquid Culture Ingredient Reference</h1>
+            <p>Circular Economy Rating System for Kitchen Waste Stream Nutrients</p>
+        </header>
+
+        <div class="rating-legend">
+            <h2 class="legend-title">📊 Circular Economy Rating System</h2>
+            <div class="legend-grid">
+                <div class="legend-item">
+                    <div class="score-indicator score-excellent">9-10</div>
+                    <div>
+                        <div style="font-weight: 600; color: #f8fafc;">Excellent</div>
+                        <div style="font-size: 0.75rem; color: #94a3b8;">Pure kitchen waste • Maximum sustainability</div>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="score-indicator score-high">7-8</div>
+                    <div>
+                        <div style="font-weight: 600; color: #f8fafc;">High</div>
+                        <div style="font-size: 0.75rem; color: #94a3b8;">Mostly circular • Great sustainability</div>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="score-indicator score-medium">5-6</div>
+                    <div>
+                        <div style="font-weight: 600; color: #f8fafc;">Medium</div>
+                        <div style="font-size: 0.75rem; color: #94a3b8;">Some circular elements • Moderate impact</div>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="score-indicator score-low">1-4</div>
+                    <div>
+                        <div style="font-weight: 600; color: #f8fafc;">Low</div>
+                        <div style="font-size: 0.75rem; color: #94a3b8;">Purchased inputs • Linear approach</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="categoriesGrid" class="categories-grid"></div>
+    </div>
+
+    <div class="status-bar">
+        hub.approvideo.org • Click any ingredient for detailed preparation and usage information
+    </div>
+
+    <!-- Ingredient Details Overlay -->
+    <div id="ingredientOverlay" class="ingredient-overlay">
+        <div class="overlay-content">
+            <div class="overlay-header">
+                <div class="overlay-title">
+                    <div id="overlayIcon" class="overlay-icon"></div>
+                    <div id="overlayName" class="overlay-name"></div>
+                </div>
+                <button class="close-btn" onclick="closeOverlay()">×</button>
+            </div>
+
+            <div class="overlay-section">
+                <h3>📋 Description</h3>
+                <p id="overlayDescription"></p>
+            </div>
+
+            <div class="overlay-section">
+                <h3>🔬 Detailed Information</h3>
+                <p id="overlayDetailedInfo"></p>
+            </div>
+
+            <div class="overlay-section">
+                <h3>👨‍🍳 Preparation Instructions</h3>
+                <p id="overlayPreparationNotes"></p>
+            </div>
+
+            <div class="overlay-section">
+                <h3>✨ Benefits</h3>
+                <div id="overlayBenefits" class="benefits-grid"></div>
+            </div>
+
+            <div class="overlay-section">
+                <h3>📊 Nutritional Profile</h3>
+                <div id="overlayNutrition" class="nutrition-bars"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Comprehensive ingredient database
+        const INGREDIENT_DATABASE = {
+            // Water Sources
+            water: {
+                title: "Water Sources",
+                description: "Clean water bases for sterile liquid culture foundation",
+                color: "#3b82f6",
+                ingredients: {
+                    distilledWater: {
+                        name: "Distilled Water",
+                        source: "home distillation or purchased",
+                        score: 2,
+                        availability: "medium",
+                        description: "Ultra-pure water base with zero minerals. Perfect sterile foundation for sensitive spore germination and contamination-free liquid cultures.",
+                        detailedInfo: "Steam distillation removes all minerals, chlorine, and potential contaminants. pH neutral at 7.0. Creates ideal sterile environment for mycelium without competing ions. Essential for laboratory-grade liquid cultures.",
+                        preparationNotes: "Collect distilled water from home distiller or purchase pharmaceutical-grade water. Store in sterile glass containers. Can substitute with deionized water if available. Use within 1 week of opening.",
+                        benefits: ["Maximum sterility", "pH neutral", "No competing minerals", "Universal base"],
+                        balance: { purity: 10, availability: 6, sustainability: 2 }
+                    },
+                    filteredWater: {
+                        name: "Filtered Water",
+                        source: "tap water + carbon filtration",
+                        score: 4,
+                        availability: "high",
+                        description: "Clean water with trace beneficial minerals retained. Excellent general-purpose base that's readily available in most kitchens with good sustainability.",
+                        detailedInfo: "Carbon filtration removes chlorine while retaining beneficial trace minerals like calcium and magnesium. Slightly alkaline pH 7.2-7.8 naturally supports mycelium growth. Cost-effective and sustainable long-term option.",
+                        preparationNotes: "Use quality carbon filter system (Brita, Pur, or under-sink). Change filters regularly per manufacturer specs. Test pH - should be 7.0-8.0 for optimal results. Let chlorinated water sit 24 hours if no filter.",
+                        benefits: ["Readily available", "Retains beneficial minerals", "Removes chlorine", "Cost effective"],
+                        balance: { purity: 7, availability: 10, sustainability: 4 }
+                    },
+                    rainwater: {
+                        name: "Rainwater",
+                        source: "collected precipitation",
+                        score: 9,
+                        availability: "variable",
+                        description: "Nature's distilled water with perfect pH balance. Represents ultimate circular economy water source with exceptional purity and zero environmental impact.",
+                        detailedInfo: "Naturally soft water with pH 5.6-6.5, ideal for mycelium growth. Contains trace atmospheric minerals but zero chlorine or chemical treatments. Completely renewable resource with natural distillation process.",
+                        preparationNotes: "Collect from clean roof systems using food-grade containers. Filter through coffee filter to remove debris. Store covered to prevent contamination. Best collected from middle of rainfall for purity.",
+                        benefits: ["Natural pH balance", "Zero chemicals", "Sustainable source", "Soft water profile"],
+                        balance: { purity: 9, availability: 6, sustainability: 10 }
+                    },
+                    steamCondensate: {
+                        name: "Steam Condensate",
+                        source: "cooking steam recovery",
+                        score: 8,
+                        availability: "high",
+                        description: "Ultra-pure steam-distilled water captured from everyday cooking. Zero-waste approach to obtaining laboratory-grade water from waste heat energy.",
+                        detailedInfo: "Steam condensation naturally distills water, removing all dissolved solids and contaminants. pH neutral around 7.0. Captures waste heat energy while producing pure water. Available daily from cooking processes.",
+                        preparationNotes: "Collect condensate from pot lids, oven doors, or steamer baskets using clean collection vessels. Refrigerate until use. Produces 50-200ml per cooking session depending on method.",
+                        benefits: ["Waste heat recovery", "Daily availability", "Laboratory purity", "Zero additional cost"],
+                        balance: { purity: 9, availability: 8, sustainability: 8 }
+                    }
+                }
+            },
+
+            // Carbon Sources
+            carbon: {
+                title: "Carbon Sources",
+                description: "Energy-rich carbohydrates for rapid mycelium growth and colonization",
+                color: "#d97706",
+                ingredients: {
+                    riceCookingWater: {
+                        name: "Rice Cooking Water",
+                        source: "starchy water from cooking rice",
+                        score: 9,
+                        availability: "high",
+                        description: "Starch-rich liquid gold from rice cooking. Contains complex carbohydrates perfect for sustained mycelium energy during aggressive colonization phases.",
+                        detailedInfo: "Rice water contains amylose and amylopectin starches that mycelium readily converts to glucose. Rich in B vitamins, particularly B1, B3, and B6. pH typically 6.0-6.5. Provides 15-20g carbohydrates per 500ml.",
+                        preparationNotes: "Save water from rinsing and cooking rice (both usable). Don't oversalt during cooking. Cool quickly and refrigerate. Use within 48 hours for best results. Strain if needed to remove particles.",
+                        benefits: ["High energy density", "Complex carbohydrates", "B vitamin content", "Readily available"],
+                        balance: { energy: 9, vitamins: 6, availability: 9 }
+                    },
+                    pastaWater: {
+                        name: "Pasta Cooking Water",
+                        source: "starchy water from pasta boiling",
+                        score: 9,
+                        availability: "high",
+                        description: "High-energy starch solution from pasta cooking. Excellent fast-acting carbohydrate source for rapid mycelium expansion phases with immediate availability.",
+                        detailedInfo: "Pasta water contains dissolved wheat starches and proteins. Higher starch concentration than rice water due to longer cooking time. pH 6.5-7.0. Contains gluten proteins which provide additional nitrogen compounds.",
+                        preparationNotes: "Reserve 2-3 cups before draining pasta. Use moderately salted water (1 tsp per quart maximum). Cool rapidly to prevent spoilage. Best used fresh within 24-48 hours of preparation.",
+                        benefits: ["Very high starch content", "Quick mycelium uptake", "Additional proteins", "Kitchen staple"],
+                        balance: { energy: 10, proteins: 5, availability: 10 }
+                    },
+                    fruitScraps: {
+                        name: "Fruit Scraps Extract",
+                        source: "apple peels, citrus rinds, overripe fruit",
+                        score: 10,
+                        availability: "high",
+                        description: "Natural fruit sugars and organic acids from kitchen waste. Provides fast-acting energy with natural antimicrobial properties from citrus oils and fruit acids.",
+                        detailedInfo: "Apple peels contain pectin, fructose, and malic acid. Citrus rinds provide limonene oils with antimicrobial properties. Natural pH buffering from organic acids (4.5-5.5 pH). High in vitamin C and antioxidants.",
+                        preparationNotes: "Use organic fruit when possible to avoid pesticides. Simmer peels and scraps for 20 minutes, then strain. For citrus, use minimal peel to avoid excess oils. Dilute if too acidic (pH below 5.0).",
+                        benefits: ["Natural antimicrobials", "Fast-acting sugars", "Organic acids", "pH buffering"],
+                        balance: { energy: 8, antimicrobials: 7, sustainability: 10 }
+                    },
+                    cardboardWater: {
+                        name: "Cardboard Soak Water",
+                        source: "corrugated cardboard extract",
+                        score: 8,
+                        availability: "high",
+                        description: "Cellulose-rich extract providing structural building blocks. Cardboard breakdown releases calcium, potassium, and trace minerals while providing fiber matrices.",
+                        detailedInfo: "Corrugated cardboard contains 80-90% cellulose plus calcium carbonate as filler. Extended soaking releases minerals and creates short-chain cellulose fragments mycelium can utilize for structure building.",
+                        preparationNotes: "Use only plain corrugated cardboard (no inks, wax, tape, or glossy coating). Soak 24-48 hours in filtered water. Strain through fine mesh. Light brown color indicates good extraction.",
+                        benefits: ["Cellulose building blocks", "Calcium content", "Structural support", "Widely available"],
+                        balance: { structure: 8, minerals: 6, sustainability: 8 }
+                    }
+                }
+            },
+
+            // Nitrogen Sources
+            nitrogen: {
+                title: "Nitrogen Sources",
+                description: "Protein-rich nutrients for mycelium structure and enzyme production",
+                color: "#16a34a",
+                ingredients: {
+                    lentilSoakWater: {
+                        name: "Lentil Soak Water",
+                        source: "water from soaking dried lentils",
+                        score: 10,
+                        availability: "high",
+                        description: "Premium protein-rich liquid from lentil soaking. Contains dissolved amino acids, proteins, and minerals essential for strong mycelium structure and rapid development.",
+                        detailedInfo: "Lentils release soluble proteins, amino acids (especially lysine and methionine), folate, and iron during soaking. pH 6.2-6.8. Contains 3-5g protein per 500ml soak water. Highest quality nitrogen source.",
+                        preparationNotes: "Soak 100g lentils in 500ml filtered water for 12-24 hours. Strain liquid, save lentils for cooking. Rich amber color indicates good extraction. Use within 72 hours refrigerated.",
+                        benefits: ["High protein content", "Essential amino acids", "Iron and folate", "Easy preparation"],
+                        balance: { proteins: 9, minerals: 7, availability: 9 }
+                    },
+                    favaBeanWater: {
+                        name: "Fava Bean Water",
+                        source: "cooking water from fava beans",
+                        score: 9,
+                        availability: "medium",
+                        description: "Concentrated protein solution from fava beans. Exceptionally rich in nitrogen compounds and minerals, ideal for fruiting body development and complex structures.",
+                        detailedInfo: "Fava beans contain highest protein of common legumes (26-30%). Rich in levodopa, tyrosine, and other aromatic amino acids. Excellent mineral profile including magnesium, potassium, and phosphorus.",
+                        preparationNotes: "Cook 150g fava beans in 750ml water for 45 minutes. Save cooking water after straining. Can also use overnight soak water. Contains more minerals than other legumes due to thick shells.",
+                        benefits: ["Highest protein legume", "Unique amino acids", "Rich mineral profile", "Excellent for fruiting"],
+                        balance: { proteins: 10, minerals: 8, specialty: 7 }
+                    },
+                    legumeCookingWater: {
+                        name: "General Legume Water",
+                        source: "cooking water from beans, chickpeas, etc.",
+                        score: 9,
+                        availability: "high",
+                        description: "Versatile protein and mineral solution from various bean varieties. Provides balanced amino acid profile and essential nutrients for all growth phases.",
+                        detailedInfo: "Mixed legume water provides diverse amino acid profiles depending on variety. Contains dissolved proteins, starches, and B vitamins. pH typically 6.0-7.0. Black beans add anthocyanins, chickpeas add folate.",
+                        preparationNotes: "Use cooking water from black beans, chickpeas, kidney beans, or mixed varieties. Don't over-salt during cooking. Cool quickly and refrigerate. Use within 72 hours for optimal freshness.",
+                        benefits: ["Diverse amino acids", "Balanced nutrition", "Versatile source", "Long storage life"],
+                        balance: { proteins: 8, variety: 9, availability: 9 }
+                    }
+                }
+            },
+
+            // Mineral Sources
+            minerals: {
+                title: "Mineral Sources", 
+                description: "Essential minerals for cell wall strength and structural integrity",
+                color: "#a16207",
+                ingredients: {
+                    eggshells: {
+                        name: "Eggshell Powder",
+                        source: "ground eggshells from cooking waste",
+                        score: 10,
+                        availability: "high",
+                        description: "Pure calcium carbonate for cell wall strength and pH buffering. Essential for robust fruiting body formation and structural integrity of mycelium networks.",
+                        detailedInfo: "Eggshells are 94% calcium carbonate with traces of magnesium, strontium, and other trace minerals. Provides pH buffering capacity to maintain optimal growing conditions (pH 6.5-7.5). Critical for mushroom formation.",
+                        preparationNotes: "Clean shells thoroughly and sterilize in boiling water for 5 minutes. Dry completely in oven at 200°F. Grind to fine powder in coffee grinder. Add 1/2 tsp per 500ml liquid culture after sterilization.",
+                        benefits: ["Pure calcium source", "pH buffering", "Cell wall strength", "Zero waste utilization"],
+                        balance: { calcium: 10, buffering: 8, sustainability: 10 }
+                    },
+                    vegetableBroth: {
+                        name: "Vegetable Scrap Broth",
+                        source: "simmered vegetable scraps and peels",
+                        score: 10,
+                        availability: "high",
+                        description: "Complete mineral profile from diverse vegetable sources. Provides broad spectrum micronutrients and water-soluble vitamins in readily bioavailable form.",
+                        detailedInfo: "Vegetable broth contains potassium, magnesium, phosphorus, and trace elements. pH 5.5-6.5. Different vegetables contribute unique profiles - carrots (beta-carotene), onions (sulfur compounds), celery (sodium).",
+                        preparationNotes: "Simmer mixed vegetable scraps (peels, ends, leaves) for 45-60 minutes. Use diverse vegetables for complete nutrition. Strain well through fine mesh. Refrigerate up to 1 week or freeze in portions.",
+                        benefits: ["Complete mineral spectrum", "Water-soluble vitamins", "Diverse nutrition", "Maximum waste utilization"],
+                        balance: { minerals: 9, vitamins: 7, sustainability: 10 }
+                    }
+                }
+            },
+
+            // Vitamin Sources
+            vitamins: {
+                title: "Vitamin Sources",
+                description: "Growth factors and vitamins for metabolic processes and development",
+                color: "#a855f7",
+                ingredients: {
+                    sproutingWater: {
+                        name: "Sprouting Water",
+                        source: "water from seed sprouting process",
+                        score: 8,
+                        availability: "medium",
+                        description: "Growth hormone concentrate from activated seeds. Contains natural cytokinins and auxins that promote rapid cell division and mycelium development.",
+                        detailedInfo: "Sprouting releases plant hormones, vitamins (especially B-complex and C), and amino acids. Contains natural gibberellins that promote growth and development. pH 6.0-6.8. Rich in enzymatically active compounds.",
+                        preparationNotes: "Soak alfalfa, mung beans, or mixed seeds for 12 hours. Rinse every 8 hours for 3-5 days during sprouting. Collect all rinse water. Fresh preparation ensures maximum hormone activity.",
+                        benefits: ["Natural growth hormones", "High vitamin content", "Cell division promoters", "Fresh preparation"],
+                        balance: { hormones: 9, vitamins: 8, freshness: 9 }
+                    },
+                    aeratedCompostTea: {
+                        name: "Aerated Compost Tea",
+                        source: "actively aerated organic compost extract",
+                        score: 9,
+                        availability: "medium",
+                        description: "Living ecosystem in liquid form. Contains beneficial microorganisms, enzymes, and growth factors that create synergistic relationships with mycelium.",
+                        detailedInfo: "24-48 hour aeration extracts water-soluble nutrients and cultivates beneficial bacteria and fungi. Contains humic acids, fulvic acids, and natural growth hormones. pH 6.0-7.0. Living biological system.",
+                        preparationNotes: "Use 1 cup quality compost in 1 gallon water. Aerate continuously 24-48 hours with aquarium pump. Strain through cloth. Use immediately for maximum microbial activity. Sweet earthy smell indicates success.",
+                        benefits: ["Living microorganisms", "Natural growth hormones", "Enzyme production", "Biological diversity"],
+                        balance: { biology: 10, enzymes: 9, hormones: 8 }
+                    },
+                    fermentedGrainWater: {
+                        name: "Fermented Rice Water",
+                        source: "controlled fermentation of rice water",
+                        score: 9,
+                        availability: "medium",
+                        description: "B-vitamin complex from controlled grain fermentation. Particularly rich in B12, folate, and vitamins essential for fruiting body development and metabolic processes.",
+                        detailedInfo: "3-5 day controlled fermentation produces maximum B-vitamin content. Lactic acid bacteria create beneficial organic acids and vitamin B12. pH 4.5-5.5 provides natural preservation and growth stimulation.",
+                        preparationNotes: "Ferment rice water at room temperature 3-5 days until slightly sour. Strain and dilute 1:3 with fresh water. Sweet-sour aroma indicates successful fermentation. pH should be 4.5-5.5.",
+                        benefits: ["High B-vitamin content", "Vitamin B12 production", "Natural preservation", "Enhanced bioavailability"],
+                        balance: { vitamins: 9, preservation: 8, fermentation: 9 }
+                    }
+                }
+            },
+
+            // Specialty Additives
+            specialty: {
+                title: "Specialty Additives",
+                description: "Advanced ingredients for enhanced performance and specific applications",
+                color: "#f97316",
+                ingredients: {
+                    pastaWaterWithYeast: {
+                        name: "Pasta Water + Baker's Yeast",
+                        source: "pasta water with active yeast added",
+                        score: 8,
+                        availability: "high",
+                        description: "Enhanced pasta water with living baker's yeast for enzyme production. Creates active nutrient cycling system that pre-breaks down complex molecules for easier uptake.",
+                        detailedInfo: "Baker's yeast (Saccharomyces cerevisiae) produces enzymes that break down starches and proteins. Adds B vitamins, amino acids, and growth factors. pH drops to 5.5-6.0 during fermentation process.",
+                        preparationNotes: "Cool pasta water to room temperature first. Add 1/4 tsp active dry yeast per 500ml. Let activate 30 minutes until bubbling. Use within 6 hours for maximum enzyme activity. Don't overheat.",
+                        benefits: ["Living enzyme system", "Enhanced nutrition", "Pre-digested nutrients", "Growth factors"],
+                        balance: { enzymes: 9, activity: 8, enhancement: 9 }
+                    }
+                }
+            }
+        };
+
+        class IngredientReferenceApp {
+            constructor() {
+                this.currentIngredient = null;
+                this.init();
+            }
+
+            init() {
+                this.renderCategories();
+                this.setupEventListeners();
+            }
+
+            setupEventListeners() {
+                // Close overlay on escape key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.closeOverlay();
+                    }
+                });
+
+                // Close overlay on background click
+                document.getElementById('ingredientOverlay').addEventListener('click', (e) => {
+                    if (e.target.id === 'ingredientOverlay') {
+                        this.closeOverlay();
+                    }
+                });
+            }
+
+            renderCategories() {
+                const grid = document.getElementById('categoriesGrid');
+                let html = '';
+
+                Object.entries(INGREDIENT_DATABASE).forEach(([categoryKey, category]) => {
+                    html += `
+                        <div class="category-section ${categoryKey}">
+                            <div class="category-header">
+                                <div class="category-icon"></div>
+                                <div>
+                                    <div class="category-title">${category.title}</div>
+                                    <div class="category-description">${category.description}</div>
+                                </div>
+                            </div>
+                            <div class="ingredients-list">
+                                ${this.renderIngredients(categoryKey, category.ingredients)}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                grid.innerHTML = html;
+            }
+
+            renderIngredients(categoryKey, ingredients) {
+                return Object.entries(ingredients).map(([key, ingredient]) => {
+                    const scoreClass = this.getScoreClass(ingredient.score);
+                    return `
+                        <div class="ingredient-card" onclick="app.showIngredientDetails('${categoryKey}', '${key}')">
+                            <div class="ingredient-header">
+                                <div class="ingredient-name">${ingredient.name}</div>
+                                <div class="ingredient-score">
+                                    <span class="score-badge ${scoreClass}">${ingredient.score}/10</span>
+                                </div>
+                            </div>
+                            <div class="ingredient-source">${ingredient.source}</div>
+                            <div class="ingredient-tags">
+                                <span class="tag">${INGREDIENT_DATABASE[categoryKey].title}</span>
+                                <span class="tag">${ingredient.availability} availability</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            getScoreClass(score) {
+                if (score >= 9) return 'score-excellent';
+                if (score >= 7) return 'score-high'; 
+                if (score >= 5) return 'score-medium';
+                return 'score-low';
+            }
+
+            showIngredientDetails(categoryKey, ingredientKey) {
+                const category = INGREDIENT_DATABASE[categoryKey];
+                const ingredient = category.ingredients[ingredientKey];
+                
+                if (!ingredient) return;
+
+                this.currentIngredient = { category: categoryKey, key: ingredientKey, data: ingredient };
+
+                // Update overlay content
+                document.getElementById('overlayIcon').style.background = category.color;
+                document.getElementById('overlayName').textContent = ingredient.name;
+                document.getElementById('overlayDescription').textContent = ingredient.description;
+                document.getElementById('overlayDetailedInfo').textContent = ingredient.detailedInfo;
+                document.getElementById('overlayPreparationNotes').textContent = ingredient.preparationNotes;
+
+                // Benefits
+                const benefitsContainer = document.getElementById('overlayBenefits');
+                benefitsContainer.innerHTML = ingredient.benefits.map(benefit => 
+                    `<div class="benefit-tag">${benefit}</div>`
+                ).join('');
+
+                // Nutrition bars
+                const nutritionContainer = document.getElementById('overlayNutrition');
+                let nutritionHtml = '';
+                Object.entries(ingredient.balance).forEach(([type, value]) => {
+                    const percentage = (value / 10) * 100;
+                    nutritionHtml += `
+                        <div class="nutrition-item">
+                            <div class="nutrition-label">
+                                <span style="text-transform: capitalize;">${type}</span>
+                                <span>${value}/10</span>
+                            </div>
+                            <div class="nutrition-bar">
+                                <div class="nutrition-fill" style="width: ${percentage}%; background: ${category.color};"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+                nutritionContainer.innerHTML = nutritionHtml;
+
+                // Show overlay
+                document.getElementById('ingredientOverlay').classList.add('visible');
+            }
+
+            closeOverlay() {
+                document.getElementById('ingredientOverlay').classList.remove('visible');
+                this.currentIngredient = null;
+            }
+        }
+
+        // Global functions
+        function closeOverlay() {
+            if (window.app) {
+                window.app.closeOverlay();
+            }
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            window.app = new IngredientReferenceApp();
+        });
+    </script>
+</body>
+</html>
