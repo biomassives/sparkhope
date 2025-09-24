@@ -2,253 +2,240 @@
 import BaseHead from "../components/BaseHead.astro";
 ---
 
-<html lang="en">
-  <head>
-    <BaseHead title="Generative Storytelling - The Synergy Accord" />
-    <style>
-      /* === GLOBAL === */
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      :root {
-        --color-bg: #0f172a;
-        --color-panel: #1e293b;
-        --color-border: #334155;
-        --color-accent: #60a5fa;
-        --color-success: #34d399;
-        --color-hover: #475569;
-      }
-      body {
-        font-family: 'Inter', sans-serif;
-        background: linear-gradient(135deg, var(--color-panel), var(--color-bg));
-        color: #f1f5f9;
-        min-height: 100vh;
-        overflow-x: hidden;
-      }
+<BaseHead title="Generative Storytelling - The Synergy Accord" />
 
-      /* === LAYOUT === */
-      .container {
-        display: grid;
-        grid-template-columns: 300px 1fr 320px;
-        grid-template-rows: 60px 1fr;
-        grid-template-areas: 
-          "header header header"
-          "sidebar main panel";
-        height: 100vh;
-        gap: 1px;
-        background: var(--color-bg);
-      }
-      .header {
-        grid-area: header;
-        background: var(--color-panel);
-        display: flex;
-        align-items: center;
-        padding: 0 1.5rem;
-        border-bottom: 1px solid var(--color-border);
-      }
-      .logo { font-size: 1.25rem; font-weight: 700; color: var(--color-accent); }
-      .sidebar, .control-panel {
-        padding: 1rem;
-        overflow-y: auto;
-        background: var(--color-panel);
-      }
-      .sidebar { grid-area: sidebar; border-right: 1px solid var(--color-border); }
-      .control-panel { grid-area: panel; border-left: 1px solid var(--color-border); }
-      .main-canvas {
-        grid-area: main;
-        background: var(--color-bg);
-        position: relative;
-        overflow: hidden;
-      }
+<style>
+  /* === GLOBAL === */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --color-bg: #0f172a;
+    --color-panel: #1e293b;
+    --color-border: #334155;
+    --color-accent: #60a5fa;
+    --color-success: #34d399;
+    --color-hover: #475569;
+  }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, var(--color-panel), var(--color-bg));
+    color: #f1f5f9;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  /* … (keep all the CSS from before here) … */
+</style>
 
-      /* === TITLES & CARDS === */
-      .section-title {
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: #94a3b8;
-        margin-bottom: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-      .character-card, .section-card {
-        background: #334155;
-        border-radius: 0.5rem;
-        padding: 0.75rem;
-        margin-bottom: 0.75rem;
-        border: 1px solid #475569;
-        cursor: pointer;
-        transition: all 0.2s ease;
-      }
-      .character-card:hover, .section-card:hover {
-        background: var(--color-hover);
-        border-color: var(--color-accent);
-        transform: translateY(-1px);
-      }
-      .character-name { font-weight: 600; color: #f1f5f9; margin-bottom: 0.25rem; }
-      .character-role { font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.5rem; }
-      .character-attributes { display: flex; flex-wrap: wrap; gap: 0.25rem; }
-      .attribute-tag {
-        background: #1e40af;
-        color: #bfdbfe;
-        font-size: 0.625rem;
-        padding: 0.125rem 0.375rem;
-        border-radius: 0.25rem;
-      }
+<div class="container">
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo">🎭 Generative Storytelling - The Synergy Accord</div>
+  </header>
 
-      /* === OVERLAY === */
-      .narrative-overlay {
-        position: absolute;
-        top: 2rem;
-        left: 2rem;
-        right: 2rem;
-        background: rgba(30, 41, 59, 0.9);
-        border-radius: 0.75rem;
-        padding: 1.5rem;
-        backdrop-filter: blur(10px);
-        border: 1px solid var(--color-border);
-        transform: translateY(-120%);
-        transition: transform 0.3s ease;
-      }
-      .narrative-overlay.active { transform: translateY(0); }
-      .overlay-close {
-        position: absolute;
-        top: 0.5rem; right: 0.75rem;
-        background: transparent;
-        border: none;
-        color: #f1f5f9;
-        font-size: 1.25rem;
-        cursor: pointer;
-      }
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="section-title">Characters</div>
+    <div id="characters-container"></div>
+    
+    <div class="section-title">Narrative Elements</div>
+    <div id="narrative-container"></div>
+  </aside>
 
-      /* === KEYWORDS === */
-      .keyword-cloud { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
-      .keyword {
-        background: #059669;
-        color: #ecfdf5;
-        padding: 0.25rem 0.75rem;
-        border-radius: 1rem;
-        font-size: 0.75rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-      }
-      .keyword:hover { background: #047857; transform: scale(1.05); }
+  <!-- MAIN CANVAS -->
+  <main class="main-canvas">
+    <canvas class="canvas" id="generative-canvas"></canvas>
+    <div class="generative-shapes" id="shapes-container"></div>
+    
+    <div class="narrative-overlay" id="narrative-overlay" role="dialog" aria-modal="true">
+      <button class="overlay-close" id="overlay-close">×</button>
+      <h3 id="overlay-title">Current Section</h3>
+      <p id="overlay-content">Select a narrative element to explore...</p>
+      <div class="keyword-cloud" id="keyword-cloud"></div>
+    </div>
+  </main>
 
-      /* === CANVAS & SHAPES === */
-      .canvas {
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(circle at 30% 70%, #1e40af22 0%, transparent 50%),
-                    radial-gradient(circle at 70% 30%, #059669aa 0%, transparent 50%),
-                    var(--color-bg);
-      }
-      .generative-shapes { position: absolute; width: 100%; height: 100%; pointer-events: none; }
-      .shape {
-        position: absolute;
-        border-radius: 50%;
-        opacity: 0.6;
-        animation: float 6s ease-in-out infinite;
-      }
-      @keyframes float {
-        0%, 100% { transform: translateY(0) rotate(0); }
-        50% { transform: translateY(-20px) rotate(180deg); }
-      }
+  <!-- CONTROL PANEL -->
+  <aside class="control-panel">
+    <div class="section-title">Story Progress</div>
+    <div class="section-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+      <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+    </div>
 
-      /* === CONTROLS === */
-      .controls { display: flex; flex-direction: column; gap: 1rem; }
-      .slider-container { display: flex; flex-direction: column; gap: 0.5rem; }
-      .slider {
-        width: 100%; height: 4px;
-        background: var(--color-border);
-        border-radius: 2px;
-        outline: none;
-        opacity: 0.7;
+    <div class="section-title">Mood & Atmosphere</div>
+    <div class="mood-selector" id="mood-selector"></div>
+
+    <div class="section-title">Visual Controls</div>
+    <div class="controls">
+      <div class="slider-container">
+        <label for="complexity-slider">Complexity</label>
+        <input type="range" class="slider" id="complexity-slider" min="1" max="10" value="5">
+      </div>
+      <div class="slider-container">
+        <label for="speed-slider">Animation Speed</label>
+        <input type="range" class="slider" id="speed-slider" min="0.1" max="2" step="0.1" value="1">
+      </div>
+      <div class="slider-container">
+        <label for="synergy-slider">Synergy Level</label>
+        <input type="range" class="slider" id="synergy-slider" min="0" max="100" value="50">
+      </div>
+    </div>
+
+    <div class="section-title">Data Preview</div>
+    <div class="data-preview" id="data-preview"></div>
+  </aside>
+</div>
+
+<script is:client="load">
+  // === STORY DATA PARSER ===
+  class StoryDataParser {
+    constructor() {
+      this.data = {
+        characters: [
+          { name: "Lyra", role: "Visionary", attributes: ["Curiosity","Creativity"] },
+          { name: "Orin", role: "Skeptic", attributes: ["Logic","Restraint"] },
+          { name: "Kael", role: "Connector", attributes: ["Empathy","Adaptability"] }
+        ],
+        sections: [
+          { id: 1, title: "The Accord Begins", keywords: ["unity","balance","initiation"] },
+          { id: 2, title: "Tensions Arise", keywords: ["conflict","doubt","debate"] },
+          { id: 3, title: "The Breakthrough", keywords: ["insight","transformation","synergy"] }
+        ]
+      };
+    }
+    getCharacters() { return this.data.characters; }
+    getSections() { return this.data.sections; }
+  }
+
+  // === GENERATIVE ART ENGINE ===
+  class GenerativeArtEngine {
+    constructor(canvas, shapesContainer) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext("2d");
+      this.shapesContainer = shapesContainer;
+      this.settings = { complexity: 5, speed: 1, synergy: 50 };
+      this.resize();
+      window.addEventListener("resize", () => this.resize());
+      this.animate();
+    }
+    resize() {
+      this.canvas.width = this.canvas.clientWidth;
+      this.canvas.height = this.canvas.clientHeight;
+    }
+    updateSettings(newSettings) {
+      this.settings = { ...this.settings, ...newSettings };
+    }
+    animate() {
+      requestAnimationFrame(() => this.animate());
+      const { width, height } = this.canvas;
+      this.ctx.clearRect(0, 0, width, height);
+      this.ctx.strokeStyle = `rgba(96,165,250,${this.settings.synergy/100})`;
+      this.ctx.lineWidth = 1.5;
+      for (let i = 0; i < this.settings.complexity; i++) {
+        this.ctx.beginPath();
+        this.ctx.arc(
+          width/2 + Math.sin(Date.now()/1000*this.settings.speed+i)*100,
+          height/2 + Math.cos(Date.now()/1100*this.settings.speed+i)*100,
+          50 + Math.sin(i+Date.now()/800)*30,
+          0, Math.PI*2
+        );
+        this.ctx.stroke();
       }
-      .slider:hover { opacity: 1; }
-      .slider::-webkit-slider-thumb {
-        appearance: none;
-        width: 16px; height: 16px;
-        background: var(--color-accent);
-        border-radius: 50%;
-        cursor: pointer;
-      }
+    }
+  }
 
-      /* === PROGRESS BAR === */
-      .section-progress {
-        width: 100%; height: 6px;
-        background: var(--color-border);
-        border-radius: 3px;
-        overflow: hidden;
-        margin-bottom: 1rem;
-      }
-      .progress-bar {
-        height: 100%;
-        background: linear-gradient(90deg, var(--color-accent), var(--color-success));
-        transition: width 0.3s ease;
-      }
+  // === MAIN APP ===
+  class GenerativeStorytellingApp {
+    constructor() {
+      this.parser = new StoryDataParser();
+      this.canvas = document.getElementById("generative-canvas");
+      this.shapesContainer = document.getElementById("shapes-container");
+      this.art = new GenerativeArtEngine(this.canvas, this.shapesContainer);
+      this.overlay = document.getElementById("narrative-overlay");
+      this.overlayTitle = document.getElementById("overlay-title");
+      this.overlayContent = document.getElementById("overlay-content");
+      this.keywordCloud = document.getElementById("keyword-cloud");
+      this.progressBar = document.getElementById("progress-bar");
+      this.dataPreview = document.getElementById("data-preview");
+      this.init();
+    }
+    init() {
+      this.renderCharacters();
+      this.renderSections();
+      this.renderMoods();
+      this.bindControls();
+      this.updateProgress(0);
+      this.previewData();
+    }
+    renderCharacters() {
+      const container = document.getElementById("characters-container");
+      this.parser.getCharacters().forEach(c => {
+        const el = document.createElement("div");
+        el.className = "character-card";
+        el.innerHTML = `
+          <div class="character-name">${c.name}</div>
+          <div class="character-role">${c.role}</div>
+          <div class="character-attributes">
+            ${c.attributes.map(a=>`<span class="attribute-tag">${a}</span>`).join("")}
+          </div>`;
+        el.onclick = () => this.showOverlay(c.name, `Role: ${c.role}`, c.attributes);
+        container.appendChild(el);
+      });
+    }
+    renderSections() {
+      const container = document.getElementById("narrative-container");
+      this.parser.getSections().forEach(s => {
+        const el = document.createElement("div");
+        el.className = "section-card";
+        el.textContent = s.title;
+        el.onclick = () => {
+          this.showOverlay(s.title, "Key moments unfold...", s.keywords);
+          this.updateProgress((s.id/this.parser.getSections().length)*100);
+        };
+        container.appendChild(el);
+      });
+    }
+    renderMoods() {
+      const moods = ["🌅 Calm","⚡ Intense","🌌 Dreamlike","🔥 Dramatic"];
+      const container = document.getElementById("mood-selector");
+      moods.forEach(m => {
+        const el = document.createElement("button");
+        el.textContent = m;
+        el.onclick = () => this.showOverlay("Mood Shift", `Atmosphere: ${m}`, [m]);
+        container.appendChild(el);
+      });
+    }
+    bindControls() {
+      document.getElementById("complexity-slider").oninput = e => this.art.updateSettings({ complexity: +e.target.value });
+      document.getElementById("speed-slider").oninput = e => this.art.updateSettings({ speed: +e.target.value });
+      document.getElementById("synergy-slider").oninput = e => this.art.updateSettings({ synergy: +e.target.value });
+    }
+    showOverlay(title, content, keywords) {
+      this.overlayTitle.textContent = title;
+      this.overlayContent.textContent = content;
+      this.keywordCloud.innerHTML = "";
+      keywords.forEach(k => {
+        const el = document.createElement("span");
+        el.className = "keyword";
+        el.textContent = k;
+        this.keywordCloud.appendChild(el);
+      });
+      this.overlay.classList.add("active");
+    }
+    updateProgress(value) {
+      this.progressBar.style.width = `${value}%`;
+      this.progressBar.parentElement.setAttribute("aria-valuenow", value);
+    }
+    previewData() {
+      this.dataPreview.textContent = JSON.stringify(this.parser.data,null,2);
+    }
+  }
 
-      /* === DATA PREVIEW === */
-      .data-preview {
-        background: var(--color-bg);
-        border-radius: 0.5rem;
-        padding: 1rem;
-        margin-top: 1rem;
-        border: 1px solid var(--color-border);
-        font-family: monospace;
-        font-size: 0.75rem;
-        max-height: 200px;
-        overflow-y: auto;
-      }
-
-      /* === RESPONSIVE === */
-      @media (max-width: 1024px) {
-        .container {
-          grid-template-columns: 1fr;
-          grid-template-areas: 
-            "header"
-            "main"
-            "panel";
-        }
-        .sidebar { display: none; }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <!-- HEADER -->
-      <header class="header">
-        <div class="logo">🎭 Generative Storytelling - The Synergy Accord</div>
-      </header>
-
-      <!-- SIDEBAR -->
-      <aside class="sidebar">
-        <div class="section-title">Characters</div>
-        <div id="characters-container"></div>
-        
-        <div class="section-title">Narrative Elements</div>
-        <div id="narrative-container"></div>
-      </aside>
-
-      <!-- MAIN CANVAS -->
-      <main class="main-canvas">
-        <canvas class="canvas" id="generative-canvas"></canvas>
-        <div class="generative-shapes" id="shapes-container"></div>
-        
-        <div class="narrative-overlay" id="narrative-overlay" role="dialog" aria-modal="true">
-          <button class="overlay-close" id="overlay-close">×</button>
-          <h3 id="overlay-title">Current Section</h3>
-          <p id="overlay-content">Select a narrative element to explore...</p>
-          <div class="keyword-cloud" id="keyword-cloud"></div>
-        </div>
-      </main>
-
-      <!-- CONTROL PANEL -->
-      <aside class="control-panel">
-        <div class="section-title">Story Progress</div>
-        <div class="section-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-          <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
-        </div>
-
-        <div class="section-title">Mood & Atmosphere</div>
-        <div class="mood-selector" id="mood-selector"></div>
-
-        <div class="section-title">Visual Controls</div>
-        <div class="controls">
-          <div class="slider
+  // === START APP ===
+  document.addEventListener("DOMContentLoaded", () => {
+    const app = new GenerativeStorytellingApp();
+    window.storyApp = app;
+    document.getElementById("overlay-close").onclick = () => {
+      document.getElementById("narrative-overlay").classList.remove("active");
+    };
+    console.log("🎭 Generative Storytelling Interface ready in Astro");
+  });
+</script>
