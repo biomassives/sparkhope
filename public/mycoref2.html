@@ -1,0 +1,145 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liquid Culture Batch Planning Grid</title>
+  <style>
+    /* Existing Tailwind emulation preserved */
+    /* --- Minor UI upgrades --- */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .reference-link {
+      font-size: 14px;
+      font-weight: 500;
+      color: #2563eb;
+      text-decoration: none;
+    }
+    .reference-link:hover {
+      text-decoration: underline;
+    }
+    .grid-row-header {
+      position: sticky;
+      left: 0;
+      background: #f9fafb;
+      z-index: 5;
+    }
+    .grid-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .grid-cell:hover {
+      background: #f9fafb;
+      transition: background 0.2s;
+    }
+    .ingredient-chip {
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .ingredient-chip:hover {
+      transform: scale(1.05);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+    .safety-alert {
+      margin-top: 4px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #fef2f2;
+      color: #991b1b;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .timeline-bar {
+      width: 6px;
+      border-radius: 4px;
+      background: linear-gradient(to bottom, #93c5fd, #2563eb);
+      margin-right: 8px;
+    }
+    .time-phase-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+  <div class="container">
+    <!-- Header with Reference Link -->
+    <div class="top-bar">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800">Liquid Culture Batch Planning Grid</h1>
+        <p class="text-gray-600 text-sm">Compare preparation strategies and timing requirements at a glance</p>
+      </div>
+      <a href="/reference/liquid-culture" class="reference-link" target="_blank">🔗 Reference Page</a>
+    </div>
+
+    <!-- Track Selector -->
+    <div class="track-selector">
+      <button class="track-button active" onclick="setTrack('all')" id="track-all">All Tracks</button>
+      <button class="track-button" onclick="setTrack('minimal')" id="track-minimal">Minimal Prep (2h)</button>
+      <button class="track-button" onclick="setTrack('standard')" id="track-standard">Standard Prep (12h)</button>
+      <button class="track-button" onclick="setTrack('advanced')" id="track-advanced">Advanced Prep (48h)</button>
+      <button class="track-button" onclick="setTrack('premium')" id="track-premium">Premium Track (72h)</button>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend-grid">
+      <div class="legend-item"><div class="legend-dot bg-blue-500"></div><span class="text-sm">Water Base</span></div>
+      <div class="legend-item"><div class="legend-dot bg-orange-500"></div><span class="text-sm">Carbon/Energy</span></div>
+      <div class="legend-item"><div class="legend-dot bg-green-500"></div><span class="text-sm">Nitrogen/Building</span></div>
+      <div class="legend-item"><div class="legend-dot bg-purple-500"></div><span class="text-sm">Minerals/Structure</span></div>
+      <div class="legend-item"><div class="legend-dot bg-red-500"></div><span class="text-sm">Specialty/Advanced</span></div>
+      <div class="legend-item"><span class="text-sm font-semibold">⚡</span><span class="text-sm">Jump-in Point</span></div>
+    </div>
+
+    <!-- Planning Grid -->
+    <div class="planning-grid" id="planning-grid">
+      <!-- Headers will be filled dynamically -->
+      <div class="grid-header">Time Phase</div>
+      <div class="grid-header">Minimal Track<br><span class="text-sm font-normal">(2 hour prep)</span></div>
+      <div class="grid-header">Standard Track<br><span class="text-sm font-normal">(12 hour prep)</span></div>
+      <div class="grid-header">Advanced Track<br><span class="text-sm font-normal">(48 hour prep)</span></div>
+      <div class="grid-header">Premium Track<br><span class="text-sm font-normal">(72 hour prep)</span></div>
+    </div>
+  </div>
+
+  <script>
+    // Existing JS untouched except improved createCellContent
+    function createCellContent(phase) {
+      const ingredientColors = {
+        water: 'bg-blue-500',
+        carbon: 'bg-orange-500',
+        nitrogen: 'bg-green-500',
+        minerals: 'bg-purple-500',
+        vitamins: 'bg-purple-500',
+        specialty: 'bg-red-500'
+      };
+      const complexityClass = {
+        low: 'complexity-low',
+        medium: 'complexity-medium',
+        high: 'complexity-high'
+      };
+      return `
+        ${phase.jump ? '<div class="jump-indicator">⚡</div>' : ''}
+        <div class="complexity-indicator ${complexityClass[phase.complexity]}">${phase.complexity}</div>
+        <div class="font-semibold text-sm mb-2">${phase.title}</div>
+        <div class="space-y-1">
+          ${phase.ingredients.map(ing => `
+            <div class="flex items-center justify-between">
+              <span class="ingredient-chip ${ingredientColors[ing.category]}">${ing.name}</span>
+              <span class="time-badge">${ing.time}</span>
+            </div>
+            ${ing.safety ? '<div class="safety-alert">⚠️ Requires safety protocol</div>' : ''}
+          `).join('')}
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
+```
