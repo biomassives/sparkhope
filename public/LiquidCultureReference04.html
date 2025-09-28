@@ -1,0 +1,2722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circular Economy Liquid Culture Reference - hub.approvideo.org</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.125rem;
+            opacity: 0.9;
+        }
+
+        .rating-legend {
+            background: #1e293b;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #334155;
+        }
+
+        .legend-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #f8fafc;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: #0f172a;
+            border-radius: 0.5rem;
+            border: 1px solid #334155;
+        }
+
+        .score-indicator {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: white;
+        }
+
+        .score-excellent { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .score-high { background: linear-gradient(135deg, #059669, #10b981); }
+        .score-medium { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .score-low { background: linear-gradient(135deg, #6b7280, #9ca3af); }
+
+        /* Search and Filter Controls */
+        .search-controls {
+            background: #1e293b;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #334155;
+        }
+
+        .search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #334155;
+        }
+
+        .search-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #10b981;
+            margin: 0;
+        }
+
+        .search-stats {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        .search-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .search-input-group {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 2.5rem 0.75rem 1rem;
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 0.5rem;
+            color: #f8fafc;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+        }
+
+        .search-input::placeholder {
+            color: #64748b;
+        }
+
+        .clear-btn {
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #475569;
+            color: #f8fafc;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .clear-btn:hover {
+            background: #6b7280;
+        }
+
+        .clear-btn.visible {
+            display: flex;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .filter-select {
+            padding: 0.75rem;
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 0.5rem;
+            color: #f8fafc;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+        }
+
+        .filter-select option {
+            background: #0f172a;
+            color: #f8fafc;
+        }
+
+        .effectiveness-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .effectiveness-section {
+            background: #1e293b;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            border: 1px solid #334155;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .effectiveness-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #334155;
+        }
+
+        .effectiveness-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .effectiveness-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+
+        .effectiveness-description {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-left: 1.5rem;
+        }
+
+        .highly-effective .effectiveness-indicator { background: #dc2626; }
+        .very-effective .effectiveness-indicator { background: #059669; }
+        .effective .effectiveness-indicator { background: #d97706; }
+        .functional .effectiveness-indicator { background: #6b7280; }
+
+        .ingredients-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .ingredient-card {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .ingredient-card:hover {
+            border-color: #10b981;
+            transform: translateX(4px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .ingredient-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .ingredient-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #f8fafc;
+        }
+
+        .ingredient-source {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+        }
+
+        .ingredient-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+
+        .tag {
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+            font-size: 0.625rem;
+            font-weight: 600;
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .role-tag {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            margin-right: 0.25rem;
+        }
+
+        .role-foundation { 
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .role-energy { 
+            background: rgba(251, 146, 60, 0.15);
+            color: #fb923c;
+            border-color: rgba(251, 146, 60, 0.3);
+        }
+
+        .role-building { 
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .role-structure { 
+            background: rgba(147, 51, 234, 0.15);
+            color: #9333ea;
+            border-color: rgba(147, 51, 234, 0.3);
+        }
+
+        .role-protection { 
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .secondary-role {
+            opacity: 0.8;
+            font-size: 0.625rem;
+            margin-left: 0.25rem;
+        }
+
+        .safety-warning {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .water { --category-color: #3b82f6; }
+        .carbon { --category-color: #d97706; }
+        .nitrogen { --category-color: #16a34a; }
+        .minerals { --category-color: #a16207; }
+        .vitamins { --category-color: #a855f7; }
+        .specialty { --category-color: #f97316; }
+
+        .water .category-icon { background: #3b82f6; }
+        .carbon .category-icon { background: #d97706; }
+        .nitrogen .category-icon { background: #16a34a; }
+        .minerals .category-icon { background: #a16207; }
+        .vitamins .category-icon { background: #a855f7; }
+        .specialty .category-icon { background: #f97316; }
+
+        .water .ingredient-card { border-left-color: #3b82f6; }
+        .carbon .ingredient-card { border-left-color: #d97706; }
+        .nitrogen .ingredient-card { border-left-color: #16a34a; }
+        .minerals .ingredient-card { border-left-color: #a16207; }
+        .vitamins .ingredient-card { border-left-color: #a855f7; }
+        .specialty .ingredient-card { border-left-color: #f97316; }
+
+        .ingredient-nutrients {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nutrient-summary {
+            font-size: 0.75rem;
+            color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        /* Hidden state for filtered items */
+        .ingredient-card.hidden {
+            display: none;
+        }
+
+        .effectiveness-section.hidden {
+            display: none;
+        }
+
+        .effectiveness-section.partial .ingredients-list {
+            opacity: 1;
+        }
+
+        /* Recipe Builder Styles */
+        .recipe-builder {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid #475569;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .recipe-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #475569;
+        }
+
+        .recipe-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #10b981;
+            margin: 0;
+        }
+
+        .recipe-stats {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .stat-item {
+            font-size: 0.875rem;
+            color: #cbd5e1;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .recipe-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #f8fafc;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .component-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .component-section {
+            background: #0f172a;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            border: 1px solid #334155;
+        }
+
+        .component-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 0.75rem;
+        }
+
+        .component-select {
+            width: 100%;
+            padding: 0.75rem;
+            background: #1e293b;
+            border: 1px solid #475569;
+            border-radius: 0.375rem;
+            color: #f8fafc;
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+        }
+
+        .component-select:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+        }
+
+        .amount-slider {
+            width: 100%;
+            height: 6px;
+            background: #334155;
+            border-radius: 3px;
+            outline: none;
+            margin-bottom: 0.5rem;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .amount-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #10b981;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .amount-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: #10b981;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .amount-display {
+            font-size: 0.75rem;
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .recipe-card {
+            background: #0f172a;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            border: 1px solid #334155;
+            margin-bottom: 1rem;
+        }
+
+        .recipe-card h4 {
+            color: #10b981;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .recipe-ingredients ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1.5rem 0;
+        }
+
+        .recipe-ingredients li {
+            color: #cbd5e1;
+            font-size: 0.875rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #334155;
+        }
+
+        .recipe-ingredients li:last-child {
+            border-bottom: none;
+        }
+
+        .recipe-ingredients .placeholder {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .recipe-instructions ol {
+            color: #cbd5e1;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            margin: 0 0 1.5rem 0;
+            padding-left: 1.25rem;
+        }
+
+        .recipe-instructions li {
+            margin-bottom: 0.5rem;
+        }
+
+        .recipe-analysis {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 0.375rem;
+            padding: 1rem;
+        }
+
+        .analysis-placeholder {
+            color: #64748b;
+            font-style: italic;
+            font-size: 0.875rem;
+            margin: 0;
+        }
+
+        .recipe-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .action-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-1px);
+        }
+
+        .action-btn.secondary {
+            background: #374151;
+            color: #d1d5db;
+            border: 1px solid #4b5563;
+        }
+
+        .action-btn.secondary:hover {
+            background: #4b5563;
+            color: #f9fafb;
+        }
+
+        /* Ingredient Details Overlay */
+        .ingredient-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 2rem;
+        }
+
+        .ingredient-overlay.visible {
+            display: flex;
+        }
+
+        .overlay-content {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 700px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 1px solid #475569;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .overlay-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #475569;
+        }
+
+        .overlay-title {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+            flex: 1;
+        }
+
+        .overlay-roles {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .role-display {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-white;
+        }
+
+        .role-primary {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .role-secondary {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            font-size: 0.625rem;
+            opacity: 0.9;
+        }
+
+        .overlay-navigation {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0 1rem;
+        }
+
+        .nav-btn {
+            background: #374151;
+            color: #d1d5db;
+            border: none;
+            border-radius: 0.375rem;
+            width: 36px;
+            height: 36px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: #4b5563;
+            color: #f9fafb;
+            transform: translateY(-1px);
+        }
+
+        .nav-btn:disabled {
+            background: #1f2937;
+            color: #6b7280;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .nav-counter {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .overlay-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+
+        .overlay-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+
+        .close-btn {
+            background: #475569;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-size: 1.125rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #6b7280;
+        }
+
+        .overlay-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .overlay-section h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #10b981;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .overlay-section p {
+            font-size: 0.875rem;
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-bottom: 0.75rem;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .benefit-tag {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .safety-warnings {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .safety-warnings h4 {
+            color: #ef4444;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .safety-warnings ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .safety-warnings li {
+            font-size: 0.75rem;
+            color: #fecaca;
+            margin-bottom: 0.25rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .safety-warnings li:before {
+            content: "⚠";
+            position: absolute;
+            left: 0;
+            color: #ef4444;
+        }
+
+        .nutritional-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .nutritional-table th,
+        .nutritional-table td {
+            padding: 0.5rem;
+            text-align: left;
+            border-bottom: 1px solid #475569;
+        }
+
+        .nutritional-table th {
+            background: #374151;
+            color: #f9fafb;
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .nutritional-table td {
+            color: #cbd5e1;
+        }
+
+        .nutritional-table .nutrient-value {
+            font-weight: 600;
+            color: #10b981;
+        }
+
+        .nutritional-table .nutrient-unit {
+            color: #9ca3af;
+            font-size: 0.75rem;
+        }
+
+        .status-bar {
+            background: #1f2937;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            border-top: 1px solid #374151;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .legend-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .overlay-content {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            .search-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            
+            .search-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .recipe-content {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .recipe-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .recipe-stats {
+                flex-direction: column;
+                gap: 0.5rem;
+                width: 100%;
+            }
+
+            .recipe-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🌱 Spark Hope Food Resiliency</h1>
+            <p>Liquid Culture Nutrient Database • Kitchen Waste Stream to Food Production</p>
+        </header>
+
+        <div class="rating-legend">
+            <h2 class="legend-title">Recipe Wizard Categories</h2>
+            <div class="legend-grid">
+                <div class="legend-item">
+                    <div class="score-indicator" style="background: #3b82f6;">💧</div>
+                    <div>
+                        <div style="font-weight: 600; color: #f8fafc;">Water Base</div>
+                        <div style="font-size: 0.75rem; color: #94a3b8;">Sterile foundation • pH control • Carrier medium</div>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="score-indicator" style="background: #fb923c;">⚡</div>
+                    <div>
+                        <div style="font-weight: 600; color: #f8fafc;">Energy Source</div>
+                        <div style="font-size: 0.75rem; color: #94a3b8;">Carbohydrates • Sugars • Growth fuel</div>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="score-indicator" style="background: #22c55e;">🧬</div>
+                    <div>
+                        <div style="font-weight: 600; color: #f8fafc;">Protein Builder</div>
+                        <div style="font-size: 0.75rem; color: #94a3b8;">Amino acids • Nitrogen • Structure</div>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="score-indicator" style="background: #9333ea;">💎</div>
+                    <div>
+                        <div style="font-weight: 600; color: #f8fafc;">Structure & Vitamins</div>
+                        <div style="font-size: 0.75rem; color: #94a3b8;">Minerals • Growth factors • Cell walls</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search and Filter Controls -->
+        <div class="search-controls">
+            <div class="search-header">
+                <h3 class="search-title">🔍 Find Ingredients</h3>
+                <div class="search-stats" id="searchStats">Showing all ingredients</div>
+            </div>
+            <div class="search-grid">
+                <div class="search-input-group">
+                    <input type="text" id="searchInput" placeholder="Search ingredients, sources, or descriptions..." class="search-input">
+                    <button class="clear-btn" id="clearSearch" title="Clear search">×</button>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Category:</label>
+                    <select id="categoryFilter" class="filter-select">
+                        <option value="">All Categories</option>
+                        <option value="water-base">💧 Water Base</option>
+                        <option value="energy-source">⚡ Energy Source</option>
+                        <option value="protein-builder">🧬 Protein Builder</option>
+                        <option value="structure-vitamins">💎 Structure & Vitamins</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Availability:</label>
+                    <select id="availabilityFilter" class="filter-select">
+                        <option value="">All Levels</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Safety:</label>
+                    <select id="safetyFilter" class="filter-select">
+                        <option value="">All Types</option>
+                        <option value="standard">Standard Protocol</option>
+                        <option value="safety">Safety Protocol Required</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="prepFlow" class="bg-slate-800 p-6 rounded-lg shadow-xl mb-8 border border-slate-700">
+            <h2 class="text-2xl font-bold text-teal-400 mb-4">🔬 Educational Prep Flow: Maximum Bioavailability</h2>
+            <p class="text-slate-300 mb-6">This flow explains how to use ingredients like Pasta Water (high protein/starch) for optimal results by performing a simple <strong>Nutrient Tea Boil (NTB)</strong> and <strong>Enzymatic Pre-treatment</strong> before final sterilization.</p>
+
+            <div class="space-y-6">
+                
+                <div class="flex flex-col md:flex-row items-start md:items-center bg-slate-900 p-4 rounded-lg border-l-4 border-yellow-500">
+                    <span class="text-xl font-bold text-yellow-500 mr-4 whitespace-nowrap">DAY 1: Extract & Pre-Digestion</span>
+                    <div class="flex-grow pt-2 md:pt-0">
+                        <ul class="list-disc list-inside text-slate-300 space-y-1">
+                            <li><strong>Extraction:</strong> Boil or soak your <strong>Protein Builder</strong> (Bean/Pasta Water) or <strong>Energy Source</strong> (Malted Grain).</li>
+                            <li><strong>Yeast Boost (Optional):</strong> Add a pinch of dried yeast to the liquid. The yeast enzymes immediately start breaking down complex starches and proteins into simple sugars and amino acids.</li>
+                            <li><strong>Overnight Rest:</strong> Allow the mixture to rest at room temp for <strong>8-12 hours</strong> (The Pre-Digestion phase).</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="text-center text-4xl text-teal-400 my-2">
+                    ↓
+                </div>
+
+                <div class="flex flex-col md:flex-row items-start md:items-center bg-slate-900 p-4 rounded-lg border-l-4 border-green-500">
+                    <span class="text-xl font-bold text-green-500 mr-4 whitespace-nowrap">DAY 2: Assembly & Sterilization</span>
+                    <div class="flex-grow pt-2 md:pt-0">
+                        <ul class="list-disc list-inside text-slate-300 space-y-1">
+                            <li><strong>Assembly:</strong> Combine your <strong>Filtered Water Base</strong> (90%) with the <strong>Pre-Digested Liquid</strong> (10%). Add <strong>Structure/Vitamins</strong> (e.g., Eggshell Powder).</li>
+                            <li><strong>Jars:</strong> Pour into LC jars with filters/ports.</li>
+                            <li><strong>Sterilization:</strong> Pressure cook the final, assembled solution at <strong>15 PSI for 30 minutes</strong>. This kills the pre-digestion yeast, leaving a sterile, nutrient-maximized broth.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="effectivenessGrid" class="effectiveness-grid"></div>
+
+        <!-- Recipe Builder Section -->
+        <div id="recipeBuilder" class="recipe-builder">
+            <div class="recipe-header">
+                <h2 class="recipe-title">🧪 Custom Recipe Builder</h2>
+                <div class="recipe-stats">
+                    <span class="stat-item" id="recipeVolume">Volume: 500ml</span>
+                    <span class="stat-item" id="recipeScore">Balance Score: --</span>
+                    <span class="stat-item" id="recipeCost">Sustainability: --</span>
+                </div>
+            </div>
+
+            <div class="recipe-content">
+                <div class="recipe-selection">
+                    <h3 class="section-title">Recipe Components</h3>
+                    <div class="component-grid">
+                        <div class="component-section">
+                            <h4 class="component-title">💧 Water Base (80-90%)</h4>
+                            <select id="waterBase" class="component-select">
+                                <option value="">Select water source...</option>
+                            </select>
+                            <input type="range" id="waterAmount" min="75" max="95" value="85" class="amount-slider">
+                            <span class="amount-display" id="waterDisplay">85% (425ml)</span>
+                        </div>
+
+                        <div class="component-section">
+                            <h4 class="component-title">⚡ Energy Source (5-15%)</h4>
+                            <select id="energySource" class="component-select">
+                                <option value="">Select energy source...</option>
+                            </select>
+                            <input type="range" id="energyAmount" min="2" max="20" value="10" class="amount-slider">
+                            <span class="amount-display" id="energyDisplay">10% (50ml)</span>
+                        </div>
+
+                        <div class="component-section">
+                            <h4 class="component-title">🧬 Protein Builder (2-8%)</h4>
+                            <select id="proteinSource" class="component-select">
+                                <option value="">Select protein source...</option>
+                            </select>
+                            <input type="range" id="proteinAmount" min="1" max="12" value="3" class="amount-slider">
+                            <span class="amount-display" id="proteinDisplay">3% (15ml)</span>
+                        </div>
+
+                        <div class="component-section">
+                            <h4 class="component-title">💎 Structure & Vitamins (0.5-2%)</h4>
+                            <select id="structureSource" class="component-select">
+                                <option value="">Select mineral/vitamin source...</option>
+                            </select>
+                            <input type="range" id="structureAmount" min="0.5" max="3" value="2" step="0.1" class="amount-slider">
+                            <span class="amount-display" id="structureDisplay">2% (10ml)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recipe-output">
+                    <h3 class="section-title">Generated Recipe</h3>
+                    <div class="recipe-card" id="generatedRecipe">
+                        <div class="recipe-ingredients">
+                            <h4>Ingredients (500ml batch):</h4>
+                            <ul id="ingredientsList">
+                                <li class="placeholder">Select ingredients to generate recipe...</li>
+                            </ul>
+                        </div>
+                        <div class="recipe-instructions" id="recipeInstructions">
+                            <h4>Preparation Instructions:</h4>
+                            <ol>
+                                <li>Recipe will appear here once ingredients are selected...</li>
+                            </ol>
+                        </div>
+                        <div class="recipe-analysis" id="recipeAnalysis">
+                            <h4>Nutritional Analysis:</h4>
+                            <p class="analysis-placeholder">Analysis will appear with complete recipe...</p>
+                        </div>
+                    </div>
+                    <div class="recipe-actions">
+                        <button class="action-btn primary" id="saveRecipe">📋 Copy Recipe</button>
+                        <button class="action-btn secondary" id="clearRecipe">🗑️ Clear All</button>
+                        <button class="action-btn secondary" id="randomRecipe">🎲 Random Recipe</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="status-bar">
+        🌱 Spark Hope Food Resiliency Project • hub.approvideo.org • Click ingredients for detailed preparation • Use ‹‹ ›› to browse database
+    </div>
+
+    <!-- Ingredient Details Overlay -->
+    <div id="ingredientOverlay" class="ingredient-overlay">
+        <div class="overlay-content">
+            <div class="overlay-header">
+                <div class="overlay-title">
+                    <div id="overlayIcon" class="overlay-icon"></div>
+                    <div id="overlayName" class="overlay-name"></div>
+                    <div id="overlayRoles" class="overlay-roles">
+                        <span id="overlayPrimaryRole"></span>
+                        <span id="overlaySecondaryRole"></span>
+                    </div>
+                </div>
+                <div class="overlay-navigation">
+                    <button class="nav-btn" id="prevBtn" onclick="app.navigateOverlay(-1)" title="Previous ingredient">‹‹</button>
+                    <div class="nav-counter" id="navCounter">1 / 24</div>
+                    <button class="nav-btn" id="nextBtn" onclick="app.navigateOverlay(1)" title="Next ingredient">››</button>
+                </div>
+                <button class="close-btn" onclick="closeOverlay()">×</button>
+            </div>
+
+            <div class="overlay-section">
+                <h3>Source & Description</h3>
+                <p id="overlaySource" class="text-slate-400 text-sm mb-2"></p>
+                <p id="overlayDescription"></p>
+            </div>
+
+            <div class="overlay-section">
+                <h3>Detailed Information</h3>
+                <p id="overlayDetailedInfo"></p>
+            </div>
+
+            <div id="overlayPreparation" class="overlay-section">
+                <h3>Preparation Flow</h3>
+                <p id="overlayPreparationNotes"></p>
+            </div>
+
+            <div class="overlay-section">
+                <h3>Benefits</h3>
+                <div id="overlayBenefits" class="benefits-grid"></div>
+            </div>
+
+            <div id="safetyWarningsSection" class="overlay-section" style="display: none;">
+                <div class="safety-warnings">
+                    <h4>Safety Warnings</h4>
+                    <ul id="overlayWarnings"></ul>
+                </div>
+            </div>
+
+            <div class="overlay-section">
+                <h3>Nutritional Analysis per 100ml</h3>
+                <div id="overlayNutritionalTable"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Updated comprehensive ingredient database
+        const INGREDIENT_DATABASE = {
+            water: {
+                title: "Water Sources",
+                description: "Clean water bases for sterile liquid culture foundation",
+                color: "#3b82f6",
+                ingredients: {
+                    distilledWater: {
+                        name: "Distilled Water",
+                        source: "home distillation or purchased",
+                        score: 2,
+                        availability: "medium",
+                        nutritionalRole: "💧",
+                        roleDescription: "Water Base",
+                        description: "Ultra-pure water base with zero minerals. Perfect sterile foundation for sensitive spore germination and contamination-free liquid cultures.",
+                        detailedInfo: "Steam distillation removes all minerals, chlorine, and potential contaminants. pH neutral at 7.0. Creates ideal sterile environment for mycelium without competing ions. Essential for laboratory-grade liquid cultures.",
+                        preparationNotes: "Collect distilled water from home distiller or purchase pharmaceutical-grade water. Store in sterile glass containers. Can substitute with deionized water if available. Use within 1 week of opening.",
+                        benefits: ["Maximum sterility", "pH neutral", "No competing minerals", "Universal base"],
+                        balance: { purity: 10, availability: 6, sustainability: 2 }
+                    },
+                    filteredWater: {
+                        name: "Filtered Water",
+                        source: "tap water + carbon filtration",
+                        score: 4,
+                        availability: "high",
+                        nutritionalRole: "💧",
+                        roleDescription: "Water Base",
+                        description: "Clean water with trace beneficial minerals retained. Excellent general-purpose base that's readily available in most kitchens with good sustainability.",
+                        detailedInfo: "Carbon filtration removes chlorine while retaining beneficial trace minerals like calcium and magnesium. Slightly alkaline pH 7.2-7.8 naturally supports mycelium growth. Cost-effective and sustainable long-term option.",
+                        preparationNotes: "Use quality carbon filter system (Brita, Pur, or under-sink). Change filters regularly per manufacturer specs. Test pH - should be 7.0-8.0 for optimal results. Let chlorinated water sit 24 hours if no filter.",
+                        benefits: ["Readily available", "Retains beneficial minerals", "Removes chlorine", "Cost effective"],
+                        balance: { purity: 7, availability: 10, sustainability: 4 }
+                    },
+                    rainwater: {
+                        name: "Rainwater",
+                        source: "collected precipitation",
+                        score: 9,
+                        availability: "variable",
+                        nutritionalRole: "💧",
+                        roleDescription: "Water Base",
+                        description: "Nature's distilled water with perfect pH balance. Represents ultimate circular economy water source with exceptional purity and zero environmental impact.",
+                        detailedInfo: "Naturally soft water with pH 5.6-6.5, ideal for mycelium growth. Contains trace atmospheric minerals but zero chlorine or chemical treatments. Completely renewable resource with natural distillation process.",
+                        preparationNotes: "Collect from clean roof systems using food-grade containers. Filter through coffee filter to remove debris. Store covered to prevent contamination. Best collected from middle of rainfall for purity.",
+                        benefits: ["Natural pH balance", "Zero chemicals", "Sustainable source", "Soft water profile"],
+                        balance: { purity: 9, availability: 6, sustainability: 10 }
+                    },
+                    steamCondensate: {
+                        name: "Steam Condensate",
+                        source: "cooking steam recovery",
+                        score: 8,
+                        availability: "high",
+                        nutritionalRole: "💧",
+                        roleDescription: "Water Base",
+                        description: "Ultra-pure steam-distilled water captured from everyday cooking. Zero-waste approach to obtaining laboratory-grade water from waste heat energy.",
+                        detailedInfo: "Steam condensation naturally distills water, removing all dissolved solids and contaminants. pH neutral around 7.0. Captures waste heat energy while producing pure water. Available daily from cooking processes.",
+                        preparationNotes: "Collect condensate from pot lids, oven doors, or steamer baskets using clean collection vessels. Refrigerate until use. Produces 50-200ml per cooking session depending on method.",
+                        benefits: ["Waste heat recovery", "Daily availability", "Laboratory purity", "Zero additional cost"],
+                        nutritionalAnalysis: {
+                            per100ml: {
+                                totalCarbs: "0g",
+                                sugars: "0g",
+                                proteins: "0g", 
+                                totalNitrogen: "0mg",
+                                calcium: "0mg",
+                                minerals: { dissolved_solids: "0mg" },
+                                pH: "7.0",
+                                purity: "99.9%"
+                            }
+                        },
+                        balance: { purity: 9, availability: 8, sustainability: 8 }
+                    }
+                }
+            },
+
+            carbon: {
+                title: "Carbon Sources",
+                description: "Energy-rich carbohydrates for rapid mycelium growth and colonization",
+                color: "#d97706",
+                ingredients: {
+                    riceCookingWater: {
+                        name: "Rice Cooking Water",
+                        source: "starchy water from cooking rice",
+                        score: 9,
+                        availability: "high",
+                        nutritionalRole: "⚡",
+                        roleDescription: "Energy",
+                        description: "Starch-rich liquid gold from rice cooking. Contains complex carbohydrates perfect for sustained mycelium energy during aggressive colonization phases.",
+                        detailedInfo: "Rice water contains amylose and amylopectin starches that mycelium readily converts to glucose. Rich in B vitamins, particularly B1, B3, and B6. pH typically 6.0-6.5. Provides 15-20g carbohydrates per 500ml.",
+                        preparationNotes: "Save water from rinsing and cooking rice (both usable). Don't oversalt during cooking. Cool quickly and refrigerate. Use within 48 hours for best results. Strain if needed to remove particles.",
+                        benefits: ["High energy density", "Complex carbohydrates", "B vitamin content", "Readily available"],
+                        nutritionalAnalysis: {
+                            per100ml: {
+                                totalCarbs: "3.2g",
+                                sugars: "0.8g",
+                                proteins: "0.4g",
+                                totalNitrogen: "64mg",
+                                calcium: "8mg",
+                                minerals: { k: "35mg", mg: "12mg", p: "18mg" },
+                                pH: "6.0-6.5",
+                                vitamins: { b1: "0.02mg", b3: "0.1mg", b6: "0.01mg" }
+                            }
+                        },
+                        balance: { energy: 9, vitamins: 6, availability: 9 }
+                    },
+                    pastaWater: {
+                        name: "Pasta Cooking Water",
+                        source: "starchy water from pasta boiling",
+                        score: 9,
+                        availability: "high",
+                        nutritionalRole: "⚡",
+                        roleDescription: "Energy",
+                        description: "High-energy starch solution from pasta cooking. Excellent fast-acting carbohydrate source for rapid mycelium expansion phases with immediate availability.",
+                        detailedInfo: "Pasta water contains dissolved wheat starches and proteins. Higher starch concentration than rice water due to longer cooking time. pH 6.5-7.0. Contains gluten proteins which provide additional nitrogen compounds.",
+                        preparationNotes: "Reserve 2-3 cups before draining pasta. Use moderately salted water (1 tsp per quart maximum). Cool rapidly to prevent spoilage. Best used fresh within 24-48 hours of preparation.",
+                        benefits: ["Very high starch content", "Quick mycelium uptake", "Additional proteins", "Kitchen staple"],
+                        nutritionalAnalysis: {
+                            per100ml: {
+                                totalCarbs: "4.8g",
+                                sugars: "1.2g",
+                                proteins: "0.7g",
+                                totalNitrogen: "112mg",
+                                calcium: "12mg",
+                                minerals: { k: "45mg", mg: "8mg", p: "22mg", na: "180mg" },
+                                pH: "6.5-7.0",
+                                vitamins: { b1: "0.03mg", b2: "0.02mg", folate: "0.008mg" }
+                            }
+                        },
+                        balance: { energy: 10, proteins: 5, availability: 10 }
+                    },
+                    fruitScraps: {
+                        name: "Fruit Scraps Extract",
+                        source: "apple peels, citrus rinds, overripe fruit",
+                        score: 10,
+                        availability: "high",
+                        nutritionalRole: "⚡",
+                        roleDescription: "Energy",
+                        description: "Natural fruit sugars and organic acids from kitchen waste. Provides fast-acting energy with natural antimicrobial properties from citrus oils and fruit acids.",
+                        detailedInfo: "Apple peels contain pectin, fructose, and malic acid. Citrus rinds provide limonene oils with antimicrobial properties. Natural pH buffering from organic acids (4.5-5.5 pH). High in vitamin C and antioxidants.",
+                        preparationNotes: "Use organic fruit when possible to avoid pesticides. Simmer peels and scraps for 20 minutes, then strain. For citrus, use minimal peel to avoid excess oils. Dilute if too acidic (pH below 5.0).",
+                        benefits: ["Natural antimicrobials", "Fast-acting sugars", "Organic acids", "pH buffering"],
+                        nutritionalAnalysis: {
+                            per100ml: {
+                                totalCarbs: "6.8g",
+                                sugars: "5.2g",
+                                proteins: "0.3g",
+                                totalNitrogen: "48mg",
+                                calcium: "15mg",
+                                minerals: { k: "78mg", mg: "6mg", p: "8mg" },
+                                pH: "4.5-5.5",
+                                vitamins: { c: "12mg", folate: "0.006mg" },
+                                organicAcids: { malic: "120mg", citric: "85mg" }
+                            }
+                        },
+                        balance: { energy: 8, antimicrobials: 7, sustainability: 10 }
+                    },
+                    cardboardWater: {
+                        name: "Cardboard Soak Water",
+                        source: "corrugated cardboard extract",
+                        score: 8,
+                        availability: "high",
+                        nutritionalRole: "⚡",
+                        roleDescription: "Energy",
+                        secondaryRole: "💎",
+                        secondaryDescription: "Structure",
+                        description: "Cellulose-rich extract providing structural building blocks. Cardboard breakdown releases calcium, potassium, and trace minerals while providing fiber matrices.",
+                        detailedInfo: "Corrugated cardboard contains 80-90% cellulose plus calcium carbonate as filler. Extended soaking releases minerals and creates short-chain cellulose fragments mycelium can utilize for structure building.",
+                        preparationNotes: "Use only plain corrugated cardboard (no inks, wax, tape, or glossy coating). Soak 24-48 hours in filtered water. Strain through fine mesh. Light brown color indicates good extraction.",
+                        benefits: ["Cellulose building blocks", "Calcium content", "Structural support", "Widely available"],
+                        balance: { structure: 8, minerals: 6, sustainability: 8 }
+                    },
+                    yeastSugarBoiled: {
+                        name: "Yeast Sugar Conversion (Boiled)",
+                        source: "yeast-processed sugar solution, heat treated",
+                        score: 9,
+                        availability: "medium",
+                        nutritionalRole: "⚡",
+                        roleDescription: "Energy",
+                        description: "Pre-digested sugar solution from controlled yeast fermentation, then sterilized. Provides immediately available energy with yeast-derived B vitamins and growth factors.",
+                        detailedInfo: "24-hour yeast fermentation converts complex sugars into simple glucose and fructose while producing B-complex vitamins, amino acids, and yeast extract compounds. Boiling eliminates live yeast while preserving nutrients.",
+                        preparationNotes: "Dissolve 2 tbsp sugar in 500ml warm water. Add 1/4 tsp active yeast, ferment 24 hours until active bubbling stops. Boil 10 minutes to sterilize. Cool before use. Rich golden color indicates success.",
+                        benefits: ["Pre-digested sugars", "Yeast-derived vitamins", "Sterile preparation", "Fast uptake"],
+                        balance: { energy: 10, vitamins: 8, sterility: 9 }
+                    },
+                    yeastSugarDirect: {
+                        name: "Yeast Sugar Conversion (Direct)",
+                        source: "active yeast-processed sugar solution",
+                        score: 10,
+                        availability: "medium",
+                        nutritionalRole: "⚡",
+                        roleDescription: "Energy", 
+                        description: "Living yeast ecosystem producing active enzymes and metabolites. Creates dynamic nutrient environment with continuous enzyme production and probiotic benefits.",
+                        detailedInfo: "Active Saccharomyces cerevisiae produces invertase, amylase, and protease enzymes while generating B12, folate, and amino acids. Living system continues producing growth factors and breaking down complex molecules.",
+                        preparationNotes: "Prepare fresh yeast solution as above but add directly without boiling. Use within 6 hours for maximum enzyme activity. Should show active bubbling. Add at room temperature only.",
+                        benefits: ["Living enzyme system", "Continuous production", "Maximum B vitamins", "Probiotic effects"],
+                        balance: { enzymes: 10, activity: 9, vitamins: 9 }
+                    },
+                    coconutWater: {
+                        name: "Fresh Coconut Water",
+                        source: "fresh coconut liquid",
+                        score: 9,
+                        availability: "medium",
+                        nutritionalRole: "⚡",
+                        roleDescription: "Energy",
+                        secondaryRole: "💎",
+                        secondaryDescription: "Structure",
+                        description: "Natural electrolyte solution with balanced minerals and sugars. Provides immediate energy plus essential growth minerals in perfect biological ratios.",
+                        detailedInfo: "Coconut water contains natural plant hormones (cytokinins), potassium, magnesium, and natural sugars in optimal ratios for cellular growth. Sterile when fresh. pH 5.0-5.4 naturally supports mycelium development.",
+                        preparationNotes: "Use fresh coconut water within 24 hours of opening. Strain through fine mesh to remove any pulp. Can dilute 1:1 with distilled water if too concentrated. Refrigerate unused portions.",
+                        benefits: ["Natural electrolytes", "Plant growth hormones", "Sterile when fresh", "Balanced nutrition"],
+                        nutritionalAnalysis: {
+                            per100ml: {
+                                totalCarbs: "3.7g",
+                                sugars: "2.6g",
+                                proteins: "0.7g",
+                                totalNitrogen: "112mg",
+                                calcium: "24mg",
+                                minerals: { k: "250mg", mg: "25mg", p: "20mg", na: "105mg" },
+                                pH: "5.0-5.4",
+                                cytokinins: "trace amounts"
+                            }
+                        },
+                        balance: { energy: 8, minerals: 9, hormones: 7 }
+                    }
+                }
+            },
+
+            nitrogen: {
+                title: "Nitrogen Sources",
+                description: "Protein-rich nutrients for mycelium structure and enzyme production",
+                color: "#22c55e",
+                ingredients: {
+                    lentilSoakWater: {
+                        name: "Lentil Soak Water",
+                        source: "water from soaking dried lentils",
+                        score: 10,
+                        availability: "high",
+                        nutritionalRole: "🧬",
+                        roleDescription: "Building",
+                        description: "Premium protein-rich liquid from lentil soaking. Contains dissolved amino acids, proteins, and minerals essential for strong mycelium structure and rapid development.",
+                        detailedInfo: "Lentils release soluble proteins, amino acids (especially lysine and methionine), folate, and iron during soaking. pH 6.2-6.8. Contains 3-5g protein per 500ml soak water. Highest quality nitrogen source.",
+                        preparationNotes: "Soak 100g lentils in 500ml filtered water for 12-24 hours. Strain liquid, save lentils for cooking. Rich amber color indicates good extraction. Use within 72 hours refrigerated.",
+                        benefits: ["High protein content", "Essential amino acids", "Iron and folate", "Easy preparation"],
+                        nutritionalAnalysis: {
+                            per100ml: {
+                                totalCarbs: "1.8g",
+                                sugars: "0.4g",
+                                proteins: "2.2g",
+                                totalNitrogen: "352mg",
+                                calcium: "18mg",
+                                minerals: { k: "125mg", mg: "24mg", p: "45mg", fe: "2.4mg", zn: "0.8mg" },
+                                pH: "6.2-6.8",
+                                vitamins: { folate: "0.025mg", b6: "0.008mg" },
+                                aminoAcids: { lysine: "120mg", methionine: "18mg", leucine: "95mg" }
+                            }
+                        },
+                        balance: { proteins: 9, minerals: 7, availability: 9 }
+                    },
+                    favaBeanWater: {
+                        name: "Fava Bean Water",
+                        source: "cooking water from fava beans",
+                        score: 9,
+                        availability: "medium",
+                        nutritionalRole: "🧬",
+                        roleDescription: "Building",
+                        secondaryRole: "💎",
+                        secondaryDescription: "Structure",
+                        description: "Concentrated protein solution from fava beans. Exceptionally rich in nitrogen compounds and minerals, ideal for fruiting body development and complex structures.",
+                        detailedInfo: "Fava beans contain highest protein of common legumes (26-30%). Rich in levodopa, tyrosine, and other aromatic amino acids. Excellent mineral profile including magnesium, potassium, and phosphorus.",
+                        preparationNotes: "Cook 150g fava beans in 750ml water for 45 minutes. Save cooking water after straining. Can also use overnight soak water. Contains more minerals than other legumes due to thick shells.",
+                        benefits: ["Highest protein legume", "Unique amino acids", "Rich mineral profile", "Excellent for fruiting"],
+                        balance: { proteins: 10, minerals: 8, specialty: 7 }
+                    },
+                    legumeCookingWater: {
+                        name: "General Legume Water",
+                        source: "cooking water from beans, chickpeas, etc.",
+                        score: 9,
+                        availability: "high",
+                        nutritionalRole: "🧬",
+                        roleDescription: "Building",
+                        description: "Versatile protein and mineral solution from various bean varieties. Provides balanced amino acid profile and essential nutrients for all growth phases.",
+                        detailedInfo: "Mixed legume water provides diverse amino acid profiles depending on variety. Contains dissolved proteins, starches, and B vitamins. pH typically 6.0-7.0. Black beans add anthocyanins, chickpeas add folate.",
+                        preparationNotes: "Use cooking water from black beans, chickpeas, kidney beans, or mixed varieties. Don't over-salt during cooking. Cool quickly and refrigerate. Use within 72 hours for optimal freshness.",
+                        benefits: ["Diverse amino acids", "Balanced nutrition", "Versatile source", "Long storage life"],
+                        balance: { proteins: 8, variety: 9, availability: 9 }
+                    },
+                    animalDungSoakWater: {
+                        name: "Animal Dung Soak Water",
+                        source: "aged herbivore manure extract - sterile preparation",
+                        score: 9,
+                        availability: "variable",
+                        nutritionalRole: "🧬",
+                        roleDescription: "Building",
+                        secondaryRole: "💎",
+                        secondaryDescription: "Structure",
+                        description: "Premium nitrogen source from properly aged and sterilized herbivore manure. Provides complete amino acid profile and mineral spectrum when prepared with strict contamination prevention.",
+                        detailedInfo: "Well-composted cow, horse, or goat manure releases soluble proteins, amino acids, and trace minerals. Contains beneficial organic compounds and growth factors. pH 6.8-7.2. Requires mandatory sterilization for safety.",
+                        preparationNotes: "CONTAMINATION-FREE PROTOCOL: Use only 6+ month composted herbivore manure. Pre-rinse with distilled water. Soak 48-72h in sterile container. Triple filter through coarse strain → coffee filter → clamped Tyvek layers for 0.2μm filtration. Pressure cook 15 min at 15 PSI. Cool in sterile environment. Dilute 1:10 before use.",
+                        benefits: ["Complete amino acids", "Rich mineral profile", "Growth factors", "Sustainable source"],
+                        contributions: { 
+                            nutritional: 9, 
+                            sustainable: 10, 
+                            available: 7, 
+                            complexity: 2, 
+                            biosafety: 4, 
+                            bioavailable: 9 
+                        },
+                        safetyWarnings: ["NEVER use fresh manure", "Herbivores only - no carnivore waste", "Mandatory sterilization required", "Use within 24 hours of preparation", "Work in sterile environment with flame sterilized tools"]
+                    },
+                    insectPowder: {
+                        name: "Dried Insect Powder",
+                        source: "cricket/mealworm powder supplement",
+                        score: 10,
+                        availability: "low",
+                        nutritionalRole: "🧬",
+                        roleDescription: "Building",
+                        secondaryRole: "💎",
+                        secondaryDescription: "Structure",
+                        description: "Ultimate protein source with complete amino acid profile plus chitin for structural support. Provides rare amino acids and minerals difficult to obtain from plant sources.",
+                        detailedInfo: "Cricket powder contains 60-70% complete protein with all essential amino acids. Rich in B12, iron, zinc, and calcium. Chitin content supports cell wall development. Contains taurine and other compounds rare in plant sources.",
+                        preparationNotes: "Purchase food-grade insect powder or prepare from dried insects. Sterilize at 250°F for 20 minutes. Grind to fine powder. Add 1-2g per 500ml liquid culture after cooling. Store in airtight container.",
+                        benefits: ["Complete protein profile", "Rare amino acids", "Chitin content", "High bioavailability"],
+                        nutritionalAnalysis: {
+                            per100ml: {
+                                totalCarbs: "0.8g",
+                                sugars: "0.2g",
+                                proteins: "6.2g",
+                                totalNitrogen: "992mg",
+                                calcium: "45mg",
+                                minerals: { k: "98mg", mg: "18mg", p: "85mg", fe: "3.2mg", zn: "2.1mg" },
+                                pH: "6.8-7.2",
+                                vitamins: { b12: "0.024mg", b2: "0.18mg" },
+                                aminoAcids: { leucine: "280mg", lysine: "195mg", methionine: "85mg", taurine: "45mg" },
+                                chitin: "0.8g"
+                            }
+                        },
+                        balance: { proteins: 10, minerals: 8, specialty: 10 }
+                    },
+                    nutSoakWater: {
+                        name: "Nut Soak Water",
+                        source: "water from soaking almonds, walnuts, pecans",
+                        score: 8,
+                        availability: "medium",
+                        nutritionalRole: "🧬",
+                        roleDescription: "Building",
+                        secondaryRole: "⚡",
+                        secondaryDescription: "Energy",
+                        description: "Rich protein and healthy fat extract from tree nuts. Provides essential fatty acids, vitamin E, and complete amino acid spectrum for robust mycelium development.",
+                        detailedInfo: "Nuts release soluble proteins, healthy fats, and minerals during soaking. Almonds provide calcium and vitamin E, walnuts contribute omega-3s, pecans add manganese. pH 6.0-6.8 with natural antioxidants.",
+                        preparationNotes: "Soak 100g mixed raw nuts in 500ml filtered water for 8-12 hours. Strain liquid and reserve nuts for other uses. Light brown, slightly cloudy extract indicates good nutrition extraction.",
+                        benefits: ["Healthy fatty acids", "Complete proteins", "Natural antioxidants", "Mineral diversity"],
+                        nutritionalAnalysis: {
+                            per100ml: {
+                                totalCarbs: "1.4g",
+                                sugars: "0.6g",
+                                proteins: "1.8g",
+                                totalNitrogen: "288mg",
+                                calcium: "32mg",
+                                minerals: { k: "95mg", mg: "28mg", p: "52mg", mn: "0.4mg" },
+                                pH: "6.0-6.8",
+                                vitamins: { e: "1.2mg", folate: "0.008mg" },
+                                fattyAcids: { omega3: "15mg", omega6: "85mg" }
+                            }
+                        },
+                        balance: { proteins: 7, fats: 8, antioxidants: 6 }
+                    }
+                }
+            },
+
+            minerals: {
+                title: "Mineral Sources", 
+                description: "Essential minerals for cell wall strength and structural integrity",
+                color: "#9333ea",
+                ingredients: {
+                    eggshells: {
+                        name: "Eggshell Powder",
+                        source: "ground eggshells from cooking waste",
+                        score: 10,
+                        availability: "high",
+                        nutritionalRole: "💎",
+                        roleDescription: "Structure",
+                        description: "Pure calcium carbonate for cell wall strength and pH buffering. Essential for robust fruiting body formation and structural integrity of mycelium networks.",
+                        detailedInfo: "Eggshells are 94% calcium carbonate with traces of magnesium, strontium, and other trace minerals. Provides pH buffering capacity to maintain optimal growing conditions (pH 6.5-7.5). Critical for mushroom formation.",
+                        preparationNotes: "Clean shells thoroughly and sterilize in boiling water for 5 minutes. Dry completely in oven at 200°F. Grind to fine powder in coffee grinder. Add 1/2 tsp per 500ml liquid culture after sterilization.",
+                        benefits: ["Pure calcium source", "pH buffering", "Cell wall strength", "Zero waste utilization"],
+                        nutritionalAnalysis: {
+                            per100ml: {
+                                totalCarbs: "0g",
+                                sugars: "0g", 
+                                proteins: "0.1g",
+                                totalNitrogen: "16mg",
+                                calcium: "380mg",
+                                minerals: { mg: "12mg", sr: "4mg", p: "8mg" },
+                                pH: "8.2-8.8",
+                                calciumCarbonate: "94%",
+                                buffering: "moderate alkaline"
+                            }
+                        },
+                        balance: { calcium: 10, buffering: 8, sustainability: 10 }
+                    },
+                    vegetableBroth: {
+                        name: "Vegetable Scrap Broth",
+                        source: "simmered vegetable scraps and peels",
+                        score: 10,
+                        availability: "high",
+                        nutritionalRole: "💎",
+                        roleDescription: "Structure",
+                        description: "Complete mineral profile from diverse vegetable sources. Provides broad spectrum micronutrients and water-soluble vitamins in readily bioavailable form.",
+                        detailedInfo: "Vegetable broth contains potassium, magnesium, phosphorus, and trace elements. pH 5.5-6.5. Different vegetables contribute unique profiles - carrots (beta-carotene), onions (sulfur compounds), celery (sodium).",
+                        preparationNotes: "Simmer mixed vegetable scraps (peels, ends, leaves) for 45-60 minutes. Use diverse vegetables for complete nutrition. Strain well through fine mesh. Refrigerate up to 1 week or freeze in portions.",
+                        benefits: ["Complete mineral spectrum", "Water-soluble vitamins", "Diverse nutrition", "Maximum waste utilization"],
+                        nutritionalAnalysis: {
+                            per100ml: {
+                                totalCarbs: "2.1g",
+                                sugars: "1.3g",
+                                proteins: "0.8g",
+                                totalNitrogen: "128mg",
+                                calcium: "25mg",
+                                minerals: { k: "185mg", mg: "18mg", p: "28mg", fe: "0.6mg" },
+                                pH: "5.5-6.5",
+                                vitamins: { c: "8mg", folate: "0.012mg", a: "85mcg" },
+                                trace: { mn: "0.15mg", cu: "0.08mg", se: "1.2mcg" }
+                            }
+                        },
+                        balance: { minerals: 9, vitamins: 7, sustainability: 10 }
+                    },
+                    gypsumPowder: {
+                        name: "Clean Gypsum Powder", 
+                        source: "contamination-free gypsum board powder",
+                        score: 8,
+                        availability: "medium",
+                        nutritionalRole: "💎",
+                        roleDescription: "Structure",
+                        description: "Pure calcium sulfate dihydrate providing essential sulfur nutrition and pH stability. Critical for protein synthesis and cellular processes requiring sulfur compounds.",
+                        detailedInfo: "Pharmaceutical-grade gypsum provides bioavailable calcium and sulfur in 2:1 ratio. Essential for amino acid synthesis (cysteine, methionine) and enzyme function. Maintains pH stability around 7.0-7.5. Low solubility provides sustained release.",
+                        preparationNotes: "VERIFY contamination-free source - no paint, adhesives, or chemical treatments. Grind to fine powder in clean environment. Sterilize at 250°F for 30 minutes. Add 2-3g per 500ml after cooling. Store in sealed container.",
+                        benefits: ["Essential sulfur nutrition", "pH stability", "Sustained calcium release", "Protein synthesis support"],
+                        balance: { sulfur: 10, calcium: 8, stability: 9 },
+                        safetyWarnings: ["MUST verify contamination-free source", "No painted or treated gypsum", "Test small batch first", "Grind in well-ventilated area"]
+                    },
+                    boneBroth: {
+                        name: "Bone Broth Extract",
+                        source: "long-simmered animal bones from cooking waste",
+                        score: 9,
+                        availability: "high",
+                        nutritionalRole: "💎",
+                        roleDescription: "Structure",
+                        secondaryRole: "🧬",
+                        secondaryDescription: "Building",
+                        description: "Mineral-rich collagen extract from kitchen waste bones. Provides bioavailable calcium, phosphorus, and complete amino acid profile from collagen breakdown for structural development.",
+                        detailedInfo: "12-24 hour simmering extracts calcium phosphate, magnesium, and trace minerals from bone matrix. Collagen breakdown releases glycine, proline, hydroxyproline, and other amino acids essential for structural proteins. pH 6.0-6.8 with rich mineral content.",
+                        preparationNotes: "Use bones from roasted chicken, beef, or pork (cooking waste). Simmer 12-24 hours with 1 tbsp vinegar per quart to aid mineral extraction. Strain through fine mesh. Cool and remove fat layer. Concentrate by reducing volume 50%. Refrigerate up to 5 days or freeze portions.",
+                        benefits: ["Bioavailable minerals", "Complete amino acid profile", "Collagen-derived nutrients", "Kitchen waste utilization"],
+                        balance: { minerals: 9, amino_acids: 8, sustainability: 9 }
+                    }
+                }
+            },
+
+            vitamins: {
+                title: "Vitamin Sources",
+                description: "Growth factors and vitamins for metabolic processes and development",
+                color: "#9333ea",
+                ingredients: {
+                    sproutingWater: {
+                        name: "Sprouting Water",
+                        source: "water from seed sprouting process",
+                        score: 8,
+                        availability: "medium",
+                        nutritionalRole: "💎",
+                        roleDescription: "Structure",
+                        description: "Growth hormone concentrate from activated seeds. Contains natural cytokinins and auxins that promote rapid cell division and mycelium development.",
+                        detailedInfo: "Sprouting releases plant hormones, vitamins (especially B-complex and C), and amino acids. Contains natural gibberellins that promote growth and development. pH 6.0-6.8. Rich in enzymatically active compounds.",
+                        preparationNotes: "Soak alfalfa, mung beans, or mixed seeds for 12 hours. Rinse every 8 hours for 3-5 days during sprouting. Collect all rinse water. Fresh preparation ensures maximum hormone activity.",
+                        benefits: ["Natural growth hormones", "High vitamin content", "Cell division promoters", "Fresh preparation"],
+                        balance: { hormones: 9, vitamins: 8, freshness: 9 }
+                    },
+                    aeratedCompostTea: {
+                        name: "Aerated Compost Tea",
+                        source: "actively aerated organic compost extract",
+                        score: 9,
+                        availability: "medium",
+                        nutritionalRole: "💎",
+                        roleDescription: "Structure",
+                        secondaryRole: "🧬",
+                        secondaryDescription: "Building",
+                        description: "Living ecosystem in liquid form. Contains beneficial microorganisms, enzymes, and growth factors that create synergistic relationships with mycelium.",
+                        detailedInfo: "24-48 hour aeration extracts water-soluble nutrients and cultivates beneficial bacteria and fungi. Contains humic acids, fulvic acids, and natural growth hormones. pH 6.0-7.0. Living biological system.",
+                        preparationNotes: "Use 1 cup quality compost in 1 gallon water. Aerate continuously 24-48 hours with aquarium pump. Strain through cloth. Use immediately for maximum microbial activity. Sweet earthy smell indicates success.",
+                        benefits: ["Living microorganisms", "Natural growth hormones", "Enzyme production", "Biological diversity"],
+                        balance: { biology: 10, enzymes: 9, hormones: 8 }
+                    },
+                    fermentedGrainWater: {
+                        name: "Fermented Rice Water",
+                        source: "controlled fermentation of rice water",
+                        score: 9,
+                        availability: "medium",
+                        nutritionalRole: "💎",
+                        roleDescription: "Structure",
+                        secondaryRole: "🛡️",
+                        secondaryDescription: "Protection",
+                        description: "B-vitamin complex from controlled grain fermentation. Particularly rich in B12, folate, and vitamins essential for fruiting body development with natural preservation.",
+                        detailedInfo: "3-5 day controlled fermentation produces maximum B-vitamin content. Lactic acid bacteria create beneficial organic acids and vitamin B12. pH 4.5-5.5 provides natural preservation and growth stimulation.",
+                        preparationNotes: "Ferment rice water at room temperature 3-5 days until slightly sour. Strain and dilute 1:3 with fresh water. Sweet-sour aroma indicates successful fermentation. pH should be 4.5-5.5.",
+                        benefits: ["High B-vitamin content", "Vitamin B12 production", "Natural preservation", "Enhanced bioavailability"],
+                        balance: { vitamins: 9, preservation: 8, fermentation: 9 }
+                    }
+                }
+            },
+
+            specialty: {
+                title: "Specialty Additives",
+                description: "Advanced ingredients for enhanced performance and specific applications",
+                color: "#ef4444",
+                ingredients: {
+                    pastaWaterWithYeast: {
+                        name: "Pasta Water + Baker's Yeast",
+                        source: "pasta water with active yeast added",
+                        score: 8,
+                        availability: "high",
+                        nutritionalRole: "⚡",
+                        roleDescription: "Energy",
+                        secondaryRole: "🧬",
+                        secondaryDescription: "Building",
+                        description: "Enhanced pasta water with living baker's yeast for enzyme production. Creates active nutrient cycling system that pre-breaks down complex molecules for easier uptake.",
+                        detailedInfo: "Baker's yeast (Saccharomyces cerevisiae) produces enzymes that break down starches and proteins. Adds B vitamins, amino acids, and growth factors. pH drops to 5.5-6.0 during fermentation process.",
+                        preparationNotes: "Cool pasta water to room temperature first. Add 1/4 tsp active dry yeast per 500ml. Let activate 30 minutes until bubbling. Use within 6 hours for maximum enzyme activity. Don't overheat.",
+                        benefits: ["Living enzyme system", "Enhanced nutrition", "Pre-digested nutrients", "Growth factors"],
+                        balance: { enzymes: 9, activity: 8, enhancement: 9 }
+                    },
+                    spirulinaExtract: {
+                        name: "Spirulina/Chlorella Extract",
+                        source: "dried blue-green algae powder",
+                        score: 7,
+                        availability: "medium",
+                        nutritionalRole: "🧬",
+                        roleDescription: "Building",
+                        secondaryRole: "💎",
+                        secondaryDescription: "Structure",
+                        description: "Concentrated microalgae providing complete protein and rare micronutrients. Contains natural growth factors, chlorophyll, and trace elements unavailable from terrestrial sources.",
+                        detailedInfo: "Spirulina contains 60-70% complete protein with all essential amino acids. Rich in gamma-linolenic acid, phycocyanin, and rare minerals like chromium and selenium. Natural source of growth-promoting compounds and antioxidants.",
+                        preparationNotes: "Use food-grade spirulina or chlorella powder. Dissolve 1-2g in 500ml warm water. Stir well to prevent clumping. Strain if needed. Distinctive blue-green color indicates proper extraction. Store refrigerated, use within 48 hours.",
+                        benefits: ["Complete protein profile", "Rare micronutrients", "Natural growth factors", "Antioxidant properties"],
+                        balance: { proteins: 8, micronutrients: 10, specialty: 9 }
+                    },
+                    coffeeGroundsExtract: {
+                        name: "Coffee Grounds Extract",
+                        source: "spent coffee grounds from brewing",
+                        score: 8,
+                        availability: "high",
+                        nutritionalRole: "🧬",
+                        roleDescription: "Building",
+                        secondaryRole: "🛡️",
+                        secondaryDescription: "Protection",
+                        description: "Nitrogen-rich extract from coffee waste with natural antifungal properties. Provides caffeine as natural preservative plus organic acids for pH buffering.",
+                        detailedInfo: "Used coffee grounds contain 2-3% nitrogen, potassium, and phosphorus. Caffeine acts as natural antifungal agent. pH 6.0-6.8 provides buffering capacity. Contains beneficial organic acids and trace minerals extracted during brewing.",
+                        preparationNotes: "Use fresh spent grounds within 24 hours to prevent mold. Soak 1 cup grounds in 500ml hot water for 2-4 hours. Strain through fine mesh twice. Dark brown extract should smell like coffee, not sour. Dilute 1:1 if too concentrated.",
+                        benefits: ["High nitrogen content", "Natural antifungal", "pH buffering", "Kitchen waste utilization"],
+                        balance: { nitrogen: 8, antifungal: 7, sustainability: 9 }
+                    },
+                    teaLeafExtract: {
+                        name: "Tea Leaf Extract",
+                        source: "used tea bags and loose leaf tea",
+                        score: 7,
+                        availability: "high",
+                        nutritionalRole: "🛡️",
+                        roleDescription: "Protection",
+                        secondaryRole: "💎",
+                        secondaryDescription: "Structure",
+                        description: "Tannin-rich extract providing natural preservatives and unique amino acids. Green tea varieties offer L-theanine and catechins with strong antimicrobial properties.",
+                        detailedInfo: "Tea leaves contain tannins, amino acids (especially L-theanine), and polyphenolic compounds. Green tea provides EGCG and other catechins with antimicrobial activity. pH 5.5-6.5 with natural preservation qualities.",
+                        preparationNotes: "Collect used tea bags or steep loose leaves second time. Soak in warm water 30-60 minutes for extraction. Green tea preferred for maximum nutrients. Strain well. Light amber to green color depending on tea type. Use within 72 hours refrigerated.",
+                        benefits: ["Natural preservatives", "Unique amino acids", "Antimicrobial compounds", "Readily available"],
+                        balance: { preservation: 8, amino_acids: 6, availability: 10 }
+                    },
+                    fishWasteEmulsion: {
+                        name: "Fish Waste Emulsion",
+                        source: "fermented fish scraps from cooking",
+                        score: 9,
+                        availability: "medium",
+                        nutritionalRole: "🧬",
+                        roleDescription: "Building",
+                        secondaryRole: "💎",
+                        secondaryDescription: "Structure",
+                        description: "Traditional fermented fish fertilizer providing omega fatty acids and complete proteins. Requires controlled fermentation to prevent putrefaction and contamination.",
+                        detailedInfo: "Fish waste contains complete proteins, omega-3 and omega-6 fatty acids, and natural fish oils. Controlled anaerobic fermentation breaks down proteins into amino acids while preventing pathogenic bacteria. Rich in phosphorus and trace marine minerals.",
+                        preparationNotes: "FERMENTATION PROTOCOL: Use fresh fish scraps (heads, bones, guts). Layer with salt (10% by weight) in airtight container. Ferment 4-6 weeks at room temperature. Should smell fishy-sour, not putrid. Strain liquid, dilute 1:20 before use. Pressure cook extract 15 minutes for safety.",
+                        benefits: ["Complete protein source", "Omega fatty acids", "Marine trace minerals", "Traditional fertilizer"],
+                        balance: { proteins: 9, fatty_acids: 10, minerals: 8 },
+                        safetyWarnings: ["Use only fresh fish scraps", "Maintain proper salt ratios", "Monitor fermentation odor", "Mandatory sterilization required", "Risk of botulism if fermented incorrectly"]
+                    },
+                    woodAshWater: {
+                        name: "Wood Ash Water",
+                        source: "clean hardwood ash extract",
+                        score: 6,
+                        availability: "low",
+                        nutritionalRole: "💎",
+                        roleDescription: "Structure",
+                        description: "Potassium-rich extract from hardwood ash. Provides essential potash for fruiting body development but requires careful pH monitoring and safety precautions.",
+                        detailedInfo: "Hardwood ash contains 3-7% potassium carbonate plus calcium, magnesium, and trace minerals. Highly alkaline (pH 10-12) requiring dilution and pH adjustment. Traditional source of potash for agriculture. Can contain heavy metals from wood source.",
+                        preparationNotes: "SAFETY FIRST: Use only clean hardwood ash from untreated wood (no painted, treated, or unknown wood). Soak 1 tbsp ash in 1 liter water for 24 hours. Strain through multiple filters. Test pH - adjust to 7.0-8.0 with vinegar. Wear gloves - caustic solution. Start with very dilute amounts.",
+                        benefits: ["High potassium content", "Essential for fruiting", "Trace minerals", "Traditional amendment"],
+                        contributions: { 
+                            nutritional: 7, 
+                            sustainable: 8, 
+                            available: 3, 
+                            complexity: 3, 
+                            biosafety: 3, 
+                            bioavailable: 6 
+                        },
+                        safetyWarnings: ["CAUSTIC - wear protective equipment", "Only clean hardwood ash", "No treated or painted wood", "Mandatory pH testing required", "Potential heavy metal contamination", "Start with minimal amounts"]
+                    }
+                }
+            }
+        };
+
+        class IngredientReferenceApp {
+            constructor() {
+                this.currentIngredient = null;
+                this.ingredientsList = [];
+                this.currentIndex = 0;
+                this.init();
+            }
+
+            init() {
+                this.buildIngredientsList();
+                this.renderByWizardCategory();
+                this.setupEventListeners();
+                this.initializeRecipeBuilder();
+            }
+
+            buildIngredientsList() {
+                this.ingredientsList = [];
+                Object.entries(INGREDIENT_DATABASE).forEach(([categoryKey, category]) => {
+                    Object.entries(category.ingredients).forEach(([ingredientKey, ingredient]) => {
+                        this.ingredientsList.push({
+                            categoryKey,
+                            ingredientKey,
+                            category,
+                            ingredient,
+                            displayName: ingredient.name,
+                            categoryName: category.title
+                        });
+                    });
+                });
+            }
+
+            renderByWizardCategory() {
+                const grid = document.getElementById('effectivenessGrid');
+                
+                // Group ingredients by wizard category
+                const wizardGroups = {
+                    'water-base': { 
+                        title: '💧 Water Base', 
+                        description: 'Sterile foundation media for liquid culture growth',
+                        color: '#3b82f6',
+                        ingredients: [] 
+                    },
+                    'energy-source': { 
+                        title: '⚡ Energy Source', 
+                        description: 'Carbohydrates and sugars for mycelium fuel',
+                        color: '#fb923c',
+                        ingredients: [] 
+                    },
+                    'protein-builder': { 
+                        title: '🧬 Protein Builder', 
+                        description: 'Amino acids and nitrogen for structural development',
+                        color: '#22c55e',
+                        ingredients: [] 
+                    },
+                    'structure-vitamins': { 
+                        title: '💎 Structure & Vitamins', 
+                        description: 'Minerals, vitamins, and cellular building blocks',
+                        color: '#9333ea',
+                        ingredients: [] 
+                    }
+                };
+
+                // Sort ingredients into wizard category groups
+                this.ingredientsList.forEach(item => {
+                    const role = item.ingredient.nutritionalRole;
+                    let groupKey = 'structure-vitamins'; // default
+                    
+                    if (role === '💧') groupKey = 'water-base';
+                    else if (role === '⚡') groupKey = 'energy-source';
+                    else if (role === '🧬') groupKey = 'protein-builder';
+                    else if (role === '💎') groupKey = 'structure-vitamins';
+                    
+                    if (wizardGroups[groupKey]) {
+                        wizardGroups[groupKey].ingredients.push(item);
+                    }
+                });
+
+                let html = '';
+                Object.entries(wizardGroups).forEach(([key, group]) => {
+                    if (group.ingredients.length > 0) {
+                        html += `
+                            <div class="effectiveness-section ${key}">
+                                <div class="effectiveness-header">
+                                    <div class="effectiveness-indicator" style="background: ${group.color};"></div>
+                                    <div>
+                                        <div class="effectiveness-title">${group.title}</div>
+                                        <div class="effectiveness-description">${group.description}</div>
+                                    </div>
+                                </div>
+                                <div class="ingredients-list">
+                                    ${this.renderWizardIngredients(group.ingredients)}
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+
+                grid.innerHTML = html;
+            }
+
+            renderWizardIngredients(ingredients) {
+                // Sort by nutritional density within each category
+                const sortedIngredients = ingredients.sort((a, b) => {
+                    const aNutritional = a.ingredient.contributions?.nutritional || 0;
+                    const bNutritional = b.ingredient.contributions?.nutritional || 0;
+                    return bNutritional - aNutritional;
+                });
+                
+                return sortedIngredients.map(item => {
+                    const hasWarnings = item.ingredient.safetyWarnings && item.ingredient.safetyWarnings.length > 0;
+                    const primaryRoleClass = this.getRoleClass(item.ingredient.nutritionalRole);
+                    const secondaryRoleClass = item.ingredient.secondaryRole ? this.getRoleClass(item.ingredient.secondaryRole) : null;
+                    
+                    return `
+                        <div class="ingredient-card" onclick="app.showIngredientDetails('${item.categoryKey}', '${item.ingredientKey}')">
+                            <div class="ingredient-header">
+                                <div class="ingredient-name">${item.ingredient.name}</div>
+                                <div class="ingredient-nutrients">
+                                    ${this.renderNutrientSummary(item.ingredient)}
+                                </div>
+                            </div>
+                            <div class="ingredient-source">${item.ingredient.source}</div>
+                            <div class="ingredient-tags">
+                                ${item.ingredient.nutritionalRole ? `<span class="role-tag ${primaryRoleClass}">${item.ingredient.nutritionalRole} ${item.ingredient.roleDescription || ''}</span>` : ''}
+                                ${item.ingredient.secondaryRole ? `<span class="role-tag ${secondaryRoleClass} secondary-role">${item.ingredient.secondaryRole} ${item.ingredient.secondaryDescription || ''}</span>` : ''}
+                                <span class="tag">${item.categoryName}</span>
+                                <span class="tag">${item.ingredient.availability} availability</span>
+                                ${hasWarnings ? '<span class="tag safety-warning">Safety Protocol</span>' : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            renderNutrientSummary(ingredient) {
+                // Show key nutrients based on ingredient role, with better fallbacks
+                const role = ingredient.nutritionalRole;
+                const nutrition = ingredient.nutritionalAnalysis?.per100ml;
+                const contributions = ingredient.contributions;
+                const balance = ingredient.balance; // Fallback to old balance data
+                
+                if (role === '💧') {
+                    const pH = nutrition?.pH || (balance?.purity ? '6.5-7.5' : 'Variable');
+                    const purity = contributions?.biosafety || contributions?.sterility || balance?.purity || 'TBD';
+                    return `<span class="nutrient-summary">pH: ${pH} • Safety: ${purity}${typeof purity === 'number' ? '/10' : ''}</span>`;
+                } else if (role === '⚡') {
+                    const carbs = nutrition?.totalCarbs;
+                    const sugars = nutrition?.sugars;
+                    const energy = contributions?.nutritional || balance?.energy;
+                    
+                    if (carbs && sugars) {
+                        return `<span class="nutrient-summary">Carbs: ${carbs} • Sugars: ${sugars}</span>`;
+                    } else if (energy) {
+                        return `<span class="nutrient-summary">Energy Density: ${energy}/10 • Bioavailable: ${contributions?.bioavailable || 'High'}/10</span>`;
+                    } else {
+                        return `<span class="nutrient-summary">Complex carbohydrates • Energy source</span>`;
+                    }
+                } else if (role === '🧬') {
+                    const protein = nutrition?.proteins;
+                    const nitrogen = nutrition?.totalNitrogen;
+                    const proteinRating = contributions?.nutritional || balance?.proteins;
+                    
+                    if (protein && nitrogen) {
+                        return `<span class="nutrient-summary">Protein: ${protein} • N: ${nitrogen}</span>`;
+                    } else if (proteinRating) {
+                        return `<span class="nutrient-summary">Protein: ${proteinRating}/10 • Amino acids: ${contributions?.bioavailable || 'High'}/10</span>`;
+                    } else {
+                        return `<span class="nutrient-summary">Amino acids • Nitrogen source</span>`;
+                    }
+                } else if (role === '💎') {
+                    const calcium = nutrition?.calcium;
+                    const potassium = nutrition?.minerals?.k;
+                    const mineralRating = contributions?.nutritional || balance?.minerals;
+                    
+                    if (calcium || potassium) {
+                        const caDisplay = calcium ? `Ca: ${calcium}` : '';
+                        const kDisplay = potassium ? `K: ${potassium}` : '';
+                        const separator = calcium && potassium ? ' • ' : '';
+                        return `<span class="nutrient-summary">${caDisplay}${separator}${kDisplay}</span>`;
+                    } else if (mineralRating) {
+                        return `<span class="nutrient-summary">Minerals: ${mineralRating}/10 • Structure: ${contributions?.bioavailable || 'Good'}/10</span>`;
+                    } else {
+                        return `<span class="nutrient-summary">Essential minerals • Structural support</span>`;
+                    }
+                }
+                return '<span class="nutrient-summary">Nutritional profile available in details</span>';
+            }
+
+            setupEventListeners() {
+                // Search and filter functionality
+                this.setupSearchAndFiltering();
+
+                // Close overlay on escape key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.closeOverlay();
+                    }
+                    // Navigation with arrow keys
+                    if (e.key === 'ArrowLeft' && this.currentIngredient) {
+                        this.navigateOverlay(-1);
+                    }
+                    if (e.key === 'ArrowRight' && this.currentIngredient) {
+                        this.navigateOverlay(1);
+                    }
+                });
+
+                // Close overlay on background click
+                document.getElementById('ingredientOverlay').addEventListener('click', (e) => {
+                    if (e.target.id === 'ingredientOverlay') {
+                        this.closeOverlay();
+                    }
+                });
+            }
+
+            setupSearchAndFiltering() {
+                const searchInput = document.getElementById('searchInput');
+                const clearBtn = document.getElementById('clearSearch');
+                const categoryFilter = document.getElementById('categoryFilter');
+                const availabilityFilter = document.getElementById('availabilityFilter');
+                const safetyFilter = document.getElementById('safetyFilter');
+
+                // Search input functionality
+                searchInput.addEventListener('input', (e) => {
+                    this.updateSearch();
+                    clearBtn.classList.toggle('visible', e.target.value.length > 0);
+                });
+
+                // Clear search button
+                clearBtn.addEventListener('click', () => {
+                    searchInput.value = '';
+                    clearBtn.classList.remove('visible');
+                    this.updateSearch();
+                });
+
+                // Filter change handlers
+                [categoryFilter, availabilityFilter, safetyFilter].forEach(filter => {
+                    filter.addEventListener('change', () => this.updateSearch());
+                });
+
+                // Initial state
+                this.updateSearchStats();
+            }
+
+            updateSearch() {
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                const categoryFilter = document.getElementById('categoryFilter').value;
+                const availabilityFilter = document.getElementById('availabilityFilter').value;
+                const safetyFilter = document.getElementById('safetyFilter').value;
+
+                let visibleCount = 0;
+                let totalCount = 0;
+
+                // Get all wizard category groups
+                const categoryGroups = {
+                    'water-base': document.querySelector('.effectiveness-section:nth-child(1)'),
+                    'energy-source': document.querySelector('.effectiveness-section:nth-child(2)'),
+                    'protein-builder': document.querySelector('.effectiveness-section:nth-child(3)'),
+                    'structure-vitamins': document.querySelector('.effectiveness-section:nth-child(4)')
+                };
+
+                Object.entries(categoryGroups).forEach(([groupKey, groupElement]) => {
+                    if (!groupElement) return;
+
+                    const cards = groupElement.querySelectorAll('.ingredient-card');
+                    let groupVisibleCount = 0;
+
+                    cards.forEach(card => {
+                        totalCount++;
+                        
+                        // Get ingredient data from the card
+                        const name = card.querySelector('.ingredient-name').textContent.toLowerCase();
+                        const source = card.querySelector('.ingredient-source').textContent.toLowerCase();
+                        const description = card.textContent.toLowerCase();
+                        
+                        // Get availability from tag
+                        const availabilityTag = Array.from(card.querySelectorAll('.tag')).find(tag => 
+                            tag.textContent.includes('availability')
+                        );
+                        const availability = availabilityTag ? 
+                            availabilityTag.textContent.replace(' availability', '').toLowerCase() : '';
+
+                        // Check for safety warnings
+                        const hasWarnings = card.querySelector('.safety-warning') !== null;
+                        const safetyType = hasWarnings ? 'safety' : 'standard';
+
+                        // Apply filters
+                        let visible = true;
+
+                        // Search term filter
+                        if (searchTerm && !description.includes(searchTerm)) {
+                            visible = false;
+                        }
+
+                        // Category filter
+                        if (categoryFilter && groupKey !== categoryFilter) {
+                            visible = false;
+                        }
+
+                        // Availability filter
+                        if (availabilityFilter && availability !== availabilityFilter) {
+                            visible = false;
+                        }
+
+                        // Safety filter
+                        if (safetyFilter && safetyType !== safetyFilter) {
+                            visible = false;
+                        }
+
+                        // Show/hide card
+                        if (visible) {
+                            card.classList.remove('hidden');
+                            groupVisibleCount++;
+                            visibleCount++;
+                        } else {
+                            card.classList.add('hidden');
+                        }
+                    });
+
+                    // Show/hide entire category section
+                    if (groupVisibleCount > 0) {
+                        groupElement.classList.remove('hidden');
+                    } else {
+                        groupElement.classList.add('hidden');
+                    }
+                });
+
+                this.updateSearchStats(visibleCount, totalCount);
+            }
+
+            updateSearchStats(visible = null, total = null) {
+                const statsElement = document.getElementById('searchStats');
+                
+                if (visible === null || total === null) {
+                    // Count current visible ingredients
+                    const allCards = document.querySelectorAll('.ingredient-card');
+                    const visibleCards = document.querySelectorAll('.ingredient-card:not(.hidden)');
+                    visible = visibleCards.length;
+                    total = allCards.length;
+                }
+
+                if (visible === total) {
+                    statsElement.textContent = `Showing all ${total} ingredients`;
+                } else {
+                    statsElement.textContent = `Showing ${visible} of ${total} ingredients`;
+                }
+            }
+
+            getRoleClass(role) {
+                const roleMap = {
+                    '💧': 'role-foundation',
+                    '⚡': 'role-energy', 
+                    '🧬': 'role-building',
+                    '💎': 'role-structure',
+                    '🛡️': 'role-protection'
+                };
+                return roleMap[role] || 'role-foundation';
+            }
+
+            navigateOverlay(direction) {
+                if (!this.currentIngredient) return;
+
+                const newIndex = this.currentIndex + direction;
+                if (newIndex >= 0 && newIndex < this.ingredientsList.length) {
+                    this.currentIndex = newIndex;
+                    const item = this.ingredientsList[this.currentIndex];
+                    this.showIngredientDetails(item.categoryKey, item.ingredientKey, false);
+                }
+            }
+
+            updateNavigationState() {
+                const prevBtn = document.getElementById('prevBtn');
+                const nextBtn = document.getElementById('nextBtn');
+                const counter = document.getElementById('navCounter');
+
+                prevBtn.disabled = this.currentIndex === 0;
+                nextBtn.disabled = this.currentIndex === this.ingredientsList.length - 1;
+                counter.textContent = `${this.currentIndex + 1} / ${this.ingredientsList.length}`;
+            }
+
+            showIngredientDetails(categoryKey, ingredientKey, updateIndex = true) {
+                const category = INGREDIENT_DATABASE[categoryKey];
+                const ingredient = category.ingredients[ingredientKey];
+                
+                if (!ingredient) return;
+
+                // Find and set current index if not navigating
+                if (updateIndex) {
+                    this.currentIndex = this.ingredientsList.findIndex(item => 
+                        item.categoryKey === categoryKey && item.ingredientKey === ingredientKey
+                    );
+                }
+
+                this.currentIngredient = { category: categoryKey, key: ingredientKey, data: ingredient };
+
+                // Update overlay content
+                document.getElementById('overlayIcon').style.background = category.color;
+                document.getElementById('overlayName').textContent = ingredient.name;
+                document.getElementById('overlaySource').textContent = ingredient.source;
+                document.getElementById('overlayDescription').textContent = ingredient.description;
+                document.getElementById('overlayDetailedInfo').textContent = ingredient.detailedInfo;
+
+                // Enhanced role display
+                const primaryRoleEl = document.getElementById('overlayPrimaryRole');
+                const secondaryRoleEl = document.getElementById('overlaySecondaryRole');
+                
+                primaryRoleEl.innerHTML = `
+                    <span class="role-display role-primary" style="background: ${category.color};">
+                        ${ingredient.nutritionalRole} ${ingredient.roleDescription || ''}
+                    </span>
+                `;
+
+                if (ingredient.secondaryRole && ingredient.secondaryDescription) {
+                    secondaryRoleEl.innerHTML = `
+                        <span class="role-display role-secondary">
+                            ${ingredient.secondaryRole} ${ingredient.secondaryDescription}
+                        </span>
+                    `;
+                } else {
+                    secondaryRoleEl.innerHTML = '';
+                }
+
+                // Enhanced preparation notes
+                const prepNotes = ingredient.preparationNotes;
+                document.getElementById('overlayPreparationNotes').innerHTML = prepNotes 
+                    ? `<p class="text-sm text-slate-300">${prepNotes}</p>` 
+                    : '<p class="text-sm italic text-slate-400">Standard sterilization process applies.</p>';
+
+                // Benefits
+                const benefitsContainer = document.getElementById('overlayBenefits');
+                benefitsContainer.innerHTML = ingredient.benefits.map(benefit => 
+                    `<div class="benefit-tag">${benefit}</div>`
+                ).join('');
+
+                // Safety warnings
+                const warningsSection = document.getElementById('safetyWarningsSection');
+                const warningsContainer = document.getElementById('overlayWarnings');
+                
+                if (ingredient.safetyWarnings && ingredient.safetyWarnings.length > 0) {
+                    warningsSection.style.display = 'block';
+                    warningsContainer.innerHTML = ingredient.safetyWarnings.map(warning => 
+                        `<li>${warning}</li>`
+                    ).join('');
+                } else {
+                    warningsSection.style.display = 'none';
+                }
+
+                // Nutritional table
+                const nutritionalContainer = document.getElementById('overlayNutritionalTable');
+                let nutritionalHtml = '';
+                
+                if (ingredient.nutritionalAnalysis?.per100ml) {
+                    const nutrition = ingredient.nutritionalAnalysis.per100ml;
+                    
+                    nutritionalHtml = `
+                        <table class="nutritional-table">
+                            <thead>
+                                <tr>
+                                    <th>Nutrient</th>
+                                    <th>Amount</th>
+                                    <th>Unit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Total Carbohydrates</td>
+                                    <td class="nutrient-value">${nutrition.totalCarbs || '0'}</td>
+                                    <td class="nutrient-unit">g/100ml</td>
+                                </tr>
+                                <tr>
+                                    <td>Sugars</td>
+                                    <td class="nutrient-value">${nutrition.sugars || '0'}</td>
+                                    <td class="nutrient-unit">g/100ml</td>
+                                </tr>
+                                <tr>
+                                    <td>Proteins</td>
+                                    <td class="nutrient-value">${nutrition.proteins || '0'}</td>
+                                    <td class="nutrient-unit">g/100ml</td>
+                                </tr>
+                                <tr>
+                                    <td>Total Nitrogen</td>
+                                    <td class="nutrient-value">${nutrition.totalNitrogen || '0'}</td>
+                                    <td class="nutrient-unit">mg/100ml</td>
+                                </tr>
+                                <tr>
+                                    <td>Calcium</td>
+                                    <td class="nutrient-value">${nutrition.calcium || '0'}</td>
+                                    <td class="nutrient-unit">mg/100ml</td>
+                                </tr>
+                                <tr>
+                                    <td>Potassium</td>
+                                    <td class="nutrient-value">${nutrition.minerals?.k || '0'}</td>
+                                    <td class="nutrient-unit">mg/100ml</td>
+                                </tr>
+                                <tr>
+                                    <td>pH Level</td>
+                                    <td class="nutrient-value">${nutrition.pH || 'N/A'}</td>
+                                    <td class="nutrient-unit">pH units</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    `;
+                } else if (ingredient.contributions) {
+                    // Fallback to contributions display if detailed nutrition not available
+                    nutritionalHtml = `
+                        <div class="space-y-3">
+                            <div class="text-sm text-slate-300">
+                                <strong>Nutrient Density:</strong> ${ingredient.contributions.nutritional}/10 • 
+                                <strong>Bioavailability:</strong> ${ingredient.contributions.bioavailable}/10
+                            </div>
+                            <div class="text-sm text-slate-300">
+                                <strong>Sustainability:</strong> ${ingredient.contributions.sustainable}/10 • 
+                                <strong>Safety Profile:</strong> ${ingredient.contributions.biosafety}/10
+                            </div>
+                            <p class="text-xs text-slate-400 italic">Detailed nutritional analysis being compiled for this ingredient.</p>
+                        </div>
+                    `;
+                } else {
+                    nutritionalHtml = '<p class="text-sm text-slate-400 italic">Nutritional analysis data being compiled for this ingredient.</p>';
+                }
+                
+                nutritionalContainer.innerHTML = nutritionalHtml;
+
+                // Update navigation state
+                this.updateNavigationState();
+
+                // Show overlay
+                document.getElementById('ingredientOverlay').classList.add('visible');
+            }
+
+            closeOverlay() {
+                document.getElementById('ingredientOverlay').classList.remove('visible');
+                this.currentIngredient = null;
+                this.currentIndex = 0;
+            }
+
+            // Recipe Builder Methods
+            initializeRecipeBuilder() {
+                this.populateIngredientDropdowns();
+                this.setupRecipeEventListeners();
+                this.updateRecipeDisplay();
+            }
+
+            populateIngredientDropdowns() {
+                const waterSelect = document.getElementById('waterBase');
+                const energySelect = document.getElementById('energySource');
+                const proteinSelect = document.getElementById('proteinSource');
+                const structureSelect = document.getElementById('structureSource');
+
+                // Group ingredients by role
+                const categorizedIngredients = {
+                    water: [],
+                    energy: [],
+                    protein: [],
+                    structure: []
+                };
+
+                this.ingredientsList.forEach(item => {
+                    const role = item.ingredient.nutritionalRole;
+                    if (role === '💧') categorizedIngredients.water.push(item);
+                    else if (role === '⚡') categorizedIngredients.energy.push(item);
+                    else if (role === '🧬') categorizedIngredients.protein.push(item);
+                    else if (role === '💎') categorizedIngredients.structure.push(item);
+                });
+
+                // Populate dropdowns
+                categorizedIngredients.water.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = `${item.categoryKey}:${item.ingredientKey}`;
+                    option.textContent = item.ingredient.name;
+                    waterSelect.appendChild(option);
+                });
+
+                categorizedIngredients.energy.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = `${item.categoryKey}:${item.ingredientKey}`;
+                    option.textContent = item.ingredient.name;
+                    energySelect.appendChild(option);
+                });
+
+                categorizedIngredients.protein.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = `${item.categoryKey}:${item.ingredientKey}`;
+                    option.textContent = item.ingredient.name;
+                    proteinSelect.appendChild(option);
+                });
+
+                categorizedIngredients.structure.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = `${item.categoryKey}:${item.ingredientKey}`;
+                    option.textContent = item.ingredient.name;
+                    structureSelect.appendChild(option);
+                });
+            }
+
+            setupRecipeEventListeners() {
+                // Slider event listeners
+                const sliders = ['waterAmount', 'energyAmount', 'proteinAmount', 'structureAmount'];
+                sliders.forEach(sliderId => {
+                    const slider = document.getElementById(sliderId);
+                    slider.addEventListener('input', () => {
+                        this.updateSliderDisplay(sliderId);
+                        this.updateRecipeDisplay();
+                    });
+                });
+
+                // Dropdown event listeners
+                const selects = ['waterBase', 'energySource', 'proteinSource', 'structureSource'];
+                selects.forEach(selectId => {
+                    document.getElementById(selectId).addEventListener('change', () => {
+                        this.updateRecipeDisplay();
+                    });
+                });
+
+                // Action button event listeners
+                document.getElementById('saveRecipe').addEventListener('click', () => {
+                    this.copyRecipeToClipboard();
+                });
+
+                document.getElementById('clearRecipe').addEventListener('click', () => {
+                    this.clearRecipe();
+                });
+
+                document.getElementById('randomRecipe').addEventListener('click', () => {
+                    this.generateRandomRecipe();
+                });
+
+                // Initialize slider displays
+                sliders.forEach(sliderId => this.updateSliderDisplay(sliderId));
+            }
+
+            updateSliderDisplay(sliderId) {
+                const slider = document.getElementById(sliderId);
+                const displayId = sliderId.replace('Amount', 'Display');
+                const display = document.getElementById(displayId);
+                const value = parseFloat(slider.value);
+                const volume = Math.round(value * 5); // 500ml * percentage / 100
+
+                display.textContent = `${value}% (${volume}ml)`;
+            }
+
+            updateRecipeDisplay() {
+                const waterBase = document.getElementById('waterBase').value;
+                const energySource = document.getElementById('energySource').value;
+                const proteinSource = document.getElementById('proteinSource').value;
+                const structureSource = document.getElementById('structureSource').value;
+
+                const waterAmount = parseFloat(document.getElementById('waterAmount').value);
+                const energyAmount = parseFloat(document.getElementById('energyAmount').value);
+                const proteinAmount = parseFloat(document.getElementById('proteinAmount').value);
+                const structureAmount = parseFloat(document.getElementById('structureAmount').value);
+
+                // Update ingredients list
+                const ingredientsList = document.getElementById('ingredientsList');
+                ingredientsList.innerHTML = '';
+
+                const recipe = [];
+                let totalScore = 0;
+                let ingredientCount = 0;
+
+                if (waterBase) {
+                    const ingredient = this.getIngredientByKey(waterBase);
+                    const volume = Math.round(waterAmount * 5);
+                    recipe.push(`${volume}ml ${ingredient.name} (${waterAmount}%)`);
+                    totalScore += ingredient.score;
+                    ingredientCount++;
+                }
+
+                if (energySource) {
+                    const ingredient = this.getIngredientByKey(energySource);
+                    const volume = Math.round(energyAmount * 5);
+                    recipe.push(`${volume}ml ${ingredient.name} (${energyAmount}%)`);
+                    totalScore += ingredient.score;
+                    ingredientCount++;
+                }
+
+                if (proteinSource) {
+                    const ingredient = this.getIngredientByKey(proteinSource);
+                    const volume = Math.round(proteinAmount * 5);
+                    recipe.push(`${volume}ml ${ingredient.name} (${proteinAmount}%)`);
+                    totalScore += ingredient.score;
+                    ingredientCount++;
+                }
+
+                if (structureSource) {
+                    const ingredient = this.getIngredientByKey(structureSource);
+                    const volume = Math.round(structureAmount * 5);
+                    recipe.push(`${volume}ml ${ingredient.name} (${structureAmount}%)`);
+                    totalScore += ingredient.score;
+                    ingredientCount++;
+                }
+
+                if (recipe.length === 0) {
+                    ingredientsList.innerHTML = '<li class="placeholder">Select ingredients to generate recipe...</li>';
+                } else {
+                    recipe.forEach(item => {
+                        const li = document.createElement('li');
+                        li.textContent = item;
+                        ingredientsList.appendChild(li);
+                    });
+                }
+
+                // Update recipe score and instructions
+                this.updateRecipeInstructions(recipe);
+                this.updateRecipeStats(totalScore, ingredientCount);
+            }
+
+            getIngredientByKey(key) {
+                const [categoryKey, ingredientKey] = key.split(':');
+                return INGREDIENT_DATABASE[categoryKey].ingredients[ingredientKey];
+            }
+
+            updateRecipeInstructions(recipe) {
+                const instructions = document.getElementById('recipeInstructions');
+                
+                if (recipe.length === 0) {
+                    instructions.innerHTML = `
+                        <h4>Preparation Instructions:</h4>
+                        <ol><li>Recipe will appear here once ingredients are selected...</li></ol>
+                    `;
+                    return;
+                }
+
+                instructions.innerHTML = `
+                    <h4>Preparation Instructions:</h4>
+                    <ol>
+                        <li><strong>Preparation Day:</strong> Prepare your energy and protein extracts as needed. Allow enzyme pre-treatment if using yeast-based components.</li>
+                        <li><strong>Sterilization:</strong> Sterilize all glassware and tools with flame or pressure cooking.</li>
+                        <li><strong>Base Preparation:</strong> Start with your water base and ensure proper temperature (room temp for live cultures, any temp for sterilized).</li>
+                        <li><strong>Component Addition:</strong> Add ingredients in order: energy source first, then protein source, finally mineral/vitamin components.</li>
+                        <li><strong>pH Testing:</strong> Test and adjust pH to 6.0-7.0 using small amounts of vinegar or baking soda if needed.</li>
+                        <li><strong>Final Sterilization:</strong> Pressure cook assembled mixture at 15 PSI for 30 minutes (unless using live cultures).</li>
+                        <li><strong>Inoculation:</strong> Cool to room temperature and inoculate with spores or liquid culture in sterile environment.</li>
+                    </ol>
+                `;
+            }
+
+            updateRecipeStats(totalScore, ingredientCount) {
+                const avgScore = ingredientCount > 0 ? (totalScore / ingredientCount).toFixed(1) : '--';
+                const sustainability = ingredientCount > 0 ? 'High' : '--';
+
+                document.getElementById('recipeScore').textContent = `Balance Score: ${avgScore}/10`;
+                document.getElementById('recipeCost').textContent = `Sustainability: ${sustainability}`;
+            }
+
+            generateRandomRecipe() {
+                // Get random ingredients from each category
+                const waterIngredients = this.ingredientsList.filter(item => item.ingredient.nutritionalRole === '💧');
+                const energyIngredients = this.ingredientsList.filter(item => item.ingredient.nutritionalRole === '⚡');
+                const proteinIngredients = this.ingredientsList.filter(item => item.ingredient.nutritionalRole === '🧬');
+                const structureIngredients = this.ingredientsList.filter(item => item.ingredient.nutritionalRole === '💎');
+
+                if (waterIngredients.length > 0) {
+                    const random = waterIngredients[Math.floor(Math.random() * waterIngredients.length)];
+                    document.getElementById('waterBase').value = `${random.categoryKey}:${random.ingredientKey}`;
+                }
+
+                if (energyIngredients.length > 0) {
+                    const random = energyIngredients[Math.floor(Math.random() * energyIngredients.length)];
+                    document.getElementById('energySource').value = `${random.categoryKey}:${random.ingredientKey}`;
+                }
+
+                if (proteinIngredients.length > 0) {
+                    const random = proteinIngredients[Math.floor(Math.random() * proteinIngredients.length)];
+                    document.getElementById('proteinSource').value = `${random.categoryKey}:${random.ingredientKey}`;
+                }
+
+                if (structureIngredients.length > 0) {
+                    const random = structureIngredients[Math.floor(Math.random() * structureIngredients.length)];
+                    document.getElementById('structureSource').value = `${random.categoryKey}:${random.ingredientKey}`;
+                }
+
+                // Set random but reasonable percentages
+                document.getElementById('waterAmount').value = 80 + Math.random() * 10; // 80-90%
+                document.getElementById('energyAmount').value = 5 + Math.random() * 10;  // 5-15%
+                document.getElementById('proteinAmount').value = 2 + Math.random() * 6;   // 2-8%
+                document.getElementById('structureAmount').value = 0.5 + Math.random() * 2; // 0.5-2.5%
+
+                // Update displays
+                ['waterAmount', 'energyAmount', 'proteinAmount', 'structureAmount'].forEach(id => {
+                    this.updateSliderDisplay(id);
+                });
+
+                this.updateRecipeDisplay();
+            }
+
+            clearRecipe() {
+                // Clear all selections
+                document.getElementById('waterBase').value = '';
+                document.getElementById('energySource').value = '';
+                document.getElementById('proteinSource').value = '';
+                document.getElementById('structureSource').value = '';
+
+                // Reset sliders to defaults
+                document.getElementById('waterAmount').value = 85;
+                document.getElementById('energyAmount').value = 10;
+                document.getElementById('proteinAmount').value = 3;
+                document.getElementById('structureAmount').value = 2;
+
+                // Update displays
+                ['waterAmount', 'energyAmount', 'proteinAmount', 'structureAmount'].forEach(id => {
+                    this.updateSliderDisplay(id);
+                });
+
+                this.updateRecipeDisplay();
+            }
+
+            async copyRecipeToClipboard() {
+                const ingredientsList = document.getElementById('ingredientsList');
+                const instructions = document.getElementById('recipeInstructions');
+                
+                let recipeText = "🧪 Custom Liquid Culture Recipe (500ml)\n\n";
+                recipeText += "INGREDIENTS:\n";
+                
+                const ingredients = ingredientsList.querySelectorAll('li:not(.placeholder)');
+                ingredients.forEach(li => {
+                    recipeText += `• ${li.textContent}\n`;
+                });
+
+                if (ingredients.length === 0) {
+                    recipeText += "No ingredients selected\n";
+                }
+
+                recipeText += "\nPREPARATION:\n";
+                const instructionItems = instructions.querySelectorAll('ol li');
+                instructionItems.forEach((li, index) => {
+                    recipeText += `${index + 1}. ${li.textContent}\n`;
+                });
+
+                recipeText += "\n🌱 Generated by Spark Hope Food Resiliency • hub.approvideo.org";
+
+                try {
+                    await navigator.clipboard.writeText(recipeText);
+                    const btn = document.getElementById('saveRecipe');
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '✅ Copied!';
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                    }, 2000);
+                } catch (err) {
+                    console.log('Clipboard not available, showing text instead');
+                    alert(recipeText);
+                }
+            }
+        }
+
+        // Global functions
+        function closeOverlay() {
+            if (window.app) {
+                window.app.closeOverlay();
+            }
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            window.app = new IngredientReferenceApp();
+        });
+    </script>
+</body>
+</html>
