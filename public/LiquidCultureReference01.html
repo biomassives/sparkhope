@@ -277,6 +277,50 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            flex: 1;
+        }
+
+        .overlay-navigation {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0 1rem;
+        }
+
+        .nav-btn {
+            background: #374151;
+            color: #d1d5db;
+            border: none;
+            border-radius: 0.375rem;
+            width: 36px;
+            height: 36px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: #4b5563;
+            color: #f9fafb;
+            transform: translateY(-1px);
+        }
+
+        .nav-btn:disabled {
+            background: #1f2937;
+            color: #6b7280;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .nav-counter {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            min-width: 60px;
+            text-align: center;
         }
 
         .overlay-icon {
@@ -490,7 +534,7 @@
     </div>
 
     <div class="status-bar">
-        hub.approvideo.org • Click any ingredient for detailed preparation and usage information
+        hub.approvideo.org • Click any ingredient for detailed information • Use ‹‹ ›› or arrow keys to navigate between ingredients
     </div>
 
     <!-- Ingredient Details Overlay -->
@@ -500,6 +544,11 @@
                 <div class="overlay-title">
                     <div id="overlayIcon" class="overlay-icon"></div>
                     <div id="overlayName" class="overlay-name"></div>
+                </div>
+                <div class="overlay-navigation">
+                    <button class="nav-btn" id="prevBtn" onclick="app.navigateOverlay(-1)" title="Previous ingredient">‹‹</button>
+                    <div class="nav-counter" id="navCounter">1 / 24</div>
+                    <button class="nav-btn" id="nextBtn" onclick="app.navigateOverlay(1)" title="Next ingredient">››</button>
                 </div>
                 <button class="close-btn" onclick="closeOverlay()">×</button>
             </div>
@@ -905,12 +954,31 @@
         class IngredientReferenceApp {
             constructor() {
                 this.currentIngredient = null;
+                this.ingredientsList = [];
+                this.currentIndex = 0;
                 this.init();
             }
 
             init() {
+                this.buildIngredientsList();
                 this.renderCategories();
                 this.setupEventListeners();
+            }
+
+            buildIngredientsList() {
+                this.ingredientsList = [];
+                Object.entries(INGREDIENT_DATABASE).forEach(([categoryKey, category]) => {
+                    Object.entries(category.ingredients).forEach(([ingredientKey, ingredient]) => {
+                        this.ingredientsList.push({
+                            categoryKey,
+                            ingredientKey,
+                            category,
+                            ingredient,
+                            displayName: ingredient.name,
+                            categoryName: category.title
+                        });
+                    });
+                });
             }
 
             setupEventListeners() {
@@ -918,6 +986,13 @@
                 document.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape') {
                         this.closeOverlay();
+                    }
+                    // Navigation with arrow keys
+                    if (e.key === 'ArrowLeft' && this.currentIngredient) {
+                        this.navigateOverlay(-1);
+                    }
+                    if (e.key === 'ArrowRight' && this.currentIngredient) {
+                        this.navigateOverlay(1);
                     }
                 });
 
@@ -927,6 +1002,27 @@
                         this.closeOverlay();
                     }
                 });
+            }
+
+            navigateOverlay(direction) {
+                if (!this.currentIngredient) return;
+
+                const newIndex = this.currentIndex + direction;
+                if (newIndex >= 0 && newIndex < this.ingredientsList.length) {
+                    this.currentIndex = newIndex;
+                    const item = this.ingredientsList[this.currentIndex];
+                    this.showIngredientDetails(item.categoryKey, item.ingredientKey, false);
+                }
+            }
+
+            updateNavigationState() {
+                const prevBtn = document.getElementById('prevBtn');
+                const nextBtn = document.getElementById('nextBtn');
+                const counter = document.getElementById('navCounter');
+
+                prevBtn.disabled = this.currentIndex === 0;
+                nextBtn.disabled = this.currentIndex === this.ingredientsList.length - 1;
+                counter.textContent = `${this.currentIndex + 1} / ${this.ingredientsList.length}`;
             }
 
             renderCategories() {
@@ -984,11 +1080,18 @@
                 return 'score-low';
             }
 
-            showIngredientDetails(categoryKey, ingredientKey) {
+            showIngredientDetails(categoryKey, ingredientKey, updateIndex = true) {
                 const category = INGREDIENT_DATABASE[categoryKey];
                 const ingredient = category.ingredients[ingredientKey];
                 
                 if (!ingredient) return;
+
+                // Find and set current index if not navigating
+                if (updateIndex) {
+                    this.currentIndex = this.ingredientsList.findIndex(item => 
+                        item.categoryKey === categoryKey && item.ingredientKey === ingredientKey
+                    );
+                }
 
                 this.currentIngredient = { category: categoryKey, key: ingredientKey, data: ingredient };
 
@@ -1037,6 +1140,9 @@
                 });
                 nutritionContainer.innerHTML = nutritionHtml;
 
+                // Update navigation state
+                this.updateNavigationState();
+
                 // Show overlay
                 document.getElementById('ingredientOverlay').classList.add('visible');
             }
@@ -1044,6 +1150,7 @@
             closeOverlay() {
                 document.getElementById('ingredientOverlay').classList.remove('visible');
                 this.currentIngredient = null;
+                this.currentIndex = 0;
             }
         }
 
