@@ -1,0 +1,152 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Myco Lab – Substrate Reference</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f0fdf4;
+      margin: 0;
+      color: #064e3b;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+    header {
+      text-align: center;
+      padding: 2rem 1rem 1rem;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      color: #047857;
+    }
+    header p {
+      margin: 0.25rem 0 1rem;
+      font-size: 1rem;
+      color: #065f46;
+    }
+
+    /* Tabs */
+    .tab-nav {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 0.5rem 1rem;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      font-weight: 600;
+      color: #065f46;
+      transition: background 0.2s ease;
+    }
+    .tab-btn.active {
+      background: #047857;
+      color: white;
+    }
+    .tab-btn:hover {
+      background: #a7f3d0;
+    }
+
+    /* Content */
+    .tab-content {
+      display: none;
+      margin-top: 2rem;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    h2 {
+      color: #047857;
+      margin-bottom: 0.5rem;
+    }
+    ul {
+      padding-left: 1.2rem;
+    }
+    ul li {
+      margin: 0.5rem 0;
+    }
+    a {
+      color: #047857;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🍄 Myco Lab Substrate Reference</h1>
+      <p>Selection, Preparation & Supporting Resources</p>
+
+      <!-- Tab Navigation -->
+      <div class="tab-nav">
+        <button class="tab-btn active" data-tab="ingredients">Ingredients</button>
+        <button class="tab-btn" data-tab="preparation">Preparation</button>
+        <button class="tab-btn" data-tab="references">References</button>
+      </div>
+    </header>
+
+    <!-- Tabbed Sections -->
+    <main>
+      <section id="ingredients" class="tab-content active">
+        <h2>Substrate Ingredients</h2>
+        <ul>
+          <li>🌾 <strong>Grains</strong> – Rye, millet, sorghum</li>
+          <li>🍂 <strong>Lignocellulosic</strong> – Sawdust, cardboard, straw, coffee grounds</li>
+          <li>🥚 <strong>Supplements</strong> – Gypsum, bran, eggshell powder</li>
+          <li>🐛 <strong>Alternative nitrogen sources</strong> – Legume soak water, insect meal</li>
+        </ul>
+      </section>
+
+      <section id="preparation" class="tab-content">
+        <h2>Preparation Steps</h2>
+        <ul>
+          <li>Soak grains for 12–24h (hydrate & reduce bacterial load)</li>
+          <li>Boil/simmer grains until 70–80% hydrated</li>
+          <li>Drain & surface-dry until no standing water remains</li>
+          <li>Mix with supplements (gypsum, bran, Ca sources)</li>
+          <li>Load into jars/bags & sterilize (pressure cooker/autoclave)</li>
+          <li>Cool before inoculation</li>
+        </ul>
+      </section>
+
+      <section id="references" class="tab-content">
+        <h2>Supporting References</h2>
+        <ul>
+          <li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3339609/">Oyster Mushrooms – Nutrition & Cultivation</a></li>
+          <li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5987239/">Hericium erinaceus – Neurotrophic Compounds</a></li>
+          <li><a href="https://extension.psu.edu/mushroom-substrate-supplements">Penn State – Substrate Supplements</a></li>
+          <li><a href="https://www.fao.org/3/y5489e/y5489e05.htm">FAO – Mushroom Substrate Prep & Composting</a></li>
+          <li><a href="https://attra.ncat.org/product/organic-mushroom-production/">ATTRA – Organic Mushroom Production</a></li>
+        </ul>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Tab switching
+    const tabs = document.querySelectorAll(".tab-btn");
+    const contents = document.querySelectorAll(".tab-content");
+
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        tabs.forEach(t => t.classList.remove("active"));
+        contents.forEach(c => c.classList.remove("active"));
+
+        tab.classList.add("active");
+        document.getElementById(tab.dataset.tab).classList.add("active");
+      });
+    });
+  </script>
+</body>
+</html>
+```
