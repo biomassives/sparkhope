@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circular Economy Liquid Culture Reference - hub.approvideo.org</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.125rem;
+            opacity: 0.9;
+        }
+
+        .rating-legend {
+            background: #1e293b;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #334155;
+        }
+
+        .legend-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #f8fafc;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: #0f172a;
+            border-radius: 0.5rem;
+            border: 1px solid #334155;
+        }
+
+        .score-indicator {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: white;
+        }
+
+        .score-excellent { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .score-high { background: linear-gradient(135deg, #059669, #10b981); }
+        .score-medium { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .score-low { background: linear-gradient(135deg, #6b7280, #9ca3af); }
+
+        /* Search and Filter Controls */
+        .search-controls {
+            background: #1e293b;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #334155;
+        }
+
+        .search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #334155;
+        }
+
+        .search-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #10b981;
+            margin: 0;
+        }
+
+        .search-stats {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        .search-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .search-input-group {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 2.5rem 0.75rem 1rem;
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 0.5rem;
+            color: #f8fafc;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+        }
+
+        .search-input::placeholder {
+            color: #64748b;
+        }
+
+        .clear-btn {
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #475569;
+            color: #f8fafc;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .clear-btn:hover {
+            background: #6b7280;
+        }
+
+        .clear-btn.visible {
+            display: flex;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .filter-select {
+            padding: 0.75rem;
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 0.5rem;
+            color: #f8fafc;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+        }
+
+        .filter-select option {
+            background: #0f172a;
+            color: #f8fafc;
+        }
+
+        .effectiveness-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .effectiveness-section {
+            background: #1e293b;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            border: 1px solid #334155;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .effectiveness-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #334155;
+        }
+
+        .effectiveness-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .effectiveness-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+
+        .effectiveness-description {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-left: 1.5rem;
+        }
+
+        .highly-effective .effectiveness-indicator { background: #dc2626; }
+        .very-effective .effectiveness-indicator { background: #059669; }
+        .effective .effectiveness-indicator { background: #d97706; }
+        .functional .effectiveness-indicator { background: #6b7280; }
+
+        .ingredients-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .ingredient-card {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .ingredient-card:hover {
+            border-color: #10b981;
+            transform: translateX(4px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .ingredient-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .ingredient-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #f8fafc;
+        }
+
+        .ingredient-source {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+        }
+
+        .ingredient-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+
+        .tag {
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+            font-size: 0.625rem;
+            font-weight: 600;
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .role-tag {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            margin-right: 0.25rem;
+        }
+
+        .role-foundation { 
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .role-energy { 
+            background: rgba(251, 146, 60, 0.15);
+            color: #fb923c;
+            border-color: rgba(251, 146, 60, 0.3);
+        }
+
+        .role-building { 
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .role-structure { 
+            background: rgba(147, 51, 234, 0.15);
+            color: #9333ea;
+            border-color: rgba(147, 51, 234, 0.3);
+        }
+
+        .role-protection { 
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .secondary-role {
+            opacity: 0.8;
+            font-size: 0.625rem;
+            margin-left: 0.25rem;
+        }
+
+        .safety-warning {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .water { --category-color: #3b82f6; }
+        .carbon { --category-color: #d97706; }
+        .nitrogen { --category-color: #16a34a; }
+        .minerals { --category-color: #a16207; }
+        .vitamins { --category-color: #a855f7; }
+        .specialty { --category-color: #f97316; }
+
+        .water .category-icon { background: #3b82f6; }
+        .carbon .category-icon { background: #d97706; }
+        .nitrogen .category-icon { background: #16a34a; }
+        .minerals .category-icon { background: #a16207; }
+        .vitamins .category-icon { background: #a855f7; }
+        .specialty .category-icon { background: #f97316; }
+
+        .water .ingredient-card { border-left-color: #3b82f6; }
+        .carbon .ingredient-card { border-left-color: #d97706; }
+        .nitrogen .ingredient-card { border-left-color: #16a34a; }
+        .minerals .ingredient-card { border-left-color: #a16207; }
+        .vitamins .ingredient-card { border-left-color: #a855f7; }
+        .specialty .ingredient-card { border-left-color: #f97316; }
+
+        .ingredient-nutrients {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nutrient-summary {
+            font-size: 0.75rem;
+            color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        /* Hidden state for filtered items */
+        .ingredient-card.hidden {
+            display: none;
+        }
+
+        .effectiveness-section.hidden {
+            display: none;
+        }
+
+        .effectiveness-section.partial .ingredients-list {
+            opacity: 1;
+        }
+
+        /* Recipe Builder Styles */
+        .recipe-builder {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid #475569;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .recipe-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #475569;
+        }
+
+        .recipe-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #10b981;
+            margin: 0;
+        }
+
+        .recipe-stats {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .stat-item {
+            font-size: 0.875rem;
+            color: #cbd5e1;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .recipe-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #f8fafc;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .component-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .component-section {
+            background: #0f172a;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            border: 1px solid #334155;
+        }
+
+        .component-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 0.75rem;
+        }
+
+        .component-select {
+            width: 100%;
+            padding: 0.75rem;
+            background: #1e293b;
+            border: 1px solid #475569;
+            border-radius: 0.375rem;
+            color: #f8fafc;
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+        }
+
+        .component-select:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+        }
+
+        .amount-slider {
+            width: 100%;
+            height: 6px;
+            background: #334155;
+            border-radius: 3px;
+            outline: none;
+            margin-bottom: 0.5rem;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .amount-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #10b981;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .amount-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: #10b981;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .amount-display {
+            font-size: 0.75rem;
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .recipe-card {
+            background: #0f172a;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            border: 1px solid #334155;
+            margin-bottom: 1rem;
+        }
+
+        .recipe-card h4 {
+            color: #10b981;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .recipe-ingredients ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1.5rem 0;
+        }
+
+        .recipe-ingredients li {
+            color: #cbd5e1;
+            font-size: 0.875rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #334155;
+        }
+
+        .recipe-ingredients li:last-child {
+            border-bottom: none;
+        }
+
+        .recipe-ingredients .placeholder {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .recipe-instructions ol {
+            color: #cbd5e1;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            margin: 0 0 1.5rem 0;
+            padding-left: 1.25rem;
+        }
+
+        .recipe-instructions li {
+            margin-bottom: 0.5rem;
+        }
+
+        .recipe-analysis {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 0.375rem;
+            padding: 1rem;
+        }
+
+        .analysis-placeholder {
+            color: #64748b;
+            font-style: italic;
+            font-size: 0.875rem;
+            margin: 0;
+        }
+
+        .recipe-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .action-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-1px);
+        }
+
+        .action-btn.secondary {
+            background: #374151;
+            color: #d1d5db;
+            border: 1px solid #4b5563;
+        }
+
+        .action-btn.secondary:hover {
+            background: #4b5563;
+            color: #f9fafb;
+        }
+
+        /* Ingredient Details Overlay */
+        .ingredient-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 2rem;
+        }
+
+        .ingredient-overlay.visible {
+            display: flex;
+        }
+
+        .overlay-content {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 700px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 1px solid #475569;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .overlay-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #475569;
+        }
+
+        .overlay-title {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+            flex: 1;
+        }
+
+        .overlay-roles {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .role-display {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-white;
+        }
+
+        .role-primary {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .role-secondary {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            font-size: 0.625rem;
+            opacity: 0.9;
+        }
+
+        .overlay-navigation {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0 1rem;
+        }
+
+        .nav-btn {
+            background: #374151;
+            color: #d1d5db;
+            border: none;
+            border-radius: 0.375rem;
+            width: 36px;
+            height: 36px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: #4b5563;
+            color: #f9fafb;
+            transform: translateY(-1px);
+        }
+
+        .nav-btn:disabled {
+            background: #1f2937;
+            color: #6b7280;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .nav-counter {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .overlay-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+
+        .overlay-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+
+        .close-btn {
+            background: #475569;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-size: 1.125rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #6b7280;
+        }
+
+        .overlay-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .overlay-section h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #10b981;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .overlay-section p {
+            font-size: 0.875rem;
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-bottom: 0.75rem;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .benefit-tag {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .safety-warnings {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .safety-warnings h4 {
+            color: #ef4444;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .safety-warnings ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .safety-warnings li {
+            font-size: 0.75rem;
+            color: #fecaca;
+            margin-bottom: 0.25rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .safety-warnings li:before {
+            content: "⚠";
+            position: absolute;
+            left: 0;
+            color: #ef4444;
+        }
+
+        .nutritional-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .nutritional-table th,
+        .nutritional-table td {
+            padding: 0.5rem;
+            text-align: left;
+            border-bottom: 1px solid #475569;
+        }
+
+        .nutritional-table th {
+            background: #374151;
+            color: #f9fafb;
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .nutritional-table td {
+            color: #cbd5e1;
+        }
+
+        .nutritional-table .nutrient-value {
+            font-weight: 600;
+            color: #10b981;
+        }
+
+        .nutritional-table .nutrient-unit {
+            color: #9ca3af;
+            font-size: 0.75rem;
+        }
+
+        .status-bar {
+            background: #1f2937;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            border-top: 1px solid #374151;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .legend-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .overlay-content {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            .search-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            
+            .search-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .recipe-content {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .recipe-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .recipe-stats {
+                flex-direction: column;
+                gap: 0.5rem;
+                width: 100%;
+            }
+
+            .recipe-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🌱 Spark Hope Food Resiliency</h1>
+            <p>Liquid Culture Nutrient Database • Kitchen Waste Stream to Food Production</p>
+        </header>
+
+        <div class="rating-legend">
+            <h2 class="legend-title">Recipe Wizard Categories</h2>
+            <div class="legend-grid">
+                <div class="legend-item">
+                    <div class="score-indicator" style="background: #3b82f6;">💧</div>
+                    <div>
+                        <div style="font-weight: 600; color: #f8fafc;">Water Base</div>
+                        <div style="font-size: 0.75rem; color: #94a3b8;">Sterile foundation • pH control • Carrier medium</div>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="score-indicator" style="background: #fb923c;">⚡</div>
+                    <div>
+                        <div style="font-weight: 600; color: #f8fafc;">Energy Source</div>
+                        <div style="font-size: 0.75rem; color: #94a3b8;">Carbohydrates • Sugars • Growth fuel</div>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="score-indicator" style="background: #22c55e;">🧬</div>
+                    <div>
+                        <div style="font-weight: 600; color: #f8fafc;">Protein Builder</div>
+                        <div style="font-size: 0.75rem; color: #94a3b8;">Amino acids • Nitrogen • Structure</div>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <div class="score-indicator" style="background: #9333ea;">💎</div>
+                    <div>
+                        <div style="font-weight: 600; color: #f8fafc;">Structure & Vitamins</div>
+                        <div style="font-size: 0.75rem; color: #94a3b8;">Minerals • Growth factors • Cell walls</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+<h1 id="-reference-page">🌱 Reference Page</h1>
+<p>Supporting Resources for <em>Spark Hope Food Resiliency – Liquid Culture Nutrient Database</em></p>
+<p>This reference list provides scientific, ethnobotanical, and agricultural sources supporting the nutrient categories, fungal species, herbal techniques, and regenerative practices in the Spark Hope Food Resiliency document.</p>
+<hr>
+<h2 id="-key-mushroom-species">🍄 Key Mushroom Species</h2>
+<ul>
+<li><p><strong>Pleurotus ostreatus (Oyster Mushroom)</strong>
+<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3339609/">NCBI – Nutritional &amp; Medicinal Properties of Oyster Mushrooms</a>
+<a href="https://link.springer.com/article/10.1007/s13205-019-1872-5">Springer – Biodegradation of Agricultural Waste by P. ostreatus</a></p>
+</li>
+<li><p><strong>Pleurotus pulmonarius (Phoenix Oyster)</strong>
+<a href="https://pubs.acs.org/doi/10.1021/jf060646x">Journal of Agricultural &amp; Food Chemistry – Antioxidant &amp; Antibacterial Activities</a>
+<a href="https://www.fao.org/3/i3253e/i3253e.pdf">FAO – Pleurotus spp. in Sustainable Food Systems</a></p>
+</li>
+<li><p><strong>Hericium erinaceus (Lion’s Mane)</strong>
+<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5987239/">NCBI – Neurotrophic Compounds in Hericium</a>
+<a href="https://www.sciencedirect.com/science/article/abs/pii/S0378874110003216">Journal of Ethnopharmacology – Hericium and Cognitive Health</a></p>
+</li>
+<li><p><strong>Inonotus obliquus (Chaga Mushroom)</strong>
+<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3659611/">NCBI – Antioxidant &amp; Anti-Cancer Potential</a>
+<a href="https://www.researchgate.net/publication/301346265">Journal of Medicinal Mushrooms – Chaga Traditional Uses</a></p>
+</li>
+<li><p><strong>Ganoderma lucidum (Reishi/Lingzhi)</strong>
+<a href="https://www.frontiersin.org/articles/10.3389/fphar.2018.01231/full">Frontiers in Pharmacology – Ganoderma Polysaccharides &amp; Immunity</a>
+<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6518865/">NCBI – Reishi in Traditional and Modern Medicine</a></p>
+</li>
+<li><p><strong>Psilocybe spp. (Medicinal &amp; Psychedelic Research)</strong>
+<a href="https://journals.sagepub.com/doi/10.1177/0269881116675513">Journal of Psychopharmacology – Clinical Potential of Psilocybin</a>
+<a href="https://www.nature.com/articles/s41591-020-01299-9">Nature Medicine – Psilocybin for Depression</a></p>
+</li>
+</ul>
+<hr>
+<h2 id="-applications-tinctures-teas-creams">🌿 Applications: Tinctures, Teas, Creams</h2>
+<ul>
+<li><p><strong>Dual-Extraction Methods (Alcohol + Hot Water)</strong>
+<a href="https://theherbalacademy.com/mushroom-extraction/">Herbal Academy – Mushroom Tinctures Explained</a></p>
+</li>
+<li><p><strong>Mushroom-Infused Skin Creams</strong>
+<a href="https://www.cosmeticsandtoiletries.com/research/active-ingredients/Mushrooms-in-Skin-Care-556117.html">Cosmetics &amp; Toiletries – Medicinal Mushrooms in Skincare</a></p>
+</li>
+<li><p><strong>Tea Infusions &amp; Decoctions</strong>
+<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4241978/">NCBI – Polysaccharide Extraction by Hot Water</a></p>
+</li>
+</ul>
+<hr>
+<h2 id="-herbalism-techniques">🌱 Herbalism Techniques</h2>
+<ul>
+<li><p><strong>Herbalism in Practice</strong>
+<a href="https://www.americanherbalistsguild.com/">American Herbalists Guild – Clinical Herbalism Standards</a></p>
+</li>
+<li><p><strong>Traditional Plant-Mushroom Blends</strong>
+<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6705630/">NCBI – Herbal Synergies in Ethnomedicine</a></p>
+</li>
+</ul>
+<hr>
+<h2 id="-organic-biodynamic-farming">🌍 Organic &amp; Biodynamic Farming</h2>
+<ul>
+<li><p><strong>Organic Mushroom Production</strong>
+<a href="https://attra.ncat.org/product/organic-mushroom-production/">ATTRA – Organic Mushroom Production Guide</a></p>
+</li>
+<li><p><strong>Biodynamic Farming Principles</strong>
+<a href="https://www.demeter.net/">Demeter International – Biodynamic Agriculture Standards</a>
+<a href="https://www.rsarchive.org/Lectures/GA327/English/RSP1993/Ag1938_index.html">Rudolf Steiner Archive – Agriculture Course</a></p>
+</li>
+<li><p><strong>Soil Health &amp; Composting</strong>
+<a href="https://www.fao.org/organicag/oa-home/en/">FAO – Composting &amp; Organic Soil Amendments</a></p>
+</li>
+</ul>
+<hr>
+<h2 id="-preparation-sterilization">🔬 Preparation &amp; Sterilization</h2>
+<ul>
+<li><strong>Pressure Cooking &amp; Sterility</strong>
+<a href="https://www.cdc.gov/infectioncontrol/guidelines/disinfection/sterilization/index.html">CDC – Sterilization Guidelines</a>
+<a href="https://www.researchgate.net/publication/338132495">ResearchGate – Sterilization in Mushroom Cultivation</a></li>
+</ul>
+<hr>
+<h2 id="-sustainability-circular-economy">🌎 Sustainability &amp; Circular Economy</h2>
+<ul>
+<li><p><strong>Food Waste Fermentation Substrates</strong>
+<a href="https://www.sciencedirect.com/science/article/pii/S0956713519305836">ScienceDirect – Food Waste to Bioactive Compounds</a></p>
+</li>
+<li><p><strong>Circular Bioeconomy &amp; Fungal Materials</strong>
+<a href="https://ec.europa.eu/research-and-innovation/en/research-area/bioeconomy/circular-bioeconomy">European Commission – Circular Bioeconomy</a></p>
+</li>
+</ul>
+<hr>
+<h3 id="notes">Notes</h3>
+<ul>
+<li>Medicinal and psychoactive mushroom references are included for academic and ethnobotanical study only.</li>
+<li>All preparations should follow safe handling, extraction, and dosage guidelines.</li>
+<li>Biodynamic references provide context for regenerative, holistic agricultural models that integrate fungal cultivation.</li>
+</ul>
