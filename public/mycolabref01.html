@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mushroom Cultivation Guide</title>
+  <style>
+    /* Base Styles */
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f0fdf4;
+      margin: 0;
+      color: #064e3b;
+    }
+    .container {
+      max-width: 1400px; /* Max width retained for the grid */
+      margin: 0 auto;
+      padding: 1rem;
+    }
+    header {
+      text-align: center;
+      padding: 2rem 1rem 1rem;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      color: #047857;
+    }
+    header p {
+      margin: 0.25rem 0 1rem;
+      font-size: 1rem;
+      color: #065f46;
+    }
+
+    /* Tab Navigation Styles */
+    .tab-nav {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 0.5rem 0.75rem;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      font-weight: 600;
+      color: #065f46;
+      transition: background 0.2s ease;
+      font-size: 0.85rem;
+    }
+    .tab-btn.active {
+      background: #047857;
+      color: white;
+    }
+    .tab-btn:hover {
+      background: #a7f3d0;
+    }
+
+    /* Tab Content Styles */
+    .tab-content {
+      display: none;
+      margin-top: 2rem;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    h2 {
+      color: #047857;
+      margin-bottom: 0.5rem;
+    }
+    h3 {
+        color: #047857;
+        margin-top: 1.5rem;
+        border-bottom: 1px solid #a7f3d0;
+        padding-bottom: 0.25rem;
+    }
+    ul {
+      padding-left: 1.2rem;
+    }
+    ul li {
+      margin: 0.5rem 0;
+    }
+    a {
+      color: #047857;
+      text-decoration: underline;
+    }
+    /* Link styling for Reference expansion */
+    .reference-list li {
+        margin-bottom: 0.75rem;
+    }
+
+    /* Agar Specific Styling */
+    .agar-point {
+        margin: 1rem 0;
+        padding: 0.75rem;
+        border-left: 4px solid #047857;
+        background-color: #ecfdf5;
+    }
+
+    /* Table Styling */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    .data-table th, .data-table td {
+      border: 1px solid #d1fae5;
+      padding: 0.75rem;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+    .data-table th {
+      background-color: #d1fae5;
+      color: #064e3b;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .data-table tr:nth-child(even) {
+      background-color: #f7fee7;
+    }
+    .lc-table td:nth-child(3) {
+        font-style: italic;
+        color: #059669;
+    }
+
+    /* --- TIMELINE/GRID STYLES --- */
+    .text-center { text-align: center; }
+    .text-sm { font-size: 12px; }
+    .text-gray-600 { color: #4b5563; }
+    .font-bold { font-weight: bold; }
+    .mb-2 { margin-bottom: 0.5rem; }
+    .mb-6 { margin-bottom: 1.5rem; }
+
+    /* Timeline Colors */
+    .bg-blue-500 { background-color: #3b82f6; }
+    .bg-orange-500 { background-color: #f97316; }
+    .bg-green-500 { background-color: #22c55e; }
+    .bg-purple-500 { background-color: #a855f7; }
+    .bg-red-500 { background-color: #ef4444; }
+    .bg-yellow-400 { background-color: #facc15; }
+    .text-white { color: white; }
+    .text-red-600 { color: #dc2626; }
+    .text-blue-800 { color: #1e40af; }
+
+    /* Custom Grid Styles - FIXED to show all columns */
+    .planning-grid {
+        display: grid;
+        grid-template-columns: 200px repeat(4, 1fr);
+        gap: 1px;
+        background: #e5e7eb;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .grid-header {
+        background: #374151;
+        color: white;
+        padding: 12px;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .grid-row-header {
+        background: #f9fafb;
+        padding: 12px;
+        font-weight: 600;
+        border-right: 1px solid #e5e7eb;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .grid-cell {
+        background: white;
+        padding: 8px;
+        min-height: 120px;
+        position: relative;
+        /* Ensure all cells are visible */
+        display: block !important; 
+    }
+
+    .ingredient-chip {
+        display: inline-block;
+        padding: 2px 6px;
+        border-radius: 10px;
+        font-size: 10px;
+        margin: 1px;
+        color: white;
+        font-weight: 500;
+    }
+
+    .time-badge {
+        background: #6b7280;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 8px;
+        font-size: 10px;
+        font-weight: 500;
+    }
+
+    .jump-indicator {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        background: #facc15;
+        color: #92400e;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .complexity-indicator {
+        position: absolute;
+        bottom: 4px;
+        left: 4px;
+        padding: 2px 4px;
+        border-radius: 4px;
+        font-size: 9px;
+        font-weight: 600;
+    }
+
+    .complexity-low { background: #dcfce7; color: #166534; }
+    .complexity-medium { background: #fed7aa; color: #9a3412; }
+    .complexity-high { background: #fecaca; color: #991b1b; }
+
+    .legend-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Adjusted width */
+        gap: 12px;
+        margin-bottom: 20px;
+        padding: 16px;
+        background: #f9fafb;
+        border-radius: 8px;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .legend-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+    }
+
+    .flex { display: flex; }
+    .items-center { align-items: center; }
+    .justify-center { justify-content: center; }
+    .justify-between { justify-content: space-between; }
+    .space-y-1 > * + * { margin-top: 0.25rem; }
+  </style>
+</head>
+<body class="bg-gray-100">
+  <div class="container">
+    <header>
+      <h1>🍄 Mushroom Cultivation Guide</h1>
+      <p>Preparation Methods, Substrates, and Species Reference</p>
+      <div class="tab-nav">
+        <button class="tab-btn" data-tab="agar-prep">Agar Prep</button>
+        <button class="tab-btn active" data-tab="liquid-culture">L.C. Prep</button>
+        <button class="tab-btn" data-tab="liquid-culture-ingredients">L.C. Ingredients</button>
+        <button class="tab-btn" data-tab="substrate-prep">Substrate Prep</button>
+        <button class="tab-btn" data-tab="substrate-ingredients">Substrate Ingredients</button>
+        <button class="tab-btn" data-tab="species">Spp. Reference</button>
+        <button class="tab-btn" data-tab="references">References</button>
+      </div>
+    </header>
+
+    <main>
+      <section id="liquid-culture" class="tab-content active">
+        <div class="text-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Liquid Culture Batch Planning Grid 🧪</h2>
+            <p class="text-gray-600">Compare preparation strategies and timing requirements at a glance across all tracks.</p>
+        </div>
+        
+        <div class="legend-grid">
+            <div class="legend-item">
+                <div class="legend-dot bg-blue-500"></div>
+                <span class="text-sm">Water Base</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot bg-orange-500"></div>
+                <span class="text-sm">Carbon/Energy</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot bg-green-500"></div>
+                <span class="text-sm">Nitrogen/Building</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot bg-purple-500"></div>
+                <span class="text-sm">Minerals/Structure</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot bg-red-500"></div>
+                <span class="text-sm">Specialty/Advanced</span>
+            </div>
+            <div class="legend-item">
+                <span class="text-sm font-semibold jump-indicator" style="position: static; margin-right: 4px; background: #facc15; color: #92400e;">⚡</span>
+                <span class="text-sm">Jump-in Point (Alternative Start)</span>
+            </div>
+        </div>
+
+        <div class="planning-grid" id="planning-grid">
+            <div class="grid-header">Time Phase</div>
+            <div class="grid-header">Minimal Track<br><span class="text-sm font-normal">(2 hour prep)</span></div>
+            <div class="grid-header">Standard Track<br><span class="text-sm font-normal">(12 hour prep)</span></div>
+            <div class="grid-header">Advanced Track<br><span class="text-sm font-normal">(48 hour prep)</span></div>
+            <div class="grid-header">Premium Track<br><span class="text-sm font-normal">(72 hour prep)</span></div>
+        </div>
+        
+        <h3 style="margin-top: 3rem;">Preparation Procedure Summary</h3>
+        <ul>
+          <li><strong>Procedure:</strong> The general procedure involves mixing the selected medium (refer to the grid above), sterilizing in a pressure cooker ($15$ PSI for $20-30$ min), cooling to room temperature, and inoculating with spores or agar culture in a sterile environment.</li>
+          <li><strong>Goal:</strong> Create a high-quality liquid suspension of live, actively growing mycelium for rapid spawning.</li>
+        </ul>
+      </section>
+
+	<section id="liquid-culture-ingredients" class="tab-content active">
+        <div class="text-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Liquid Culture Nutrient Capacities and Handling 🧪</h2>
+
+
+<h1>Liquid‑Culture Nutrient Sources – Categorised</h1>
+
+<hr>
+
+<h2>1️⃣ Sugar / Carbon Sources</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Nutrient Source</th>
+            <th>Ideal Concentration (per 1 L H₂O)</th>
+            <th>Mycelial Capacity &amp; Growth Rate</th>
+            <th>Special Handling / Prep Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Light Malt Extract (LME)</strong></td>
+            <td>20 g – 40 g /L</td>
+            <td><strong>High Capacity.</strong> Rapid growth for aggressive species (oysters, reishi).</td>
+            <td>Dissolves easily; can cloud the solution, making contamination harder to spot.</td>
+        </tr>
+        <tr>
+            <td><strong>Dextrose / Glucose</strong></td>
+            <td>10 g – 30 g /L</td>
+            <td><strong>Medium Capacity.</strong> Simple, fast‑available sugar for initial colonisation.</td>
+            <td><strong>Best for transparent LC.</strong> Solution stays clear; sterilise at 15 psi.</td>
+        </tr>
+        <tr>
+            <td><strong>Honey</strong></td>
+            <td>10 ml – 20 ml /L</td>
+            <td><strong>Medium‑High Capacity.</strong> Complex sugars + micronutrients.</td>
+            <td>Use raw/unpasteurised for best results; foams heavily during sterilisation.</td>
+        <td></td>
+        </tr>
+        <tr>
+            <td><strong>Corn Syrup (Dextrose equiv.)</strong></td>
+            <td>10 ml – 25 ml /L</td>
+            <td><strong>Medium Capacity.</strong> Cheap sugar source, less protein than LME.</td>
+            <td>Avoid dark syrups high in molasses; species response can vary.</td>
+        </tr>
+        <tr>
+            <td><strong>Rice Cooking Water</strong></td>
+            <td>9 / 10 rating – use full‑strength cooking water</td>
+            <td>Low‑Medium Capacity (starch/sugars).</td>
+            <td>Use immediately after boiling; no salt.</td>
+        </tr>
+        <tr>
+            <td><strong>Pasta Cooking Water</strong></td>
+            <td>9 / 10 rating – full‑strength</td>
+            <td>Low‑Medium Capacity (starch/sugars).</td>
+            <td>Same as rice water; keep it clear.</td>
+        </tr>
+        <tr>
+            <td><strong>Fruit Scraps Extract</strong></td>
+            <td>10 / 10 rating – full‑strength fruit‑water extract</td>
+            <td>High Capacity (simple sugars, vitamins).</td>
+            <td>Blend & strain; use fresh to avoid fermentation.</td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2>2️⃣ Nitrogen / Protein Sources</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Nutrient Source</th>
+            <th>Ideal Concentration (per 1 L H₂O)</th>
+            <th>Mycelial Capacity &amp; Growth Rate</th>
+            <th>Special Handling / Prep Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Fish Emulsion</strong></td>
+            <td>5 ml – 15 ml /L (diluted)</td>
+            <td><strong>Very High Capacity.</strong> Strong N & amino‑acid spike.</td>
+            <td>Intense odor; sterilise; may lower pH – check balance.</td>
+        </tr>
+        <tr>
+            <strong>Lentil / Fava Bean Water</strong></td>
+            <td>100 ml – 200 ml /L (clean soak)</td>
+            <td><strong>Medium Capacity.</strong> Plant protein & oligosaccharides.</td>
+            <td>Strain thoroughly; foams during sterilisation.</td>
+        </tr>
+        <tr>
+            <td><strong>Bone Broth</strong></td>
+            <td>50 ml – 100 ml /L (skimmed)</td>
+            <td><strong>Medium‑High Capacity.</strong> Collagen, Ca/P, amino acids.</td>
+            <td>Skim all fat; sterilise well.</td>
+        </tr>
+        <tr>
+            <td><strong>General Legume Water</strong></td>
+            <td>9 / 10 rating – soak beans/chickpeas</td>
+            <td>Medium‑High Capacity (protein).</td>
+            <td>Same filtration/foaming concerns as lentils.</td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2>3️⃣ Mineral / Buffer Sources</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Nutrient Source</th>
+            <th>Ideal Concentration (per 1 L H₂O)</th>
+            <th>Mycelial Capacity &amp; Growth Rate</th>
+            <th>Special Handling / Prep Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Eggshell Powder</strong></td>
+            <td>1 g – 3 g /L</td>
+            <td>Structural Capacity (Calcium).</td>
+            <td>Raises pH; pair with acidic extracts for 5.5‑7.0 final pH.</td>
+        </tr>
+        <tr>
+            <td><strong>Vegetable Scrap Broth</strong></td>
+            <td>10 / 10 rating – full‑strength simmer</td>
+            <td>Mineral Capacity (trace elements).</td>
+            <td>Strain; no added salt.</td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2>4️⃣ Vitamin / Growth‑Factor Sources</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Nutrient Source</th>
+            <th>Ideal Concentration (per 1 L H₂O)</th>
+            <th>Mycelial Capacity &amp; Growth Rate</th>
+            <th>Special Handling / Prep Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Sprouting Cycle Water</strong></td>
+            <td>150 ml – 300 ml /L (direct soak)</td>
+            <td>Medium Capacity (B‑vitamins, enzymes).</td>
+            <td>Use water from final long soak; enzymes reduce need for T‑0 heat.</td>
+        </tr>
+        <tr>
+            <td><strong>Fermented Rice Water</strong></td>
+            <td>50 ml – 150 ml /L (filter‑clean)</td>
+            <td>Medium Capacity (sugars & B‑vitamins).</td>
+            <td>Monitor pH; limit fermentation to ~24 h.</td>
+        </tr>
+        <tr>
+            <td><strong>Yeast Conversion Extract</strong></td>
+            <td>5 g – 10 g /L (yeast powder)</td>
+            <td>Medium Capacity (B‑vitamins, glutamine).</td>
+            <td>Use inactive brewer’s yeast or active yeast for short sugar conversion.</td>
+        </tr>
+        <tr>
+            <td><strong>Aerated Compost Tea (ACT)</strong></td>
+            <td>100 ml – 200 ml /L (highly filtered)</td>
+            <td>Low‑Medium Capacity (minerals, humic/fulvic acids).</td>
+            <td>Sub‑micron filtration required before T‑0 sterilisation.</td>
+        </tr>
+                <tr>
+            <td><strong>Coffee Extract</strong></td>
+            <td>50 ml – 100 ml /L (weak brew)</td>
+            <td>Low Capacity (trace N, caffeine/polyphenols).</td>
+            <td>Acidic – buffer with 1 g egg‑shell powder or calcium carbonate.</td>
+        </tr>
+        <tr>
+            <td><strong>Tea Extract</strong></td>
+            <td>50 ml – 100 ml /L (weak brew)</td>
+            <td>Low Capacity (defence‑stimulating polyphenols).</td>
+            <td>Avoid heavily tannic teas; use unsweetened, unflavoured brew.</td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2>5️⃣ Base Water Types (Foundation for All LC)</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Water Source</th>
+            <th>Availability Rating</th>
+            <th>Notes / Typical Use</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Distilled Water</strong></td>
+            <td>2 / 10 (low availability)</td>
+            <td>Purest option; ideal when mineral control is critical.</td>
+        </tr>
+        <tr>
+            <td><strong>Filtered Water</strong></td>
+            <td>4 / 10</td>
+            <td>Tap water passed through carbon/ceramic filter; removes chlorine.</td>
+        </tr>
+        <tr>
+            <td><strong>Rainwater</strong></td>
+            <td>9 / 10</td>
+            <td>Collected precipitation; low mineral content, good for most LC.</td>
+        </tr>
+        <tr>
+            <td><strong>Steam Condensate</strong></td>
+            <td>8 / 10</td>
+            <td>Recovered cooking steam; essentially distilled.</td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2>6️⃣ Additional Carbon‑Rich Extracts (Often Used as Supplements)</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Source</th>
+            <th>Availability Rating</th>
+            <th>Key Characteristics</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Cardboard Soak Water</strong></td>
+            <td>8 / 10</td>
+            <td>Corrugated‑cardboard extract; provides cellulose‑breakdown products.</td>
+            <td>Hot/cold 48 h soak; filter thoroughly.</td>
+        </tr>
+        <tr>
+            <td><strong>Fruit Scraps Extract</strong></td>
+            <td>10 / 10</td>
+            <td>Apple peels, citrus rinds, overripe fruit – high simple sugars & vitamins.</td>
+            <td>Blend, strain, use fresh.</td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2>7️⃣ Specialty Additives (Targeted Performance Boosts)</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Additive</th>
+            <th>Availability Rating</th>
+            <th>Typical Use</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Pasta Water + Baker’s Yeast</strong></td>
+            <td>8 / 10</td>
+            <td>Provides starch + active yeast for in‑situ sugar conversion and extra B‑vitamins.</td>
+        </tr>
+        <tr>
+            <td><strong>Fermented Rice Water</strong></td>
+            <td>9 / 10</td>
+            <td>Controlled fermentation yields pre‑digested sugars and B‑complex vitamins.</td>
+        </tr>
+        <tr>
+            <td><strong>Aerated Compost Tea (ACT)</strong></td>
+            <td>9 / 10</td>
+            <td>Microbial‑rich, mineral‑dense extract; improves resilience.</td>
+        </tr>
+        <tr>
+            <td><strong>Sprouting Water</strong></td>
+            <td>8 / 10</td>
+            <td>Enzyme‑rich water from seed sprouting; adds B‑vitamins.</td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2>8️⃣ Quick‑Reference Summary</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th>Top 2‑3 High‑Impact Sources</th>
+            <th>When to Use</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Sugar / Carbon</td>
+            <td>Light Malt Extract, Dextrose, Fruit Scraps Extract</td>
+            <td>Fast colonisation, especially for fast‑growing oysters & reishi.</td>
+        </tr>
+        <tr>
+            <td>Nitrogen / Protein</td>
+            <td>Fish Emulsion, Lentil/Fava Bean Water, Bone Broth</td>
+            <td>Protein‑hungry strains (shiitake, lion’s‑mane) or when boosting mycelial density.</td>
+        </tr>
+        <tr>
+            <td>Mineral / Buffer</td>
+            <td>Eggshell Powder, Vegetable Scrap Broth</td>
+            <td>pH stabilization and structural reinforcement.</td>
+        </tr>
+        <tr>
+            <td>Vitamin / Growth Factors</td>
+            <td>Aerated Compost Tea, Sprouting Water, Fermented Rice Water</td>
+            <td>Improving resilience, enzyme activity, and overall vigor.</td>
+        </tr>
+        <tr>
+            <td>Base Water</td>
+            <td>Distilled or Rainwater</td>
+            <td>When you need a clean, low‑mineral starting point.</td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+
+        </div>
+      </section>
+        
+      <section id="agar-prep" class="tab-content">
+        <h2>Agar Preparation 🧫</h2>
+        <ul>
+          <li><strong>Materials:</strong> Agar powder, nutritional source (e.g., PDA, MEA), water, Petri dishes, pressure cooker.</li>
+          <li><strong>Procedure:</strong> Mix and sterilize the medium ($15$ PSI for $30-45$ min). **Pour plates** in a sterile environment (still air box or flow hood) before the medium solidifies.</li>
+          <li><strong>Goal:</strong> Provide a solid medium for **isolation**, **cloning**, and **contaminant cleanup**.</li>
+        </ul>
+
+        <h3>Agar Transparency and Accessibility</h3>
+        <div class="agar-point">
+            <h4>🌈 The Purpose of Colored Agar</h4>
+            <p>
+                Agar is naturally translucent. Adding a small, **food-safe dye** (typically blue or green) does not change the nutritional content, but it significantly helps the user by creating **visual contrast**. Mycelium (white) and most bacterial/mold contaminants (often green, black, or pink) become much easier to spot against a colored background, aiding new users in quickly identifying healthy growth vs. contamination.
+            </p>
+        </div>
+        
+        <div class="agar-point">
+            <h4>🛒 Pre-made vs. DIY Agar Dishes</h4>
+            <p>
+                For maximum convenience, **pre-poured dishes** are available from suppliers. These offer guaranteed sterility but are less cost-effective. This guide, however, is designed to help first-time agar preparers and focuses on the **in-house, DIY approach** using agar powder and a pressure cooker. Making your own dishes provides valuable skill, lowers costs, and gives you full control over the medium (e.g., concentration and color).
+            </p>
+        </div>
+      </section>
+      
+      <section id="substrate-prep" class="tab-content">
+        <h2>Substrate Preparation Steps 🌱</h2>
+        <ul>
+          <li><strong>Hydration:</strong> Soak/boil material (e.g., grains, straw) to achieve **Field Capacity** (holds water, no drips).</li>
+          <li><strong>Pasteurization:</strong> Heat straw or compost to 140-160 F (60-70 C) for several hours to kill competitors.</li>
+          <li><strong>Sterilization:</strong> Pressure cook sawdust blocks or grains (15 PSI for 1.5-3 hours) to kill all organisms.</li>
+          <li><strong>Inoculation:</strong> Cool substrate completely before mixing with spawn.</li>
+        </ul>
+      </section>
+
+      <section id="substrate-ingredients" class="tab-content">
+        <h2>Substrate Ingredients 🌾</h2>
+        <ul>
+          <li>🌾 <strong>Grains</strong> – Rye, millet, sorghum (Primary spawn base)</li>
+          <li>🍂 <strong>Lignocellulosic</strong> – Sawdust (Hardwood/Softwood), cardboard, straw, coffee grounds (Bulk substrate)</li>
+          <li>🥚 <strong>Supplements</strong> – Gypsum, bran, eggshell powder (Nutritional boosters and pH buffering)</li>
+          <li>🐛 <strong>Alternative Nitrogen Sources</strong> – Legume soak water, insect meal (Sustainable boosters)</li>
+        </ul>
+      </section>
+
+      <section id="species" class="tab-content">
+        <h2>Species (Spp.) Reference 🧬</h2>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Scientific Name</th>
+              <th>Common Name</th>
+              <th>Key Characteristics & Ideal Substrate</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>$Pleurotus\ ostreatus$</td>
+              <td>Oyster (Pearl/Grey)</td>
+              <td>Fast, forgiving. Ideal for beginners. Best on **pasteurized straw** or **hardwood sawdust**.</td>
+            </tr>
+            <tr>
+              <td>$Pleurotus\ pulmonarius$</td>
+              <td>Oyster (Phoenix/Summer)</td>
+              <td>Similar to $P. ostreatus$, prefers warmer temps. Grows well on **straw** or **sawdust**.</td>
+            </tr>
+            <tr>
+              <td>$Hericium\ erinaceus$</td>
+              <td>Lion's Mane</td>
+              <td>Requires hardwood. High yields on supplemented **hardwood sawdust blocks**. Slower colonization.</td>
+            </tr>
+            <tr>
+              <td>$Inonotus\ obliquus$</td>
+              <td>Chaga</td>
+              <td>Parasitic fungus, not traditionally cultivated. Primarily **wild-harvested** from **living birch trees**.</td>
+            </tr>
+            <tr>
+              <td>$Stropharia\ rugosoannulata$</td>
+              <td>Wine Cap</td>
+              <td>Excellent for outdoor beds and mycoremediation. Thrives in **wood chips** or **straw** beds in a garden.</td>
+            </tr>
+            <tr>
+              <td>$Coprinus\ comatus$</td>
+              <td>Shaggy Mane/Ink Cap</td>
+              <td>Grows on **composted manure** or **straw** mixes. Must be harvested young before auto-digestion.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+
+
+      <section id="lc-comparative" class="tab-content">
+
+
+<p>This is a great idea, especially given your focus on accessible tech and education tooling like vanilla JS and static serving. DIY substitutions and 'making do' are cornerstones of accessibility in mycology and perfectly align with a low-cost, high-impact educational page. The "Banannarama Funky Colors" style will help make the information pop!</p>
+
+<p>I have reviewed the comparison and integrated DIY/substitution options directly into the relevant sections. This information can be presented using simple text highlights or tooltips in your final static-served page.</p>
+
+<hr>
+
+<h2>🍄 Comparative Mushroom Spawn/Substrate Prep Guide (Funky Banannarama + DIY Edition)</h2>
+
+<table><thead><tr><th style="background-color: #FFD700; color: #333333; border: 2px solid #333333;"><strong>Parameter</strong></th><th style="background-color: #50C878; color: #FFFFFF; border: 2px solid #333333;"><strong>Aerated Compost Tea (ACT) – 💚 "Microbial-Boost" Method</strong></th><th style="background-color: #8A2BE2; color: #FFFFFF; border: 2px solid #333333;"><strong>Sterilized-Broth / 💜 "Nutrient-Only" Method</strong></th></tr></thead><tbody><tr><td style="background-color: #FFFACD; color: #333333; border: 1px solid #333333;"><strong>Goal</strong></td><td style="background-color: #E6FFE6; color: #333333; border: 1px solid #333333;"><strong>💚 Bio-Resilience & Vigor:</strong> Add beneficial microbes, humic/fulvic acids, and trace minerals. (1) boost mycelial growth, (2) increase contaminant resistance (e.g., against <em>Trichoderma</em>), and (3) speed up lignocellulose breakdown.</td><td style="background-color: #F8E0FF; color: #333333; border: 1px solid #333333;"><strong>💜 Clean Energy:</strong> Provide a clean, high-energy carbon source (sugars) without competing microorganisms. Ideal for pure culture expansion.</td></tr><tr><td style="background-color: #FFFACD; color: #333333; border: 1px solid #333333;"><strong>Typical Recipe (per L)</strong></td><td style="background-color: #E6FFE6; color: #333333; border: 1px solid #333333;">1. <strong>Base</strong> – 100 ml well‑aged, high‑C compost (e.g., horse‑stable, mushroom‑house spent substrate)
+
+2. <strong>Aeration</strong> – 1 L air pump + 0.5 µm inline filter, 24–48 h
+
+3. <strong>Additives (optional)</strong> – 1 ml kelp extract, 0.5 ml molasses, 0.2 ml humic acid solution
+
+
+<strong>🟢 DIY SUBSTITUTION / NOTE:</strong>
+
+• <strong>Compost Base:</strong> Worm Castings are an excellent substitute for mushroom-house compost.
+
+• <strong>Aeration:</strong> Use a cheap aquarium air pump and air stone. No inline filter is strictly necessary for ACT if the tea is applied as a soil/substrate drench (unfiltered) or coarse-filtered through a stocking/cheesecloth only. (See Filtration note below).
+
+• <strong>Molasses Substitute:</strong> Honey or Maple Syrup (small amounts of unrefined sugar feeds bacteria).
+
+• <strong>De-chlorinate Water:</strong> Simply let tap water sit out for 24 hours in an open container, or aerate it with the pump for 20 minutes before brewing.</td><td style="background-color: #F8E0FF; color: #333333; border: 1px solid #333333;">1. <strong>Base</strong> – 20 g glucose (or 10 g malt extract) + 5 g yeast extract per L
+
+2. <strong>Optional vitamins/minerals</strong> – 0.5 g MgSO4​⋅7H2​O (Epsom salt), 0.1 g CaCl2​, trace mix
+
+
+<strong>🟣 DIY SUBSTITUTION / NOTE:</strong>
+
+• <strong>Glucose/Malt Extract Substitute:</strong> Honey or Light Karo (Corn) Syrup (at a ≈4% concentration, e.g., 40g per 1L water) are the simplest substitutes. Light Malt Extract (LME) is slightly better nutritionally but honey/Karo are more accessible.
+
+• <strong>Yeast Extract Substitute:</strong> A very tiny amount of Nutritional Yeast or Brewer's Yeast powder (or even a scrape of Marmite/Vegemite) can substitute for yeast extract's nitrogen/B-vitamin content, though it makes the broth cloudy.
+
+• <strong>Minerals (MgSO4​):</strong> This is commonly Epsom Salt (found in pharmacies/garden centers) – very cheap and accessible. CaCl2​ can often be skipped for basic LC or sourced from food-grade pickling salt.</td></tr><tr><td style="background-color: #FFFACD; color: #333333; border: 1px solid #333333;"><strong>Filtration / Sterilization</strong></td><td style="background-color: #E6FFE6; color: #333333; border: 1px solid #333333;">• Pre-filter through a 5μm mesh.
+
+• Fine-filter through a 0.45μm (or 0.22μm) membrane to eliminate most spores.
+
+
+<strong>⚠️ DIY WARNING:</strong> The 0.22μm filter is the main cost/complication.
+
+<strong>DIY Alternative (High Risk/High Competition):</strong> Skip the fine-filter entirely. Use the tea unfiltered (after coarse straining through an old T-shirt or cheesecloth) to inoculate large, non-sterile substrates like straw/woodchip beds. The microbial competition is then managed by the sheer aggression of the Oyster mycelium. Do NOT use this unfiltered tea for lab work or sterile grain spawn.</td><td style="background-color: #F8E0FF; color: #333333; border: 1px solid #333333;">• Sterilize the entire broth in a pressure cooker/autoclave: 15psi (121∘C) for 20–30min.
+
+
+<strong>🛠️ DIY Sterilization:</strong>
+
+• A common kitchen Pressure Cooker is the essential, accessible, DIY alternative to a laboratory autoclave.
+
+• For small volumes (e.g., $<500\,\text{ml}$), an Instant Pot (or electric pressure cooker) on its highest pressure setting can work, but is less reliable than a true stove-top pressure cooker for reaching and holding 15psi.</td></tr><tr><td style="background-color: #FFFACD; color: #333333; border: 1px solid #333333;"><strong>Typical Workflow</strong></td><td style="background-color: #E6FFE6; color: #333333; border: 1px solid #333333;">1. Prepare compost, blend, aerate.
+
+2. Fine-filter into a sterile carboy.
+
+3. Optional pasteurise 70∘C,5min→cool.
+
+
+<strong>DIY Agitation/Inoculation:</strong>
+
+• Use a clean glass marble or a stainless steel nut/bolt inside the final substrate jar. Shake vigorously by hand multiple times a day to break up the mycelium and ensure even colonization (in place of a magnetic stirrer).</td><td style="background-color: #F8E0FF; color: #333333; border: 1px solid #333333;">1. Mix ingredients, dispense into autoclavable jars.
+
+2. Autoclave 121∘C,15psi,20min.
+
+3. Cool to ≤30∘C.
+
+
+<strong>DIY Vessel/Port:</strong>
+
+• Use standard Mason Jars. DIY lids can be made with: RTV Silicone (for a self-healing injection port) and Polyfill (stuffing from a pillow) or layers of Micropore Tape (paper surgical tape) for the air filter.</td></tr><tr><td style="background-color: #FFFACD; color: #333333; border: 1px solid #333333;"><strong>Cost Estimate (per L of final liquid)</strong></td><td style="background-color: #E6FFE6; color: #333333; border: 1px solid #333333;"><strong>Total ≈$1.70</strong>
+
+
+<strong>💸 DIY Cost Reduction:</strong> The cost drops to ≈$0.15 if you are willing to use a simple T-shirt/cheesecloth coarse-filter and skip the expensive 0.22μm filter, accepting the high risk/high competition trade-off for a bulk substrate inoculant.</td><td style="background-color: #F8E0FF; color: #333333; border: 1px solid #333333;"><strong>Total ≈$0.75</strong>
+
+
+<strong>💸 DIY Cost Reduction:</strong> Using the cheapest sugar source (e.g., 4% Light Karo/Corn Syrup) instead of LME/Glucose drops the ingredient cost substantially. The main remaining cost is the power for the pressure cooker (autoclave energy).</td></tr></tbody></table>
+
+<hr>
+
+<h2>🌱 Species & Process Modification Summary</h2>
+
+<p>This table summarizes how the DIY-friendly choice between ACT (high resilience, low sterility) and Sterile Broth (high purity, high energy cost) shifts based on the mushroom species:</p>
+
+<table><thead><tr><th style="background-color: #FFD700; color: #333333;"><strong>Species</strong></th><th style="background-color: #FFD700; color: #333333;"><strong>Growth Characteristic</strong></th><th style="background-color: #FFD700; color: #333333;"><strong>Recommended Method & DIY Note</strong></th></tr></thead><tbody><tr><td style="background-color: #FFFACD; color: #333333;"><strong>Pleurotus ostreatus (Oyster) & P. pulmonarius</strong></td><td style="background-color: #F8E0FF; color: #333333;"><strong>Aggressive Colonizer.</strong> Highly competitive, especially on straw/lignocellulose.</td><td style="background-color: #E6FFE6; color: #333333;">ACT Highly Recommended. They can outcompete the microbial load, especially for bulk substrate inoculation. Use Unfiltered ACT (coarse strain only) for maximum DIY simplicity when inoculating large, non-sterile beds (like straw or wood chips).</td></tr><tr><td style="background-color: #FFFACD; color: #333333;">Hericium erinaceus (Lion's Mane)</td><td style="background-color: #F8E0FF; color: #333333;"><strong>Slower Colonizer.</strong> Vulnerable to contamination, but benefits from lignin-degrading bacteria.</td><td style="background-color: #E6FFE6; color: #333333;">Sterile Broth (LC) for the initial culture expansion is safer. ACT (Filtered) can be added as a substrate amendment for the final block to enhance lignin breakdown, but only with reliable filtration (0.22μm or high-end 0.45μm). Slightly lower sugar LC is best (≈15g/L total sugar).</td></tr><tr><td style="background-color: #FFFACD; color: #333333;">Stropharia rugosoannulata (Winecap)</td><td style="background-color: #F8E0FF; color: #333333;">Highly Competitive Outdoor Species. Thrives in nitrogen-rich, non-sterile environments (wood chips, compost).</td><td style="background-color: #E6FFE6; color: #333333;">ACT Highly Recommended. Unfiltered ACT is the most efficient and DIY-friendly way to scale up the culture to inoculate large, non-sterile outdoor wood chip beds. The high microbial load is a feature, not a bug.</td></tr><tr><td style="background-color: #FFFACD; color: #333333;">Hypsizygus tessellatus (Beech)</td><td style="background-color: #F8E0FF; color: #333333;">Slower/Sensitive Colonizer. Typically grown on sterilized hardwood blocks.</td><td style="background-color: #E6FFE6; color: #333333;">Sterile Broth (LC) Essential. Due to its sensitivity and use in sterile blocks, purity is paramount. The small benefit of ACT is outweighed by the high risk of contamination. Stick to the Pressure Cooker (PC) and simple sugar/LME LC.</td></tr></tbody></table>
+
+
+
+
+	  </section>
+
+      <section id="references" class="tab-content">
+        <h2>Supporting References 📚</h2>
+
+        <h3 style="margin-top: 3rem;">Mycology, Food Security, and Shelter</h3>
+        
+        <div class="reference-section">
+            <h4>🔬 Scientific Papers and Applied Research</h4>
+            <ul class="reference-list">
+                <li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6467008/">**Mycoremediation of Contaminants:**</a> Review on using fungi to break down environmental pollutants and plastics, addressing biodiversity impact.</li>
+                <li><a href="https://www.frontiersin.org/articles/10.3389/fmicb.2018.02871/full">**Fungal Proteins for Food Security:**</a> Research on the nutritional value and sustainable production of edible fungi as a protein source.</li>
+                <li><a href="https://doi.org/10.1016/j.biocon.2020.108605">**Myco-materials for Sustainable Building:**</a> Paper detailing the mechanical properties and environmental benefits of using mycelium composites for shelter/insulation.</li>
+                <li><a href="https://extension.psu.edu/mushroom-substrate-supplements">Penn State – Substrate Supplements</a> (Original LC/Agar reference, retained)</li>
+		   <li><strong>Mycofiltration & Water Purification:</strong> Using fungal mats to filter pathogens and chemicals from water streams.  
+      <a href="https://www.sciencedirect.com/science/article/pii/S0045653519313191" target="_blank">Research Example</a></li>
+    <li><strong>Medicinal Fungi Research:</strong> Bioactive compounds in mushrooms for neuroprotection, immune support, and metabolic health.  
+      <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6572043/" target="_blank">Research Example</a></li>
+    <li><strong>Production Research:</strong> "Altering the agar concentration during in vitro culturing can affect the physical growth and structure of the mycelial sheet without altering its permeability or chemical makeup. When the agar concentration was increased from 1.5% agar to 6.0% agar, the mycelium density and hyphal width increased by 32.3% and 63.6%,"
+      <a href="https://www.sciencedirect.com/science/article/pii/S2238785423009778?via%3Dihub" target="_blank">Effect of agar concentration on structure and physiology of fungal hyphal systems</a></li>
+    <li><strong>Bioremediation:</strong> Degradation of polycyclic aromatic hydrocarbons by crude extracts from spent mushroom substrate and its possible mechanisms 
+      <a href="https://pubmed.ncbi.nlm.nih.gov/19924475/" target="_blank">Research Example</a></li>
+
+
+A Samim, V Singh, M Singh , H Vaseem; study suggests that P. fossulatus has great efficiency to remediate nanoparticles from contaminated water and it can be utilized as potential agent in wastewater treatment plants by different industries.  Environ Sci Pollut Res Int. 2024 <a href="https://pubmed.ncbi.nlm.nih.gov/31574438/">Research Example</a></li>
+      
+
+
+            </ul>
+        </div>
+
+        <div class="reference-section">
+            <h4>🎬 Popular Culture, Books, and Advocacy</h4>
+            <ul class="reference-list">
+                <li><a href="#">**Fantastic Fungi (2019):**</a> A documentary that brought the potential of mycology—from medicinal use to bioremediation—into the mainstream.</li>
+                <li><a href="#">**Mycelium Running by Paul Stamets:**</a> A key book on applying mushrooms for ecosystem regeneration, covering myco-filtration and myco-forestry.</li>
+                <li><a href="#">**The Fungal Web Podcast:**</a> Educational series covering the historical and societal impact of fungi beyond cultivation.</li>
+		 <li><strong>Entangled Life by Merlin Sheldrake:</strong> Deep dive into fungal networks, ecology, and plant-fungi interactions.  
+      <a href="https://www.penguinrandomhouse.com/books/609378/entangled-life-by-merlin-sheldrake/" target="_blank">Read more</a></li>
+    <li><strong>Mushroom Cultivator & Growing Gourmet & Medicinal Mushrooms:</strong> Classic cultivation manuals for practical and experimental approaches.  
+      <a href="https://www.amazon.com/Mushroom-Cultivator-Gourmet-Medicinal-Mushrooms/dp/0967402419" target="_blank">Read more</a></li>
+
+            </ul>
+        </div>
+
+
+
+
+
+
+
+		  
+        <div class="reference-section">
+            <h4>🌱 New Decentralized/Access Projects</h4>
+            <ul class="reference-list">
+                <li><a href="#">**Bio-Token Transparency Initiatives:**</a> Projects focusing on open-source data and immutable ledger technology for biodiversity tracking (Relevant to user's stated goal).</li>
+                <li><a href="#">**Open-Source Mycology Labs:**</a> Networks focused on distributing accessible cultivation techniques (like this guide) and genetics to local food initiatives.</li>
+                <li><a href="#">**Modular Myco-Construction:**</a> Teams developing low-cost, decentralized methods for growing mycelium bricks and panels for resilient, accessible housing.</li>
+		  <li><strong>Community Food & Fungi Initiatives:</strong> Urban and local projects integrating mushrooms into circular economy and food security solutions.  
+      <a href="https://www.attra.ncat.org/product/organic-mushroom-production/" target="_blank">ATTRA Example</a></li>
+    <li><strong>Citizen Science Fungal Networks:</strong> Platforms enabling global observation, strain sharing, and biodiversity mapping.  
+      <a href="https://www.mushroomobserver.org/" target="_blank">Mushroom Observer</a></li>
+
+            </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script>
+    // --- TIMELINE DATA AND FUNCTIONS (Simplified for static display) ---
+    const trackData = {
+        minimal: {
+            name: "Minimal Track",
+            phases: [
+                {
+                    time: "T-2h",
+                    title: "Quick Prep",
+                    ingredients: [
+                        { name: "Filtered Water", category: "water", time: "immediate" },
+                        { name: "Pasta Water", category: "carbon", time: "30min" },
+                        { name: "Coffee Extract", category: "specialty", time: "1h" }
+                    ],
+                    complexity: "low",
+                    jump: true
+                },
+                {
+                    time: "T-1h",
+                    title: "Assembly",
+                    ingredients: [
+                        { name: "Eggshell Powder", category: "minerals", time: "pre-made" }
+                    ],
+                    complexity: "low",
+                    jump: false
+                },
+                {
+                    time: "T-0",
+                    title: "Sterilize",
+                    ingredients: [],
+                    complexity: "medium",
+                    jump: false
+                },
+                {
+                    time: "T+2h",
+                    title: "Inoculate",
+                    ingredients: [],
+                    complexity: "medium",
+                    jump: false
+                }
+            ]
+        },
+        standard: {
+            name: "Standard Track", 
+            phases: [
+                {
+                    time: "T-12h",
+                    title: "Fresh Extracts",
+                    ingredients: [
+                        { name: "Lentil Soak Water", category: "nitrogen", time: "12h" },
+                        { name: "Vegetable Broth", category: "minerals", time: "1h" },
+                        { name: "Rice Water", category: "carbon", time: "30min" }
+                    ],
+                    complexity: "medium",
+                    jump: true
+                },
+                {
+                    time: "T-2h",
+                    title: "Quick Additions",
+                    ingredients: [
+                        { name: "Tea Extract", category: "specialty", time: "1h" }
+                    ],
+                    complexity: "low",
+                    jump: true
+                },
+                {
+                    time: "T-1h",
+                    title: "Assembly",
+                    ingredients: [
+                        { name: "Filtered Water", category: "water", time: "immediate" },
+                        { name: "Eggshell Powder", category: "minerals", time: "pre-made" }
+                    ],
+                    complexity: "medium",
+                    jump: false
+                },
+                {
+                    time: "T+2h",
+                    title: "Inoculate",
+                    ingredients: [],
+                    complexity: "medium",
+                    jump: false
+                }
+            ]
+        },
+        advanced: {
+            name: "Advanced Track",
+            phases: [
+                {
+                    time: "T-48h",
+                    title: "Long Extracts",
+                    ingredients: [
+                        { name: "Cardboard Water", category: "carbon", time: "48h" },
+                        { name: "Compost Tea", category: "vitamins", time: "48h" }
+                    ],
+                    complexity: "medium",
+                    jump: true
+                },
+                {
+                    time: "T-24h",
+                    title: "Fermentation",
+                    ingredients: [
+                        { name: "Fermented Rice", category: "vitamins", time: "24h" },
+                        { name: "Sprouting Water", category: "vitamins", time: "72h" }
+                    ],
+                    complexity: "high",
+                    jump: true
+                },
+                {
+                    time: "T-12h",
+                    title: "Fresh Prep",
+                    ingredients: [
+                        { name: "Fava Bean Water", category: "nitrogen", time: "2h" },
+                        { name: "Bone Broth", category: "minerals", time: "4h" }
+                    ],
+                    complexity: "medium",
+                    jump: true
+                },
+                {
+                    time: "T+2h",
+                    title: "Inoculate",
+                    ingredients: [],
+                    complexity: "medium",
+                    jump: false
+                }
+            ]
+        },
+        premium: {
+            name: "Premium Track",
+            phases: [
+                {
+                    time: "T-72h",
+                    title: "Premium Prep",
+                    ingredients: [
+                        { name: "Dung Soak Water", category: "nitrogen", time: "72h", safety: true },
+                        { name: "Sprouting Cycle", category: "vitamins", time: "72h" }
+                    ],
+                    complexity: "high",
+                    jump: false
+                },
+                {
+                    time: "T-48h",
+                    title: "Advanced Extracts",
+                    ingredients: [
+                        { name: "Fish Emulsion", category: "specialty", time: "48h", safety: true },
+                        { name: "Aerated Compost", category: "vitamins", time: "48h" }
+                    ],
+                    complexity: "high",
+                    jump: true
+                },
+                {
+                    time: "T-24h",
+                    title: "Fermentation",
+                    ingredients: [
+                        { name: "Yeast Conversion", category: "carbon", time: "24h" },
+                        { name: "Spirulina Extract", category: "specialty", time: "2h" }
+                    ],
+                    complexity: "medium",
+                    jump: true
+                },
+                {
+                    time: "T+2h",
+                    title: "Inoculate",
+                    ingredients: [],
+                    complexity: "high",
+                    jump: false
+                }
+            ]
+        }
+    };
+    function createGrid() {
+        const grid = document.getElementById('planning-grid');
+        // Clear existing content except headers
+        grid.innerHTML = `
+            <div class="grid-header">Time Phase</div>
+            <div class="grid-header">Minimal Track<br><span class="text-sm font-normal">(2 hour prep)</span></div>
+            <div class="grid-header">Standard Track<br><span class="text-sm font-normal">(12 hour prep)</span></div>
+            <div class="grid-header">Advanced Track<br><span class="text-sm font-normal">(48 hour prep)</span></div>
+            <div class="grid-header">Premium Track<br><span class="text-sm font-normal">(72 hour prep)</span></div>
+        `;
+
+        // Create rows for each time phase
+        const allTimePhases = ['T-72h', 'T-48h', 'T-24h', 'T-12h', 'T-2h', 'T-1h', 'T-0', 'T+2h'];
+
+        allTimePhases.forEach(timePhase => {
+            // Row header
+            const rowHeader = document.createElement('div');
+            rowHeader.className = 'grid-row-header';
+            rowHeader.innerHTML = `
+                <div class="font-semibold">${timePhase}</div>
+                <div class="text-sm text-gray-600">${getPhaseDescription(timePhase)}</div>
+            `;
+            grid.appendChild(rowHeader);
+
+            // Cells for each track
+            ['minimal', 'standard', 'advanced', 'premium'].forEach(trackKey => {
+                const cell = document.createElement('div');
+                cell.className = 'grid-cell';
+                cell.dataset.track = trackKey;
+
+                const phase = trackData[trackKey].phases.find(p => p.time === timePhase);
+
+                if (phase) {
+                    cell.innerHTML = createCellContent(phase);
+                } else {
+                    cell.innerHTML = '<div class="text-gray-400 text-sm text-center">—</div>';
+                }
+
+                grid.appendChild(cell);
+            });
+        });
+    }
+    function createCellContent(phase) {
+        const ingredientColors = {
+            water: 'bg-blue-500',
+            carbon: 'bg-orange-500',
+            nitrogen: 'bg-green-500',
+            minerals: 'bg-purple-500',
+            vitamins: 'bg-purple-500',
+            specialty: 'bg-red-500'
+        };
+
+        const complexityClass = {
+            low: 'complexity-low',
+            medium: 'complexity-medium', 
+            high: 'complexity-high'
+        };
+
+        return `
+            ${phase.jump ? '<div class="jump-indicator">⚡</div>' : ''}
+            <div class="complexity-indicator ${complexityClass[phase.complexity]}">${phase.complexity}</div>
+            <div class="font-semibold text-sm mb-2">${phase.title}</div>
+            <div class="space-y-1">
+                ${phase.ingredients.map(ing => `
+                    <div class="flex items-center justify-between">
+                        <span class="ingredient-chip ${ingredientColors[ing.category]}">${ing.name}</span>
+                        <span class="time-badge">${ing.time}</span>
+                    </div>
+                    ${ing.safety ? '<div class="text-red-600 text-xs">⚠️ Safety protocol</div>' : ''}
+                `).join('')}
+            </div>
+        `;
+    }
+    function getPhaseDescription(timePhase) {
+        const descriptions = {
+            'T-72h': '3 days before',
+            'T-48h': '2 days before',
+            'T-24h': '1 day before',
+            'T-12h': '12 hours before',
+            'T-2h': '2 hours before',
+            'T-1h': '1 hour before',
+            'T-0': 'Assembly time',
+            'T+2h': 'Post-sterilization'
+        };
+        return descriptions[timePhase] || '';
+    }
+    // Removed setTrack function
+
+    // Tab switching 
+    const tabs = document.querySelectorAll(".tab-btn");
+    const contents = document.querySelectorAll(".tab-content");
+    
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        const targetId = tab.dataset.tab;
+
+        // Deactivate all buttons and content
+        tabs.forEach(t => t.classList.remove("active"));
+        contents.forEach(c => c.classList.remove("active"));
+        
+        // Activate the clicked button
+        tab.classList.add("active");
+        
+        // Activate the corresponding content section
+        document.getElementById(targetId).classList.add("active");
+      });
+    });
+
+    // Manual initialization
+    document.addEventListener("DOMContentLoaded", () => {
+        // Set Liquid Culture Prep as active by default
+        tabs.forEach(t => t.classList.remove("active"));
+        document.querySelector("[data-tab='liquid-culture']").classList.add("active");
+        
+        contents.forEach(c => c.classList.remove("active"));
+        document.getElementById('liquid-culture').classList.add("active");
+        
+        // Initialize the planning grid
+        createGrid();
+    });
+  </script>
+</body>
+</html>
