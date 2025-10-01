@@ -266,8 +266,10 @@
       <h1>🍄 Mushroom Cultivation Guide</h1>
       <p>Preparation Methods, Substrates, and Species Reference</p>
       <div class="tab-nav">
+		<button class="tab-btn active" data-tab="welcome">Welcome</button>
         <button class="tab-btn" data-tab="agar-prep">Agar Prep</button>
-        <button class="tab-btn active" data-tab="liquid-culture">L.C. Prep</button>
+        <button class="tab-btn" data-tab="liquid-culture">L.C. Prep</button>
+        <button class="tab-btn" data-tab="lc-ref">L.C. Ref</button>
         <button class="tab-btn" data-tab="liquid-culture-ingredients">L.C. Ingredients</button>
         <button class="tab-btn" data-tab="substrate-prep">Substrate Prep</button>
         <button class="tab-btn" data-tab="substrate-ingredients">Substrate Ingredients</button>
@@ -277,6 +279,39 @@
     </header>
 
     <main>
+
+      <section id="welcome" class="tab-content active">
+        <div class="text-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Food Resiliency through Mycology 🧪</h2>
+            <p class="text-gray-600">Welcome! To produce nutritious food from im.</p>
+        </div>
+        
+        <div class="legend-grid">
+
+			<img src="/pleurotis.svg" alt="pleurotis svg">
+
+			<div class="legend-item">
+             ass="text-sm font-normal">(72 hour prep)</span></div>
+        </div>
+        
+        <h3 style="margin-top: 3rem;">Food Security Goals</h3>
+        <ul>
+          <li>identify contextualy relevant reliable food resiliency techniques</li>
+          <li>resiliency in limited input food systems</li>
+		  <li>developing concept of 'Foundational Technologies'</li>
+        </ul>
+
+
+		  
+      </section>
+
+
+
+
+
+
+
+		
       <section id="liquid-culture" class="tab-content active">
         <div class="text-center mb-6">
             <h2 class="text-2xl font-bold text-gray-800 mb-2">Liquid Culture Batch Planning Grid 🧪</h2>
@@ -753,94 +788,92 @@
 
 
 
-      <section id="lc-comparative" class="tab-content">
+      <section id="lc-ref" class="tab-content">
 
-
-<p>This is a great idea, especially given your focus on accessible tech and education tooling like vanilla JS and static serving. DIY substitutions and 'making do' are cornerstones of accessibility in mycology and perfectly align with a low-cost, high-impact educational page. The "Banannarama Funky Colors" style will help make the information pop!</p>
-
-<p>I have reviewed the comparison and integrated DIY/substitution options directly into the relevant sections. This information can be presented using simple text highlights or tooltips in your final static-served page.</p>
-
-<hr>
-
-<h2>🍄 Comparative Mushroom Spawn/Substrate Prep Guide (Funky Banannarama + DIY Edition)</h2>
-
-<table><thead><tr><th style="background-color: #FFD700; color: #333333; border: 2px solid #333333;"><strong>Parameter</strong></th><th style="background-color: #50C878; color: #FFFFFF; border: 2px solid #333333;"><strong>Aerated Compost Tea (ACT) – 💚 "Microbial-Boost" Method</strong></th><th style="background-color: #8A2BE2; color: #FFFFFF; border: 2px solid #333333;"><strong>Sterilized-Broth / 💜 "Nutrient-Only" Method</strong></th></tr></thead><tbody><tr><td style="background-color: #FFFACD; color: #333333; border: 1px solid #333333;"><strong>Goal</strong></td><td style="background-color: #E6FFE6; color: #333333; border: 1px solid #333333;"><strong>💚 Bio-Resilience & Vigor:</strong> Add beneficial microbes, humic/fulvic acids, and trace minerals. (1) boost mycelial growth, (2) increase contaminant resistance (e.g., against <em>Trichoderma</em>), and (3) speed up lignocellulose breakdown.</td><td style="background-color: #F8E0FF; color: #333333; border: 1px solid #333333;"><strong>💜 Clean Energy:</strong> Provide a clean, high-energy carbon source (sugars) without competing microorganisms. Ideal for pure culture expansion.</td></tr><tr><td style="background-color: #FFFACD; color: #333333; border: 1px solid #333333;"><strong>Typical Recipe (per L)</strong></td><td style="background-color: #E6FFE6; color: #333333; border: 1px solid #333333;">1. <strong>Base</strong> – 100 ml well‑aged, high‑C compost (e.g., horse‑stable, mushroom‑house spent substrate)
-
-2. <strong>Aeration</strong> – 1 L air pump + 0.5 µm inline filter, 24–48 h
-
-3. <strong>Additives (optional)</strong> – 1 ml kelp extract, 0.5 ml molasses, 0.2 ml humic acid solution
-
-
-<strong>🟢 DIY SUBSTITUTION / NOTE:</strong>
-
-• <strong>Compost Base:</strong> Worm Castings are an excellent substitute for mushroom-house compost.
-
-• <strong>Aeration:</strong> Use a cheap aquarium air pump and air stone. No inline filter is strictly necessary for ACT if the tea is applied as a soil/substrate drench (unfiltered) or coarse-filtered through a stocking/cheesecloth only. (See Filtration note below).
-
-• <strong>Molasses Substitute:</strong> Honey or Maple Syrup (small amounts of unrefined sugar feeds bacteria).
-
-• <strong>De-chlorinate Water:</strong> Simply let tap water sit out for 24 hours in an open container, or aerate it with the pump for 20 minutes before brewing.</td><td style="background-color: #F8E0FF; color: #333333; border: 1px solid #333333;">1. <strong>Base</strong> – 20 g glucose (or 10 g malt extract) + 5 g yeast extract per L
-
-2. <strong>Optional vitamins/minerals</strong> – 0.5 g MgSO4​⋅7H2​O (Epsom salt), 0.1 g CaCl2​, trace mix
-
-
-<strong>🟣 DIY SUBSTITUTION / NOTE:</strong>
-
-• <strong>Glucose/Malt Extract Substitute:</strong> Honey or Light Karo (Corn) Syrup (at a ≈4% concentration, e.g., 40g per 1L water) are the simplest substitutes. Light Malt Extract (LME) is slightly better nutritionally but honey/Karo are more accessible.
-
-• <strong>Yeast Extract Substitute:</strong> A very tiny amount of Nutritional Yeast or Brewer's Yeast powder (or even a scrape of Marmite/Vegemite) can substitute for yeast extract's nitrogen/B-vitamin content, though it makes the broth cloudy.
-
-• <strong>Minerals (MgSO4​):</strong> This is commonly Epsom Salt (found in pharmacies/garden centers) – very cheap and accessible. CaCl2​ can often be skipped for basic LC or sourced from food-grade pickling salt.</td></tr><tr><td style="background-color: #FFFACD; color: #333333; border: 1px solid #333333;"><strong>Filtration / Sterilization</strong></td><td style="background-color: #E6FFE6; color: #333333; border: 1px solid #333333;">• Pre-filter through a 5μm mesh.
-
-• Fine-filter through a 0.45μm (or 0.22μm) membrane to eliminate most spores.
-
-
-<strong>⚠️ DIY WARNING:</strong> The 0.22μm filter is the main cost/complication.
-
-<strong>DIY Alternative (High Risk/High Competition):</strong> Skip the fine-filter entirely. Use the tea unfiltered (after coarse straining through an old T-shirt or cheesecloth) to inoculate large, non-sterile substrates like straw/woodchip beds. The microbial competition is then managed by the sheer aggression of the Oyster mycelium. Do NOT use this unfiltered tea for lab work or sterile grain spawn.</td><td style="background-color: #F8E0FF; color: #333333; border: 1px solid #333333;">• Sterilize the entire broth in a pressure cooker/autoclave: 15psi (121∘C) for 20–30min.
-
-
-<strong>🛠️ DIY Sterilization:</strong>
-
-• A common kitchen Pressure Cooker is the essential, accessible, DIY alternative to a laboratory autoclave.
-
-• For small volumes (e.g., $<500\,\text{ml}$), an Instant Pot (or electric pressure cooker) on its highest pressure setting can work, but is less reliable than a true stove-top pressure cooker for reaching and holding 15psi.</td></tr><tr><td style="background-color: #FFFACD; color: #333333; border: 1px solid #333333;"><strong>Typical Workflow</strong></td><td style="background-color: #E6FFE6; color: #333333; border: 1px solid #333333;">1. Prepare compost, blend, aerate.
-
-2. Fine-filter into a sterile carboy.
-
-3. Optional pasteurise 70∘C,5min→cool.
-
-
-<strong>DIY Agitation/Inoculation:</strong>
-
-• Use a clean glass marble or a stainless steel nut/bolt inside the final substrate jar. Shake vigorously by hand multiple times a day to break up the mycelium and ensure even colonization (in place of a magnetic stirrer).</td><td style="background-color: #F8E0FF; color: #333333; border: 1px solid #333333;">1. Mix ingredients, dispense into autoclavable jars.
-
-2. Autoclave 121∘C,15psi,20min.
-
-3. Cool to ≤30∘C.
-
-
-<strong>DIY Vessel/Port:</strong>
-
-• Use standard Mason Jars. DIY lids can be made with: RTV Silicone (for a self-healing injection port) and Polyfill (stuffing from a pillow) or layers of Micropore Tape (paper surgical tape) for the air filter.</td></tr><tr><td style="background-color: #FFFACD; color: #333333; border: 1px solid #333333;"><strong>Cost Estimate (per L of final liquid)</strong></td><td style="background-color: #E6FFE6; color: #333333; border: 1px solid #333333;"><strong>Total ≈$1.70</strong>
-
-
-<strong>💸 DIY Cost Reduction:</strong> The cost drops to ≈$0.15 if you are willing to use a simple T-shirt/cheesecloth coarse-filter and skip the expensive 0.22μm filter, accepting the high risk/high competition trade-off for a bulk substrate inoculant.</td><td style="background-color: #F8E0FF; color: #333333; border: 1px solid #333333;"><strong>Total ≈$0.75</strong>
-
-
-<strong>💸 DIY Cost Reduction:</strong> Using the cheapest sugar source (e.g., 4% Light Karo/Corn Syrup) instead of LME/Glucose drops the ingredient cost substantially. The main remaining cost is the power for the pressure cooker (autoclave energy).</td></tr></tbody></table>
-
-<hr>
-
-<h2>🌱 Species & Process Modification Summary</h2>
-
-<p>This table summarizes how the DIY-friendly choice between ACT (high resilience, low sterility) and Sterile Broth (high purity, high energy cost) shifts based on the mushroom species:</p>
-
-<table><thead><tr><th style="background-color: #FFD700; color: #333333;"><strong>Species</strong></th><th style="background-color: #FFD700; color: #333333;"><strong>Growth Characteristic</strong></th><th style="background-color: #FFD700; color: #333333;"><strong>Recommended Method & DIY Note</strong></th></tr></thead><tbody><tr><td style="background-color: #FFFACD; color: #333333;"><strong>Pleurotus ostreatus (Oyster) & P. pulmonarius</strong></td><td style="background-color: #F8E0FF; color: #333333;"><strong>Aggressive Colonizer.</strong> Highly competitive, especially on straw/lignocellulose.</td><td style="background-color: #E6FFE6; color: #333333;">ACT Highly Recommended. They can outcompete the microbial load, especially for bulk substrate inoculation. Use Unfiltered ACT (coarse strain only) for maximum DIY simplicity when inoculating large, non-sterile beds (like straw or wood chips).</td></tr><tr><td style="background-color: #FFFACD; color: #333333;">Hericium erinaceus (Lion's Mane)</td><td style="background-color: #F8E0FF; color: #333333;"><strong>Slower Colonizer.</strong> Vulnerable to contamination, but benefits from lignin-degrading bacteria.</td><td style="background-color: #E6FFE6; color: #333333;">Sterile Broth (LC) for the initial culture expansion is safer. ACT (Filtered) can be added as a substrate amendment for the final block to enhance lignin breakdown, but only with reliable filtration (0.22μm or high-end 0.45μm). Slightly lower sugar LC is best (≈15g/L total sugar).</td></tr><tr><td style="background-color: #FFFACD; color: #333333;">Stropharia rugosoannulata (Winecap)</td><td style="background-color: #F8E0FF; color: #333333;">Highly Competitive Outdoor Species. Thrives in nitrogen-rich, non-sterile environments (wood chips, compost).</td><td style="background-color: #E6FFE6; color: #333333;">ACT Highly Recommended. Unfiltered ACT is the most efficient and DIY-friendly way to scale up the culture to inoculate large, non-sterile outdoor wood chip beds. The high microbial load is a feature, not a bug.</td></tr><tr><td style="background-color: #FFFACD; color: #333333;">Hypsizygus tessellatus (Beech)</td><td style="background-color: #F8E0FF; color: #333333;">Slower/Sensitive Colonizer. Typically grown on sterilized hardwood blocks.</td><td style="background-color: #E6FFE6; color: #333333;">Sterile Broth (LC) Essential. Due to its sensitivity and use in sterile blocks, purity is paramount. The small benefit of ACT is outweighed by the high risk of contamination. Stick to the Pressure Cooker (PC) and simple sugar/LME LC.</td></tr></tbody></table>
-
-
-
-
+		
+		<p>This is a great idea, especially given your focus on accessible tech and education tooling like vanilla JS and static serving. DIY substitutions and 'making do' are cornerstones of accessibility in mycology and perfectly align with a low-cost, high-impact educational page. The "Banannarama Funky Colors" style will help make the information pop!</p>
+		
+		<p>I have reviewed the comparison and integrated DIY/substitution options directly into the relevant sections. This information can be presented using simple text highlights or tooltips in your final static-served page.</p>
+		
+		<hr>
+		
+		<h2>🍄 Comparative Mushroom Spawn/Substrate Prep Guide (Funky Banannarama + DIY Edition)</h2>
+		
+		<table><thead><tr><th style="background-color: #FFD700; color: #333333; border: 2px solid #333333;"><strong>Parameter</strong></th><th style="background-color: #50C878; color: #FFFFFF; border: 2px solid #333333;"><strong>Aerated Compost Tea (ACT) – 💚 "Microbial-Boost" Method</strong></th><th style="background-color: #8A2BE2; color: #FFFFFF; border: 2px solid #333333;"><strong>Sterilized-Broth / 💜 "Nutrient-Only" Method</strong></th></tr></thead><tbody><tr><td style="background-color: #FFFACD; color: #333333; border: 1px solid #333333;"><strong>Goal</strong></td><td style="background-color: #E6FFE6; color: #333333; border: 1px solid #333333;"><strong>💚 Bio-Resilience & Vigor:</strong> Add beneficial microbes, humic/fulvic acids, and trace minerals. (1) boost mycelial growth, (2) increase contaminant resistance (e.g., against <em>Trichoderma</em>), and (3) speed up lignocellulose breakdown.</td><td style="background-color: #F8E0FF; color: #333333; border: 1px solid #333333;"><strong>💜 Clean Energy:</strong> Provide a clean, high-energy carbon source (sugars) without competing microorganisms. Ideal for pure culture expansion.</td></tr><tr><td style="background-color: #FFFACD; color: #333333; border: 1px solid #333333;"><strong>Typical Recipe (per L)</strong></td><td style="background-color: #E6FFE6; color: #333333; border: 1px solid #333333;">1. <strong>Base</strong> – 100 ml well‑aged, high‑C compost (e.g., horse‑stable, mushroom‑house spent substrate)
+		
+		2. <strong>Aeration</strong> – 1 L air pump + 0.5 µm inline filter, 24–48 h
+		
+		3. <strong>Additives (optional)</strong> – 1 ml kelp extract, 0.5 ml molasses, 0.2 ml humic acid solution
+		
+		
+		<strong>🟢 DIY SUBSTITUTION / NOTE:</strong>
+		
+		• <strong>Compost Base:</strong> Worm Castings are an excellent substitute for mushroom-house compost.
+		
+		• <strong>Aeration:</strong> Use a cheap aquarium air pump and air stone. No inline filter is strictly necessary for ACT if the tea is applied as a soil/substrate drench (unfiltered) or coarse-filtered through a stocking/cheesecloth only. (See Filtration note below).
+		
+		• <strong>Molasses Substitute:</strong> Honey or Maple Syrup (small amounts of unrefined sugar feeds bacteria).
+		
+		• <strong>De-chlorinate Water:</strong> Simply let tap water sit out for 24 hours in an open container, or aerate it with the pump for 20 minutes before brewing.</td><td style="background-color: #F8E0FF; color: #333333; border: 1px solid #333333;">1. <strong>Base</strong> – 20 g glucose (or 10 g malt extract) + 5 g yeast extract per L
+		
+		2. <strong>Optional vitamins/minerals</strong> – 0.5 g MgSO4​⋅7H2​O (Epsom salt), 0.1 g CaCl2​, trace mix
+		
+		
+		<strong>🟣 DIY SUBSTITUTION / NOTE:</strong>
+		
+		• <strong>Glucose/Malt Extract Substitute:</strong> Honey or Light Karo (Corn) Syrup (at a ≈4% concentration, e.g., 40g per 1L water) are the simplest substitutes. Light Malt Extract (LME) is slightly better nutritionally but honey/Karo are more accessible.
+		
+		• <strong>Yeast Extract Substitute:</strong> A very tiny amount of Nutritional Yeast or Brewer's Yeast powder (or even a scrape of Marmite/Vegemite) can substitute for yeast extract's nitrogen/B-vitamin content, though it makes the broth cloudy.
+		
+		• <strong>Minerals (MgSO4​):</strong> This is commonly Epsom Salt (found in pharmacies/garden centers) – very cheap and accessible. CaCl2​ can often be skipped for basic LC or sourced from food-grade pickling salt.</td></tr><tr><td style="background-color: #FFFACD; color: #333333; border: 1px solid #333333;"><strong>Filtration / Sterilization</strong></td><td style="background-color: #E6FFE6; color: #333333; border: 1px solid #333333;">• Pre-filter through a 5μm mesh.
+		
+		• Fine-filter through a 0.45μm (or 0.22μm) membrane to eliminate most spores.
+		
+		
+		<strong>⚠️ DIY WARNING:</strong> The 0.22μm filter is the main cost/complication.
+		
+		<strong>DIY Alternative (High Risk/High Competition):</strong> Skip the fine-filter entirely. Use the tea unfiltered (after coarse straining through an old T-shirt or cheesecloth) to inoculate large, non-sterile substrates like straw/woodchip beds. The microbial competition is then managed by the sheer aggression of the Oyster mycelium. Do NOT use this unfiltered tea for lab work or sterile grain spawn.</td><td style="background-color: #F8E0FF; color: #333333; border: 1px solid #333333;">• Sterilize the entire broth in a pressure cooker/autoclave: 15psi (121∘C) for 20–30min.
+		
+		
+		<strong>🛠️ DIY Sterilization:</strong>
+		
+		• A common kitchen Pressure Cooker is the essential, accessible, DIY alternative to a laboratory autoclave.
+		
+		• For small volumes (e.g., $<500\,\text{ml}$), an Instant Pot (or electric pressure cooker) on its highest pressure setting can work, but is less reliable than a true stove-top pressure cooker for reaching and holding 15psi.</td></tr><tr><td style="background-color: #FFFACD; color: #333333; border: 1px solid #333333;"><strong>Typical Workflow</strong></td><td style="background-color: #E6FFE6; color: #333333; border: 1px solid #333333;">1. Prepare compost, blend, aerate.
+		
+		2. Fine-filter into a sterile carboy.
+		
+		3. Optional pasteurise 70∘C,5min→cool.
+		
+		
+		<strong>DIY Agitation/Inoculation:</strong>
+		
+		• Use a clean glass marble or a stainless steel nut/bolt inside the final substrate jar. Shake vigorously by hand multiple times a day to break up the mycelium and ensure even colonization (in place of a magnetic stirrer).</td><td style="background-color: #F8E0FF; color: #333333; border: 1px solid #333333;">1. Mix ingredients, dispense into autoclavable jars.
+		
+		2. Autoclave 121∘C,15psi,20min.
+		
+		3. Cool to ≤30∘C.
+		
+		
+		<strong>DIY Vessel/Port:</strong>
+		
+		• Use standard Mason Jars. DIY lids can be made with: RTV Silicone (for a self-healing injection port) and Polyfill (stuffing from a pillow) or layers of Micropore Tape (paper surgical tape) for the air filter.</td></tr><tr><td style="background-color: #FFFACD; color: #333333; border: 1px solid #333333;"><strong>Cost Estimate (per L of final liquid)</strong></td><td style="background-color: #E6FFE6; color: #333333; border: 1px solid #333333;"><strong>Total ≈$1.70</strong>
+		
+		
+		<strong>💸 DIY Cost Reduction:</strong> The cost drops to ≈$0.15 if you are willing to use a simple T-shirt/cheesecloth coarse-filter and skip the expensive 0.22μm filter, accepting the high risk/high competition trade-off for a bulk substrate inoculant.</td><td style="background-color: #F8E0FF; color: #333333; border: 1px solid #333333;"><strong>Total ≈$0.75</strong>
+		
+		
+		<strong>💸 DIY Cost Reduction:</strong> Using the cheapest sugar source (e.g., 4% Light Karo/Corn Syrup) instead of LME/Glucose drops the ingredient cost substantially. The main remaining cost is the power for the pressure cooker (autoclave energy).</td></tr></tbody></table>
+		
+		<hr>
+		
+		<h2>🌱 Species & Process Modification Summary</h2>
+		
+		<p>This table summarizes how the DIY-friendly choice between ACT (high resilience, low sterility) and Sterile Broth (high purity, high energy cost) shifts based on the mushroom species:</p>
+		
+		<table><thead><tr><th style="background-color: #FFD700; color: #333333;"><strong>Species</strong></th><th style="background-color: #FFD700; color: #333333;"><strong>Growth Characteristic</strong></th><th style="background-color: #FFD700; color: #333333;"><strong>Recommended Method & DIY Note</strong></th></tr></thead><tbody><tr><td style="background-color: #FFFACD; color: #333333;"><strong>Pleurotus ostreatus (Oyster) & P. pulmonarius</strong></td><td style="background-color: #F8E0FF; color: #333333;"><strong>Aggressive Colonizer.</strong> Highly competitive, especially on straw/lignocellulose.</td><td style="background-color: #E6FFE6; color: #333333;">ACT Highly Recommended. They can outcompete the microbial load, especially for bulk substrate inoculation. Use Unfiltered ACT (coarse strain only) for maximum DIY simplicity when inoculating large, non-sterile beds (like straw or wood chips).</td></tr><tr><td style="background-color: #FFFACD; color: #333333;">Hericium erinaceus (Lion's Mane)</td><td style="background-color: #F8E0FF; color: #333333;"><strong>Slower Colonizer.</strong> Vulnerable to contamination, but benefits from lignin-degrading bacteria.</td><td style="background-color: #E6FFE6; color: #333333;">Sterile Broth (LC) for the initial culture expansion is safer. ACT (Filtered) can be added as a substrate amendment for the final block to enhance lignin breakdown, but only with reliable filtration (0.22μm or high-end 0.45μm). Slightly lower sugar LC is best (≈15g/L total sugar).</td></tr><tr><td style="background-color: #FFFACD; color: #333333;">Stropharia rugosoannulata (Winecap)</td><td style="background-color: #F8E0FF; color: #333333;">Highly Competitive Outdoor Species. Thrives in nitrogen-rich, non-sterile environments (wood chips, compost).</td><td style="background-color: #E6FFE6; color: #333333;">ACT Highly Recommended. Unfiltered ACT is the most efficient and DIY-friendly way to scale up the culture to inoculate large, non-sterile outdoor wood chip beds. The high microbial load is a feature, not a bug.</td></tr><tr><td style="background-color: #FFFACD; color: #333333;">Hypsizygus tessellatus (Beech)</td><td style="background-color: #F8E0FF; color: #333333;">Slower/Sensitive Colonizer. Typically grown on sterilized hardwood blocks.</td><td style="background-color: #E6FFE6; color: #333333;">Sterile Broth (LC) Essential. Due to its sensitivity and use in sterile blocks, purity is paramount. The small benefit of ACT is outweighed by the high risk of contamination. Stick to the Pressure Cooker (PC) and simple sugar/LME LC.</td></tr></tbody></table>
+		
+	
 	  </section>
 
       <section id="references" class="tab-content">
