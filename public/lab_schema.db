@@ -1,0 +1,34 @@
+NamenameSingle-line String
+Edit field
+Contact personcontact_personSingle-line String
+Edit field
+Setup descriptionsetup_descriptionMultiple-paragraph Text
+Edit field
+Producing now ?producing_nowBoolean
+Edit field
+ImagesimagesAsset Gallery
+Edit field
+Future goalsfuture_goalsMultiple-paragraph Text
+Edit field
+Current experimentscurrent_experimentsMultiple-paragraph Text
+Edit field
+IssuesissuesMultiple-paragraph Text
+Edit field
+Avg batch success ratebatch_success_rateInteger Number
+Edit field
+Current batch success ratecurrent_batch_success_rateInteger Number
+Edit field
+BlogblogSingle Link
+Edit field
+Liquid cultureliquid_cultureBoolean
+Edit field
+Grain Spawn being producedgrain_spawn_being_producedBoolean
+Edit field
+Mycelial cake being producedmycelial_cake_being_producedBoolean
+Edit field
+Aerial mycelia being producedaerial_mycelia_being_producedBoolean
+Edit field
+Edible product producededible_product_producedBoolean
+Edit field
+Training materials training_materialsMultiple-paragraph Text
+Edit field
