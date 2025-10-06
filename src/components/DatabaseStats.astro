@@ -1,0 +1,156 @@
+---
+import species from '../data/species.json';
+import ingredients from '../data/ingredients.json';
+import recipes from '../data/recipes.json';
+import batches from '../data/batches.json';
+import observations from '../data/observations.json';
+
+// Calculate stats
+const activeBatches = batches.filter(b => b.status === 'colonizing' || b.status === 'fruiting').length;
+const recentObservations = observations.filter(o => {
+  const obsDate = new Date(o.observation_date);
+  const weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 7);
+  return obsDate >= weekAgo;
+}).length;
+
+const stats = [
+  {
+    label: 'Species',
+    value: species.length,
+    icon: '🍄',
+    link: '/species/',
+    color: '#8b5cf6'
+  },
+  {
+    label: 'Active Batches',
+    value: activeBatches,
+    icon: '🧫',
+    link: '/batches/',
+    color: '#10b981'
+  },
+  {
+    label: 'Recipes',
+    value: recipes.length,
+    icon: '📋',
+    link: '/recipes/',
+    color: '#3b82f6'
+  },
+  {
+    label: 'This Week',
+    value: recentObservations,
+    icon: '📊',
+    link: '/observations/',
+    color: '#f59e0b',
+    subtitle: 'observations'
+  },
+  {
+    label: 'Ingredients',
+    value: ingredients.length,
+    icon: '🥄',
+    link: '/ingredients/',
+    color: '#ec4899'
+  },
+  {
+    label: 'Total Batches',
+    value: batches.length,
+    icon: '📦',
+    link: '/batches/',
+    color: '#6b7280'
+  }
+];
+---
+
+<div class="database-stats">
+  <h2>Database Overview</h2>
+  <div class="stats-grid">
+    {stats.map(stat => (
+      <a href={stat.link} class="stat-card" style={`--card-color: ${stat.color}`}>
+        <div class="stat-icon">{stat.icon}</div>
+        <div class="stat-content">
+          <div class="stat-value">{stat.value}</div>
+          <div class="stat-label">{stat.label}</div>
+          {stat.subtitle && <div class="stat-subtitle">{stat.subtitle}</div>}
+        </div>
+      </a>
+    ))}
+  </div>
+</div>
+
+<style>
+  .database-stats {
+    margin: 2rem 0;
+  }
+
+  .database-stats h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--sl-color-white);
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .stat-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: var(--sl-color-bg-nav);
+    border: 1px solid var(--sl-color-gray-5);
+    border-left: 4px solid var(--card-color);
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .stat-card:hover {
+    border-color: var(--card-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .stat-icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+  }
+
+  .stat-content {
+    flex: 1;
+  }
+
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--sl-color-white);
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+    color: var(--sl-color-gray-3);
+    font-weight: 500;
+  }
+
+  .stat-subtitle {
+    font-size: 0.75rem;
+    color: var(--sl-color-gray-4);
+    margin-top: 0.125rem;
+  }
+
+  @media (max-width: 768px) {
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

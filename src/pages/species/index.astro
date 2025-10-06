@@ -1,0 +1,54 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import species from '../../data/species.json';
+---
+
+<StarlightPage frontmatter={{
+  title: 'Species',
+  description: 'Mushroom species cultivation database'
+}}>
+  <div class="species-container">
+    <p class="lead">Browse all mushroom species with cultivation parameters.</p>
+    
+    <div class="species-grid">
+      {species.map(sp => (
+        <a href={`/species/${sp.id}/`} class="species-card">
+          <div class="species-header">
+            <div>
+              <h3>{sp.common_name}</h3>
+              <p class="scientific">{sp.scientific_name}</p>
+            </div>
+          </div>
+
+          <p class="description">{sp.description || 'No description available'}</p>
+
+          <div class="params">
+            <div class="param">
+              <span class="label">🌡️ Temperature</span>
+              <span class="value">{sp.optimal_temp}</span>
+            </div>
+            <div class="param">
+              <span class="label">💧 Humidity</span>
+              <span class="value">{sp.optimal_humidity}</span>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+
+  <style>
+    .species-container { max-width: 1200px; margin: 0 auto; }
+    .lead { font-size: 1.125rem; color: var(--sl-color-gray-2); margin-bottom: 2rem; }
+    .species-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem; }
+    .species-card { display: block; padding: 1.5rem; background: var(--sl-color-bg-nav); border: 1px solid var(--sl-color-gray-5); border-radius: 0.5rem; text-decoration: none; transition: all 0.2s ease; }
+    .species-card:hover { border-color: var(--sl-color-accent); transform: translateY(-2px); }
+    .species-header h3 { margin: 0 0 0.25rem 0; font-size: 1.25rem; color: var(--sl-color-white); }
+    .scientific { margin: 0; font-size: 0.875rem; color: var(--sl-color-gray-3); font-style: italic; }
+    .description { margin: 1rem 0; color: var(--sl-color-gray-2); line-height: 1.5; font-size: 0.9375rem; }
+    .params { display: grid; gap: 0.75rem; }
+    .param { display: flex; justify-content: space-between; }
+    .param .label { font-size: 0.875rem; color: var(--sl-color-gray-3); }
+    .param .value { font-size: 0.875rem; color: var(--sl-color-white); font-weight: 500; }
+  </style>
+</StarlightPage>

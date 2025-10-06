@@ -1,0 +1,172 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import batches from '../../data/batches.json';
+import observations from '../../data/observations.json';
+import recipes from '../../data/recipes.json';
+import species from '../../data/species.json';
+
+export function getStaticPaths() {
+  return batches.map(batch => ({
+    params: { id: batch.id },
+    props: { batch }
+  }));
+}
+
+const { batch } = Astro.props;
+const recipe = recipes.find(r => r.id === batch.recipe_id);
+const speciesData = species.find(s => s.id === batch.species_id);
+const batchObservations = observations
+  .filter(o => o.batch_id === batch.id)
+  .sort((a, b) => new Date(b.observation_date).getTime() - new Date(a.observation_date).getTime());
+
+const statusColors: Record<string, string> = {
+  'preparing': '#6b7280',
+  'colonizing': '#8b5cf6',
+  'ready': '#10b981',
+  'fruiting': '#ec4899',
+  'harvested': '#f59e0b',
+  'contaminated': '#ef4444',
+  'preparation': '#6b7280',
+  'colonization': '#8b5cf6'
+};
+---
+
+<StarlightPage frontmatter={{
+  title: batch.name,
+  description: `${batch.species} - ${batch.status}`
+}}>
+  <div class="batch-detail">
+    <div class="batch-header-card">
+      <div class="header-content">
+        <div>
+          <span 
+            class="status-badge" 
+            style={`background: ${statusColors[batch.status] || statusColors[batch.stage] || '#6b7280'}`}
+          >
+            {batch.status || batch.stage}
+          </span>
+          <h1 class="batch-title">{batch.name}</h1>
+        </div>
+        <div class="batch-id">ID: {batch.id}</div>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>Batch Details</h3>
+        <dl>
+          <dt>Species</dt>
+          <dd>
+            {speciesData ? (
+              <a href={`/species/${speciesData.id}/`}>{batch.species}</a>
+            ) : (
+              <span>{batch.species}</span>
+            )}
+          </dd>
+          <dt>Start Date</dt>
+          <dd>{batch.start_date}</dd>
+          <dt>Vessel Type</dt>
+          <dd>{batch.vessel_type || 'Unknown'}</dd>
+          <dt>Recipe</dt>
+          <dd>
+            {recipe ? (
+              <a href={`/recipes/${recipe.id}/`}>{batch.recipe}</a>
+            ) : (
+              <span>{batch.recipe}</span>
+            )}
+          </dd>
+          {batch.success_rating && (
+            <>
+              <dt>Success Rating</dt>
+              <dd>⭐ {batch.success_rating}/10</dd>
+            </>
+          )}
+        </dl>
+      </div>
+
+      {(batch.temperature || batch.humidity) && (
+        <div class="info-card">
+          <h3>Conditions</h3>
+          <dl>
+            {batch.temperature && (
+              <>
+                <dt>Temperature</dt>
+                <dd>🌡️ {batch.temperature}</dd>
+              </>
+            )}
+            {batch.humidity && (
+              <>
+                <dt>Humidity</dt>
+                <dd>💧 {batch.humidity}%</dd>
+              </>
+            )}
+          </dl>
+        </div>
+      )}
+    </div>
+
+    {batch.notes && (
+      <div class="notes-card">
+        <h3>Batch Notes</h3>
+        <p>{batch.notes}</p>
+      </div>
+    )}
+
+    {batch.image_path && (
+      <div class="image-card">
+        <h3>Batch Image</h3>
+        <img src={batch.image_path} alt={batch.name} />
+      </div>
+    )}
+
+    <div class="observations-section">
+      <div class="section-header">
+        <h3>Observations ({batchObservations.length})</h3>
+      </div>
+
+      {batchObservations.length > 0 ? (
+        <div class="observations-list">
+          {batchObservations.slice(0, 5).map(obs => (
+            <a href={`/observations/${obs.id}/`} class="obs-item">
+              <div class="obs-header">
+                <span class="obs-date">{obs.observation_date}</span>
+                {obs.growth_stage && (
+                  <span class={`stage-badge stage-${obs.growth_stage}`}>
+                    {obs.growth_stage}
+                  </span>
+                )}
+              </div>
+              {obs.notes && (
+                <p class="obs-notes">{obs.notes.slice(0, 100)}{obs.notes.length > 100 ? '...' : ''}</p>
+              )}
+            </a>
+          ))}
+        </div>
+      ) : (
+        <p class="no-data">No observations recorded yet.</p>
+      )}
+    </div>
+  </div>
+
+  <style>
+    .batch-detail { max-width: 1200px; margin: 0 auto; }
+    .batch-header-card { padding: 2rem; background: var(--sl-color-bg-nav); border: 1px solid var(--sl-color-gray-5); border-radius: 0.5rem; margin-bottom: 2rem; }
+    .status-badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.875rem; font-weight: 500; color: white; margin-bottom: 0.75rem; }
+    .batch-title { margin: 0; font-size: 1.75rem; color: var(--sl-color-white); }
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
+    .info-card, .notes-card, .observations-section { padding: 1.5rem; background: var(--sl-color-bg-nav); border: 1px solid var(--sl-color-gray-5); border-radius: 0.5rem; margin-bottom: 1.5rem; }
+    .info-card h3 { margin: 0 0 1rem 0; font-size: 1.125rem; color: var(--sl-color-white); }
+    dl { margin: 0; display: grid; gap: 0.75rem; }
+    dt { font-size: 0.875rem; color: var(--sl-color-gray-3); font-weight: 500; }
+    dd { margin: 0.25rem 0 0 0; color: var(--sl-color-white); }
+    dd a { color: var(--sl-color-accent); text-decoration: none; }
+    .observations-list { display: grid; gap: 1rem; }
+    .obs-item { display: block; padding: 1rem; background: var(--sl-color-black); border: 1px solid var(--sl-color-gray-6); border-radius: 0.375rem; text-decoration: none; }
+    .obs-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+    .obs-date { font-weight: 600; color: var(--sl-color-white); font-size: 0.875rem; }
+    .stage-badge { padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: 500; }
+    .stage-colonization { background: #8b5cf6; color: white; }
+    .obs-notes { margin: 0; font-size: 0.875rem; color: var(--sl-color-gray-2); }
+    .no-data { color: var(--sl-color-gray-3); font-style: italic; text-align: center; padding: 2rem; }
+  </style>
+</StarlightPage>

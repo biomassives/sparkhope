@@ -9,10 +9,10 @@ export default defineConfig({
   
   integrations: [
     starlight({
-      title: 'SparkHope',
-      description: 'Food Security Documentation and Resources',
+      title: 'Spark Hope Myco Lab',
+      description: 'Food Preparation Documentation and Resources',
       
-      // Language configuration - 7 languages for global reach!
+      // Language configuration - 7
       defaultLocale: 'en',
       locales: {
         en: {
@@ -63,6 +63,14 @@ export default defineConfig({
       
       // Sidebar configuration with translations for all 7 languages
       sidebar: [
+        {
+          label: 'Documentation',
+          autogenerate: { directory: 'docs/en', link: '/docs/en' },
+        },
+        {
+          label: 'MycoLab Database',
+          autogenerate: { directory: 'mycolab',     link: '/mycolab/' },
+        },
         {
           label: 'Guide',
           translations: {

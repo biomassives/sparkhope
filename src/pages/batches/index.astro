@@ -1,0 +1,74 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import batches from '../../data/batches.json';
+
+const statusColors: Record<string, string> = {
+  'colonizing': '#8b5cf6',
+  'ready': '#10b981',
+  'fruiting': '#ec4899',
+  'harvested': '#f59e0b',
+  'failed': '#ef4444',
+  'preparation': '#6b7280',
+  'preparing': '#6b7280'
+};
+---
+
+<StarlightPage frontmatter={{
+  title: 'Batches',
+  description: 'All cultivation batches and their status'
+}}>
+  <div class="batches-container">
+    <p class="lead">Track all active and completed cultivation batches.</p>
+    
+    <div class="batches-grid">
+      {batches.map(batch => (
+        <a href={`/batches/${batch.id}/`} class="batch-card">
+          <div class="batch-header">
+            <h3>{batch.name}</h3>
+            <span 
+              class="status-badge" 
+              style={`background: ${statusColors[batch.status] || statusColors[batch.stage] || '#6b7280'}`}
+            >
+              {batch.status || batch.stage}
+            </span>
+          </div>
+          
+          <div class="batch-info">
+            <div class="info-row">
+              <span class="label">Species</span>
+              <span class="value">{batch.species}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Started</span>
+              <span class="value">{batch.start_date}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Vessel</span>
+              <span class="value">{batch.vessel_type}</span>
+            </div>
+          </div>
+
+          {batch.notes && (
+            <p class="batch-notes">{batch.notes}</p>
+          )}
+        </a>
+      ))}
+    </div>
+  </div>
+
+  <style>
+    .batches-container { max-width: 1200px; margin: 0 auto; }
+    .lead { font-size: 1.125rem; color: var(--sl-color-gray-2); margin-bottom: 2rem; }
+    .batches-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+    .batch-card { display: block; padding: 1.5rem; background: var(--sl-color-bg-nav); border: 1px solid var(--sl-color-gray-5); border-radius: 0.5rem; text-decoration: none; transition: all 0.2s ease; }
+    .batch-card:hover { border-color: var(--sl-color-accent); transform: translateY(-2px); }
+    .batch-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--sl-color-gray-5); }
+    .batch-header h3 { margin: 0; font-size: 1.125rem; color: var(--sl-color-white); line-height: 1.4; }
+    .status-badge { padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.875rem; font-weight: 500; color: white; white-space: nowrap; }
+    .batch-info { display: grid; gap: 0.5rem; margin-bottom: 1rem; }
+    .info-row { display: flex; justify-content: space-between; }
+    .info-row .label { font-size: 0.875rem; color: var(--sl-color-gray-3); }
+    .info-row .value { font-size: 0.875rem; color: var(--sl-color-white); font-weight: 500; }
+    .batch-notes { margin: 0; font-size: 0.875rem; color: var(--sl-color-gray-2); font-style: italic; }
+  </style>
+</StarlightPage>
