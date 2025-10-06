@@ -9,8 +9,8 @@ export default defineConfig({
   
   integrations: [
     starlight({
-      title: 'Spark Hope Myco Lab',
-      description: 'Food Preparation Documentation and Resources',
+      title: 'Delicate Threads Mycelial of Hope',
+      description: 'Food Resiliency Preparation Documentation and Resources',
       
       // Language configuration - 7
       defaultLocale: 'en',
