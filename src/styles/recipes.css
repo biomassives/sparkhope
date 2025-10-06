@@ -1,0 +1,16 @@
+/* src/styles/recipes.css */
+.recipe-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+}
+.recipe-table th,
+.recipe-table td {
+  border: 1px solid #ddd;
+  padding: .5rem 1rem;
+  text-align: left;
+}
+.recipe-table th {
+  background: #f4f4f4;
+}
+

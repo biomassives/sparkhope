@@ -1,0 +1,58 @@
+---
+// Front‑matter – import the JSON data
+import recipes from '../data/recipes.json';
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Recipe Comparison</title>
+  <link rel="stylesheet" href="/styles/recipes.css" />
+</head>
+<body>
+  <h1>Recipe Overview</h1>
+
+  <!-- 1️⃣ Summary table -->
+  <section id="table-view">
+    <h2>Summary Table</h2>
+    <table class="recipe-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Total Vol.</th>
+          <th>Prep Notes</th>
+          <th># Ingredients</th>
+        </tr>
+      </thead>
+      <tbody>
+        {recipes.map(r => (
+          <tr>
+            <td>{r.name}</td>
+            <td>{r.type}</td>
+            <td>{r.total_volume}</td>
+            <td>{r.preparation?.slice(0, 40)}…</td>
+            <td>{r.ingredients.length}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 2️⃣ Ingredient matrix -->
+  <section id="matrix-view">
+    <h2>Ingredient Matrix</h2>
+    <div id="matrix-container"></div>
+  </section>
+
+  <!-- 3️⃣ Bar chart -->
+  <section id="chart-view">
+    <h2>Ingredient Totals (by unit)</h2>
+    <canvas id="ingredientChart" width="800" height="400"></canvas>
+  </section>
+
+  <!-- Explicit inline directive to silence the warning -->
+  <script is:inline type="module" src="/src/scripts/recipes.js"></script>
+</body>
+</html>
+

@@ -9,8 +9,8 @@ export default defineConfig({
   
   integrations: [
     starlight({
-      title: 'Delicate Threads Mycelial of Hope',
-      description: 'Food Resiliency Preparation Documentation and Resources',
+      title: 'Biodyamic Mycology',
+      description: 'Wild sourcing, liquid culture, agar, and spawn feedstock preparation technique for resource dprived contexts',
       
       // Language configuration - 7
       defaultLocale: 'en',
