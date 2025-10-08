@@ -25,6 +25,11 @@ if (!items.length) return null;
         <p class="text-sm text-gray-600 mt-1 line-clamp-2">{item.description}</p>
       )}
 
+      {item.preparation && (
+        <p class="text-sm text-gray-600 mt-1 line-clamp-2">{item.preparation}</p>
+      )}
+
+
       {type === 'observation' && 'status' in item && item.status && (
         <span class={`inline-block px-2 py-1 text-xs rounded-full mt-1 ${
           item.status === 'active' ? 'bg-green-100 text-green-800' :

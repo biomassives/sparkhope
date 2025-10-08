@@ -63,6 +63,14 @@ const suitableSpecies = recipe.suitable_species
       </div>
     )}
 
+    {recipe.preparation && (
+      <div class="section">
+        <h2>Preparation</h2>
+        <p>{recipe.preparation}</p>
+      </div>
+    )}
+
+
     <div class="info-grid">
       {recipe.sterilization_method && (
         <div class="info-card">
