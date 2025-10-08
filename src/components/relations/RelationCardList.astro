@@ -1,0 +1,59 @@
+---
+import type { Batch, Recipe, Ingredient, Observation, Species } from '../../types';
+
+export interface Props {
+  title?: string;
+  items: (Batch | Recipe | Ingredient | Observation | Species)[];
+  type?: 'batch' | 'recipe' | 'ingredient' | 'observation' | 'species';
+}
+
+const { title = 'Related Items', items = [], type } = Astro.props;
+if (!items.length) return null;
+---
+
+<section class="relation-list">
+  <h3 class="text-lg font-semibold mb-2">{title}</h3>
+  <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+  {items.map(item => (
+  <a
+    href={item.id ? `/${type ?? 'item'}/${item.id}` : '#'}
+    class="card-link"
+  >
+    <div class="p-4 border rounded-xl shadow-sm hover:shadow-md transition">
+      <h4 class="font-medium">{item.title ?? item.id}</h4>
+      {item.description && (
+        <p class="text-sm text-gray-600 mt-1 line-clamp-2">{item.description}</p>
+      )}
+
+      {type === 'observation' && 'status' in item && item.status && (
+        <span class={`inline-block px-2 py-1 text-xs rounded-full mt-1 ${
+          item.status === 'active' ? 'bg-green-100 text-green-800' :
+          item.status === 'completed' ? 'bg-blue-100 text-blue-800' :
+          item.status === 'harvested' ? 'bg-yellow-100 text-yellow-800' :
+          item.status === 'contaminated' ? 'bg-red-100 text-red-800' :
+          'bg-gray-100 text-gray-800'
+        }`}>
+          {item.status}
+        </span>
+      )}
+
+      {'date_created' in item && item.date_created && (
+        <p class="text-xs text-gray-400 mt-1">
+          {new Date(item.date_created).toLocaleDateString()}
+        </p>
+      )}
+
+      {type === 'observation' && 'linkedSpecies' in item && Array.isArray(item.linkedSpecies) && (
+        <div class="mt-2 flex flex-wrap gap-1">
+          {item.linkedSpecies.map((s: { id: string; title: string }) => (
+            <span class="text-xs px-2 py-0.5 bg-gray-200 rounded">{s.title}</span>
+          ))}
+        </div>
+      )}
+    </div>
+  </a>
+))}
+  
+  </div>
+</section>
+

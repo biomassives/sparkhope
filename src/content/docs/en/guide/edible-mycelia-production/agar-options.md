@@ -1,6 +1,8 @@
 ---
-title: "Agar Options"
-pathname: "guide/edible-mycelia"
+title: Agar Options
+pathname: guide/edible-mycelia
+sidebar:
+  hidden: false
 ---
 
 Sabouraud Dextrose Agar (SDA) and Malt Extract Agar (MEA) are both general fungal media, but they differ in formulation and typical uses:

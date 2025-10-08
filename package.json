@@ -12,11 +12,14 @@
     "lint": "eslint . --ext .js,.ts,.astro,.tsx,.jsx",
     "format": "prettier --write .",
     "clean": "rm -rf dist .astro node_modules",
-    "reinstall": "npm run clean && npm install"
+    "reinstall": "npm run clean && npm install",
+    "fix:frontmatter": "node scripts/fixFrontmatter.js"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.36.0",
     "astro": "^5.14.1",
+    "chart.js": "^4.5.0",
+    "gray-matter": "^4.0.3",
     "mermaid": "^11.10.1",
     "sharp": "^0.34.2"
   },

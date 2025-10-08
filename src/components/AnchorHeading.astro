@@ -1,0 +1,14 @@
+---
+interface Props {
+  level: 1 | 2 | 3 | 4 | 5 | 6;
+  id?: string;
+}
+const { level, id } = Astro.props;
+const Tag = `h${level}` as keyof HTMLElementTagNameMap;
+---
+<Tag id={id} class="group scroll-mt-20">
+  <a href={`#${id}`} class="no-underline text-inherit hover:underline">
+    <slot />
+  </a>
+</Tag>
+

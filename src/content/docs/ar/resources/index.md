@@ -1,6 +1,8 @@
 ---
 title: الموارد
 description: موارد ووثائق مفيدة
+sidebar:
+  hidden: false
 ---
 
 # الموارد

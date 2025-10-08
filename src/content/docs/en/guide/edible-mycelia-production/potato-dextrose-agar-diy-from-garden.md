@@ -1,7 +1,9 @@
 ---
 title: Making Homemade Potato Dextrose Agar from Fresh Potatoes
-description: A complete guide to creating your own PDA medium using homegrown potatoes for mycology and liquid culture projects
-tags: 
+description: >-
+  A complete guide to creating your own PDA medium using homegrown potatoes for
+  mycology and liquid culture projects
+tags:
   - diy
   - agar
   - food-security
@@ -10,6 +12,7 @@ tags:
   - homegrown
 sidebar:
   order: 3
+  hidden: false
 ---
 
 Creating your own Potato Dextrose Agar (PDA) from homegrown potatoes is not only cost-effective but also ensures you know exactly what nutrients are going into your growing medium. This wholistic approach connects your mycology work directly to your garden.

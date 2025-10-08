@@ -1,0 +1,23 @@
+---
+const { seed = 'default', colors = ['#ff0000', '#00ff00', '#0000ff'] } = Astro.props;
+
+// Deterministic pseudo-random offset based on seed
+function pseudoRandom(seed: string): number {
+  return [...seed].reduce((acc, c) => acc + c.charCodeAt(0), 0) % 1000 / 1000;
+}
+const seedOffset = pseudoRandom(seed) * 50;
+
+const svgMarkup = (() => {
+  let svg = `<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">`;
+  for (let i = 0; i < 10; i++) {
+    const color = colors[i % colors.length];
+    const y = i * 40 + seedOffset;
+    svg += `<line x1="0" y1="${y}" x2="400" y2="${y}" stroke="${color}" stroke-width="2"/>`;
+  }
+  svg += `</svg>`;
+  return svg;
+})();
+---
+
+<div class="topography-art" set:html={svgMarkup}></div>
+

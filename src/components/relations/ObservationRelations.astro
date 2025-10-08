@@ -1,0 +1,22 @@
+---
+import RelationCardList from './RelationCardList.astro';
+
+export interface Props {
+  observation: any;
+}
+
+const { observation } = Astro.props;
+---
+
+<div class="observation-relations">
+  {observation.data.linkedBatch && (
+    <RelationCardList title="Observed Batch" items={[observation.data.linkedBatch]} type="batch" />
+  )}
+  {observation.data.linkedRecipe && (
+    <RelationCardList title="Recipe Context" items={[observation.data.linkedRecipe]} type="recipe" />
+  )}
+  {observation.data.linkedSpecies?.length && (
+    <RelationCardList title="Species" items={observation.data.linkedSpecies} type="species" />
+  )}
+</div>
+

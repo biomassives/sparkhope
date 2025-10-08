@@ -1,0 +1,310 @@
+---
+// src/pages/species/[id].astro - FIXED
+import Layout from '../../layouts/Layout.astro';
+import { initializeDataStore } from '../../lib/initData.js';
+
+// Get the species ID from the URL
+const { id } = Astro.params;
+
+// Initialize data store
+const store = await initializeDataStore();
+
+// Get all species for static paths
+const allSpecies = await store.species.getAll();
+
+// Find the specific species
+const species = allSpecies.find((s: any) => 
+  s.species_id === id || s.id === id
+);
+
+if (!species) {
+  return Astro.redirect('/404');
+}
+
+// Export getStaticPaths for static site generation
+export async function getStaticPaths() {
+  const store = await initializeDataStore();
+  const species = await store.species.getAll();
+  
+  return species.map((sp: any) => ({
+    params: { id: sp.species_id || sp.id },
+  }));
+}
+
+// Get related batches for this species
+const relatedBatches = await store.batches.getBySpecies(species.species_id || species.id);
+---
+
+<Layout title={`${species.title || species.scientific_name} - MycoLab`}>
+  <div class="container">
+    <div class="species-header">
+      <h1>{species.title || species.scientific_name}</h1>
+      
+      {species.scientific_name && species.title !== species.scientific_name && (
+        <p class="scientific-name">
+          <em>{species.scientific_name}</em>
+        </p>
+      )}
+
+      {species.difficulty && (
+        <span class={`badge badge-${species.difficulty}`}>
+          {species.difficulty}
+        </span>
+      )}
+    </div>
+
+    {species.common_names && species.common_names.length > 0 && (
+      <div class="section">
+        <h3>Also known as:</h3>
+        <p>{species.common_names.join(', ')}</p>
+      </div>
+    )}
+
+    {species.description && (
+      <div class="section">
+        <h3>Description</h3>
+        <p>{species.description}</p>
+      </div>
+    )}
+
+    {species.family && (
+      <div class="section">
+        <h3>Family</h3>
+        <p>{species.family}</p>
+      </div>
+    )}
+
+    {species.suitable_substrates && species.suitable_substrates.length > 0 && (
+      <div class="section">
+        <h3>Suitable Substrates</h3>
+        <ul class="substrate-list">
+          {species.suitable_substrates.map((substrate: string) => (
+            <li>{substrate}</li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {species.nutritional_profile && (
+      <div class="section">
+        <h3>Nutritional Profile</h3>
+        <div class="nutrition-grid">
+          {species.nutritional_profile.protein && (
+            <div class="nutrition-item">
+              <span class="label">Protein:</span>
+              <span class="value">{species.nutritional_profile.protein}%</span>
+            </div>
+          )}
+          {species.nutritional_profile.fiber && (
+            <div class="nutrition-item">
+              <span class="label">Fiber:</span>
+              <span class="value">{species.nutritional_profile.fiber}%</span>
+            </div>
+          )}
+          {species.nutritional_profile.vitamins && species.nutritional_profile.vitamins.length > 0 && (
+            <div class="nutrition-item full-width">
+              <span class="label">Vitamins:</span>
+              <span class="value">{species.nutritional_profile.vitamins.join(', ')}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    )}
+
+    {species.medicinal_properties && species.medicinal_properties.length > 0 && (
+      <div class="section">
+        <h3>Medicinal Properties</h3>
+        <ul class="properties-list">
+          {species.medicinal_properties.map((property: string) => (
+            <li>{property}</li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {species.culinary_uses && (
+      <div class="section">
+        <h3>Culinary Uses</h3>
+        <p>{species.culinary_uses}</p>
+      </div>
+    )}
+
+    {relatedBatches.length > 0 && (
+      <div class="section">
+        <h3>Related Batches</h3>
+        <div class="batch-list">
+          {relatedBatches.map((batch: any) => (
+            <a href={`/batches/${batch.batch_id || batch.id}`} class="batch-link">
+              <div class="batch-item">
+                <h4>{batch.title || 'Untitled Batch'}</h4>
+                {batch.status && (
+                  <span class={`badge badge-${batch.status}`}>
+                    {batch.status}
+                  </span>
+                )}
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+</Layout>
+
+<style>
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .species-header {
+    margin-bottom: 2rem;
+  }
+
+  .species-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .scientific-name {
+    font-size: 1.5rem;
+    color: #6b7280;
+    margin: 0.5rem 0;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+  }
+
+  .badge-easy {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .badge-moderate {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  .badge-challenging {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  .badge-active {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .badge-contaminated {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  .badge-completed {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+
+  .section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 1.5rem;
+  }
+
+  .section h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: #1f2937;
+  }
+
+  .section p {
+    color: #4b5563;
+    line-height: 1.6;
+  }
+
+  .substrate-list,
+  .properties-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .substrate-list li,
+  .properties-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .substrate-list li:last-child,
+  .properties-list li:last-child {
+    border-bottom: none;
+  }
+
+  .nutrition-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .nutrition-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem;
+    background: #f9fafb;
+    border-radius: 0.375rem;
+  }
+
+  .nutrition-item.full-width {
+    grid-column: 1 / -1;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .nutrition-item .label {
+    font-weight: 500;
+    color: #374151;
+  }
+
+  .nutrition-item .value {
+    color: #6b7280;
+  }
+
+  .batch-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .batch-link {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .batch-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 0.375rem;
+    transition: background 0.2s;
+  }
+
+  .batch-item:hover {
+    background: #f3f4f6;
+  }
+
+  .batch-item h4 {
+    margin: 0;
+    font-size: 1rem;
+    color: #1f2937;
+  }
+</style>

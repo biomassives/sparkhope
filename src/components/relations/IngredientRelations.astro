@@ -1,0 +1,19 @@
+---
+import RelationCardList from './RelationCardList.astro';
+
+export interface Props {
+  ingredient: any;
+}
+
+const { ingredient } = Astro.props;
+---
+
+<div class="ingredient-relations">
+  {ingredient.data.usedInRecipes?.length && (
+    <RelationCardList title="Used in Recipes" items={ingredient.data.usedInRecipes} type="recipe" />
+  )}
+  {ingredient.data.usedInBatches?.length && (
+    <RelationCardList title="Used in Batches" items={ingredient.data.usedInBatches} type="batch" />
+  )}
+</div>
+

@@ -1,7 +1,9 @@
 ---
 title: DIY Yeast Extract Production for Mycology Media
-description: Complete guide to producing your own yeast extract at home using various methods, from baker's yeast autolysis to wild yeast cultivation
-tags: 
+description: >-
+  Complete guide to producing your own yeast extract at home using various
+  methods, from baker's yeast autolysis to wild yeast cultivation
+tags:
   - diy
   - yeast-extract
   - food-security
@@ -11,6 +13,7 @@ tags:
   - edible-mycelia
 sidebar:
   order: 4
+  hidden: false
 ---
 
 Yeast extract is a crucial nutrient source for mycology media, providing essential amino acids, vitamins, and growth factors. Rather than relying on commercial suppliers, you can produce high-quality yeast extract at home using several proven methods.

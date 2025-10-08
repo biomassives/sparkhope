@@ -1,6 +1,8 @@
 ---
 title: வளங்கள்
 description: பயனுள்ள வளங்கள் மற்றும் ஆவணங்கள்
+sidebar:
+  hidden: false
 ---
 
 # வளங்கள்

@@ -1,54 +1,387 @@
 ---
-import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
-import species from '../../data/species.json';
+// src/pages/species/index.astro - FIXED
+import Layout from '../../layouts/Layout.astro';
+import { initializeDataStore } from '../../lib/initData.js';
+
+const store = await initializeDataStore();
+const species = await store.species.getAll();
+
+// Group by difficulty
+const speciesByDifficulty = species.reduce((acc: any, sp: any) => {
+  const difficulty = sp.difficulty || 'other';
+  if (!acc[difficulty]) acc[difficulty] = [];
+  acc[difficulty].push(sp);
+  return acc;
+}, {});
+
+// Count medicinal species
+const medicinalCount = species.filter((s: any) => 
+  s.medicinal_properties && s.medicinal_properties.length > 0
+).length;
 ---
 
-<StarlightPage frontmatter={{
-  title: 'Species',
-  description: 'Mushroom species cultivation database'
-}}>
-  <div class="species-container">
-    <p class="lead">Browse all mushroom species with cultivation parameters.</p>
-    
-    <div class="species-grid">
-      {species.map(sp => (
-        <a href={`/species/${sp.id}/`} class="species-card">
-          <div class="species-header">
-            <div>
-              <h3>{sp.common_name}</h3>
-              <p class="scientific">{sp.scientific_name}</p>
-            </div>
-          </div>
-
-          <p class="description">{sp.description || 'No description available'}</p>
-
-          <div class="params">
-            <div class="param">
-              <span class="label">🌡️ Temperature</span>
-              <span class="value">{sp.optimal_temp}</span>
-            </div>
-            <div class="param">
-              <span class="label">💧 Humidity</span>
-              <span class="value">{sp.optimal_humidity}</span>
-            </div>
-          </div>
-        </a>
-      ))}
+<Layout title="Species - SparkHope">
+  <div class="hero-small">
+    <div class="container">
+      <h1>🍄 Species</h1>
+      <p class="subtitle">Mushroom varieties and their properties</p>
     </div>
   </div>
 
-  <style>
-    .species-container { max-width: 1200px; margin: 0 auto; }
-    .lead { font-size: 1.125rem; color: var(--sl-color-gray-2); margin-bottom: 2rem; }
-    .species-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem; }
-    .species-card { display: block; padding: 1.5rem; background: var(--sl-color-bg-nav); border: 1px solid var(--sl-color-gray-5); border-radius: 0.5rem; text-decoration: none; transition: all 0.2s ease; }
-    .species-card:hover { border-color: var(--sl-color-accent); transform: translateY(-2px); }
-    .species-header h3 { margin: 0 0 0.25rem 0; font-size: 1.25rem; color: var(--sl-color-white); }
-    .scientific { margin: 0; font-size: 0.875rem; color: var(--sl-color-gray-3); font-style: italic; }
-    .description { margin: 1rem 0; color: var(--sl-color-gray-2); line-height: 1.5; font-size: 0.9375rem; }
-    .params { display: grid; gap: 0.75rem; }
-    .param { display: flex; justify-content: space-between; }
-    .param .label { font-size: 0.875rem; color: var(--sl-color-gray-3); }
-    .param .value { font-size: 0.875rem; color: var(--sl-color-white); font-weight: 500; }
-  </style>
-</StarlightPage>
+  <div class="container">
+    <div class="stats">
+      <div class="stat-card">
+        <span class="stat-number">{species.length}</span>
+        <span class="stat-label">Total Species</span>
+      </div>
+      {medicinalCount > 0 && (
+        <div class="stat-card medicinal">
+          <span class="stat-number">{medicinalCount}</span>
+          <span class="stat-label">Medicinal</span>
+        </div>
+      )}
+      {Object.entries(speciesByDifficulty).map(([difficulty, items]: [string, any]) => (
+        <div class="stat-card">
+          <span class="stat-number">{items.length}</span>
+          <span class="stat-label">{difficulty}</span>
+        </div>
+      ))}
+    </div>
+
+    {species.length === 0 ? (
+      <div class="empty-state">
+        <p>No species found. Add your first mushroom species!</p>
+      </div>
+    ) : (
+      <div class="species-grid">
+        {species.map((sp: any) => (
+          <div class="species-card">
+            <div class="card-header">
+              <div class="species-names">
+                <h2>{sp.title || sp.scientific_name || 'Untitled Species'}</h2>
+                {sp.scientific_name && sp.title !== sp.scientific_name && (
+                  <p class="scientific-name">{sp.scientific_name}</p>
+                )}
+              </div>
+              {sp.difficulty && (
+                <span class={`badge badge-${sp.difficulty}`}>
+                  {sp.difficulty}
+                </span>
+              )}
+            </div>
+
+            {sp.common_names && sp.common_names.length > 0 && (
+              <div class="common-names">
+                <strong>Also known as:</strong> {sp.common_names.join(', ')}
+              </div>
+            )}
+
+            {sp.description && (
+              <p class="species-description">
+                {sp.description.substring(0, 150)}{sp.description.length > 150 ? '...' : ''}
+              </p>
+            )}
+
+            {sp.family && (
+              <div class="species-meta">
+                <strong>Family:</strong> {sp.family}
+              </div>
+            )}
+
+            <div class="properties">
+              {sp.medicinal_properties && sp.medicinal_properties.length > 0 && (
+                <div class="property-badge medicinal">
+                  💊 {sp.medicinal_properties.length} medicinal properties
+                </div>
+              )}
+              {sp.culinary_uses && (
+                <div class="property-badge culinary">
+                  🍳 Culinary uses
+                </div>
+              )}
+            </div>
+
+            {sp.suitable_substrates && sp.suitable_substrates.length > 0 && (
+              <div class="substrates">
+                <strong>Substrates:</strong>
+                <div class="substrate-tags">
+                  {sp.suitable_substrates.map((substrate: string) => (
+                    <span class="substrate-tag">{substrate}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <a href={`/species/${sp.species_id || sp.id}`} class="btn-primary">
+              View Details →
+            </a>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+</Layout>
+
+<style>
+  .hero-small {
+    background: linear-gradient(135deg, var(--sl-color-accent) 0%, var(--sl-color-accent-low) 100%);
+    color: white;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .hero-small h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: white;
+  }
+
+  .subtitle {
+    font-size: 1.125rem;
+    opacity: 0.9;
+    margin: 0;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
+  }
+
+  .stats {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .stat-card {
+    flex: 1;
+    min-width: 150px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    text-align: center;
+    transition: all 0.2s;
+  }
+
+  .stat-card.medicinal {
+    border-color: var(--color-success);
+  }
+
+  .stat-card:hover {
+    background: var(--color-bg-card-hover);
+    transform: translateY(-2px);
+  }
+
+  .stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--sl-color-accent-high);
+  }
+
+  .stat-card.medicinal .stat-number {
+    color: var(--color-success);
+  }
+
+  .stat-label {
+    display: block;
+    color: var(--color-text-dim);
+    margin-top: 0.5rem;
+    text-transform: capitalize;
+  }
+
+  .species-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .species-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .species-card:hover {
+    background: var(--color-bg-card-hover);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    transform: translateY(-2px);
+    border-color: var(--sl-color-accent);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .species-names {
+    flex: 1;
+  }
+
+  .card-header h2 {
+    font-size: 1.5rem;
+    margin: 0 0 0.25rem 0;
+  }
+
+  .scientific-name {
+    font-size: 1rem;
+    color: var(--color-text-dim);
+    font-style: italic;
+    margin: 0;
+  }
+
+  .badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .badge-easy {
+    background: #065f46;
+    color: #d1fae5;
+  }
+
+  .badge-moderate {
+    background: #78350f;
+    color: #fef3c7;
+  }
+
+  .badge-challenging {
+    background: #7f1d1d;
+    color: #fee2e2;
+  }
+
+  .badge-other {
+    background: var(--color-bg-card-hover);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+  }
+
+  .common-names {
+    font-size: 0.875rem;
+    color: var(--color-text-dim);
+  }
+
+  .common-names strong {
+    color: var(--color-text);
+  }
+
+  .species-description {
+    color: var(--color-text-dim);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .species-meta {
+    font-size: 0.875rem;
+    color: var(--color-text-dim);
+  }
+
+  .species-meta strong {
+    color: var(--color-text);
+  }
+
+  .properties {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .property-badge {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+  }
+
+  .property-badge.medicinal {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+
+  .property-badge.culinary {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+  }
+
+  .substrates {
+    font-size: 0.875rem;
+  }
+
+  .substrates strong {
+    color: var(--color-text);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .substrate-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .substrate-tag {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    background: var(--color-bg-card-hover);
+    border: 1px solid var(--color-border);
+    border-radius: 0.25rem;
+    color: var(--color-text-dim);
+  }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: var(--sl-color-accent);
+    color: white;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    text-align: center;
+    transition: all 0.2s;
+    margin-top: auto;
+  }
+
+  .btn-primary:hover {
+    background: var(--sl-color-accent-high);
+    transform: translateY(-2px);
+  }
+
+  .empty-state {
+    background: var(--color-bg-card);
+    border: 2px dashed var(--color-border);
+    border-radius: 0.75rem;
+    padding: 3rem;
+    text-align: center;
+  }
+
+  .empty-state p {
+    color: var(--color-text-dim);
+    font-size: 1.125rem;
+  }
+
+  @media (max-width: 768px) {
+    .species-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .card-header {
+      flex-direction: column;
+    }
+  }
+</style>

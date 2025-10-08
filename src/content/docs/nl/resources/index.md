@@ -1,6 +1,8 @@
 ---
 title: Bronnen
 description: Nuttige bronnen en documentatie
+sidebar:
+  hidden: false
 ---
 
 # Bronnen

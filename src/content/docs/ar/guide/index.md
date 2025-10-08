@@ -1,6 +1,8 @@
 ---
 title: البدء
 description: تعلم كيفية استخدام منصتنا
+sidebar:
+  hidden: false
 ---
 
 # البدء

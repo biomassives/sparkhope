@@ -1,6 +1,8 @@
 ---
 title: Kuanza
 description: Jifunze jinsi ya kutumia jukwaa letu
+sidebar:
+  hidden: false
 ---
 
 # Kuanza

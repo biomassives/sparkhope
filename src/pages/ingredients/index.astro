@@ -1,0 +1,312 @@
+---
+// src/pages/ingredients/index.astro - FIXED
+import Layout from '../../layouts/Layout.astro';
+import { initializeDataStore } from '../../lib/initData.js';
+
+const store = await initializeDataStore();
+const ingredients = await store.ingredients.getAll();
+
+// Group by source
+const ingredientsBySource = ingredients.reduce((acc: any, ingredient: any) => {
+  const source = ingredient.category || 'other';
+  if (!acc[source]) acc[source] = [];
+  acc[source].push(ingredient);
+  return acc;
+}, {});
+---
+
+<Layout title="Ingredients - SparkHope">
+  <div class="hero-small">
+    <div class="container">
+      <h1>🌾 Ingredients</h1>
+      <p class="subtitle">Substrate components and supplies</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="stats">
+      <div class="stat-card">
+        <span class="stat-number">{ingredients.length}</span>
+        <span class="stat-label">Total Ingredients</span>
+      </div>
+      {Object.entries(ingredientsBySource).map(([source, items]: [string, any]) => (
+        <div class="stat-card">
+          <span class="stat-number">{items.length}</span>
+          <span class="stat-label">{source}</span>
+        </div>
+      ))}
+    </div>
+
+    {ingredients.length === 0 ? (
+      <div class="empty-state">
+        <p>No ingredients found. Add your first ingredient!</p>
+      </div>
+    ) : (
+      <>
+        {Object.entries(ingredientsBySource).map(([source, items]: [string, any]) => (
+          <section class="source-section">
+            <h2 class="source-title">
+              {source === 'base' && '🧪 Base'}
+              {source === 'additive' && '➕ Additive'}
+              {source === 'local' && '🏠 Local'}
+              {source === 'commercial' && '🏪 Commercial'}
+              {source === 'foraged' && '🌲 Foraged'}
+              {source === 'waste_stream' && '♻️ Waste Stream'}
+              {source === 'other' && '📦 Other'}
+              <span class="source-count">({items.length})</span>
+            </h2>
+            
+            <div class="ingredients-grid">
+              {items.map((ingredient: any) => (
+                <div class="ingredient-card">
+                  <div class="card-header">
+                    <h3>{ingredient.name || 'Untitled Ingredient'}</h3>
+                    {ingredient.category && (
+                      <span class={`badge badge-${ingredient.category}`}>
+                        {ingredient.category}
+                      </span>
+                    )}
+                  </div>
+
+                  {ingredient.description && (
+                    <p class="ingredient-description">{ingredient.description}</p>
+                  )}
+
+                  {ingredient.storage_notes && (
+                    <div class="storage-notes">
+                      <strong>Storage:</strong> {ingredient.storage_notes}
+                    </div>
+                  )}
+
+                  <a href={`/ingredients/${ingredient.id}`} class="btn-link">
+                    View Details →
+                  </a>
+                </div>
+              ))}
+            </div>
+          </section>
+        ))}
+      </>
+    )}
+  </div>
+</Layout>
+
+<style>
+  .hero-small {
+    background: linear-gradient(135deg, var(--sl-color-accent) 0%, var(--sl-color-accent-low) 100%);
+    color: white;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .hero-small h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: white;
+  }
+
+  .subtitle {
+    font-size: 1.125rem;
+    opacity: 0.9;
+    margin: 0;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
+  }
+
+  .stats {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .stat-card {
+    flex: 1;
+    min-width: 150px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    text-align: center;
+    transition: all 0.2s;
+  }
+
+  .stat-card:hover {
+    background: var(--color-bg-card-hover);
+    transform: translateY(-2px);
+  }
+
+  .stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--sl-color-accent-high);
+  }
+
+  .stat-label {
+    display: block;
+    color: var(--color-text-dim);
+    margin-top: 0.5rem;
+    text-transform: capitalize;
+  }
+
+  .source-section {
+    margin-bottom: 3rem;
+  }
+
+  .source-title {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+    color: var(--color-text);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .source-count {
+    font-size: 1rem;
+    color: var(--color-text-dim);
+    font-weight: normal;
+  }
+
+  .ingredients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .ingredient-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .ingredient-card:hover {
+    background: var(--color-bg-card-hover);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    transform: translateY(-2px);
+    border-color: var(--sl-color-accent);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .card-header h3 {
+    font-size: 1.25rem;
+    margin: 0;
+    flex: 1;
+  }
+
+  .badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .badge-base {
+    background: #1e3a8a;
+    color: #dbeafe;
+  }
+
+  .badge-additive {
+    background: #78350f;
+    color: #fef3c7;
+  }
+
+  .badge-local {
+    background: #065f46;
+    color: #d1fae5;
+  }
+
+  .badge-commercial {
+    background: #1e3a8a;
+    color: #dbeafe;
+  }
+
+  .badge-foraged {
+    background: #78350f;
+    color: #fef3c7;
+  }
+
+  .badge-waste_stream {
+    background: #065f46;
+    color: #d1fae5;
+  }
+
+  .badge-other {
+    background: var(--color-bg-card-hover);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+  }
+
+  .ingredient-description {
+    color: var(--color-text-dim);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .storage-notes {
+    font-size: 0.875rem;
+    color: var(--color-text-dim);
+    padding: 0.75rem;
+    background: var(--color-bg-card-hover);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+  }
+
+  .storage-notes strong {
+    color: var(--color-text);
+  }
+
+  .btn-link {
+    display: inline-block;
+    margin-top: auto;
+    color: var(--sl-color-accent-high);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .btn-link:hover {
+    color: var(--sl-color-accent);
+  }
+
+  .empty-state {
+    background: var(--color-bg-card);
+    border: 2px dashed var(--color-border);
+    border-radius: 0.75rem;
+    padding: 3rem;
+    text-align: center;
+  }
+
+  .empty-state p {
+    color: var(--color-text-dim);
+    font-size: 1.125rem;
+  }
+
+  @media (max-width: 768px) {
+    .ingredients-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .card-header {
+      flex-direction: column;
+    }
+  }
+</style>

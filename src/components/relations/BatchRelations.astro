@@ -1,0 +1,25 @@
+---
+import RelationCardList from './RelationCardList.astro';
+
+export interface Props {
+  batch: any;
+}
+
+const { batch } = Astro.props;
+---
+
+<div class="batch-relations">
+  {batch.data.linkedRecipe && (
+    <RelationCardList title="Recipe Used" items={[batch.data.linkedRecipe]} type="recipe" />
+  )}
+  {batch.data.linkedSpecies?.length && (
+    <RelationCardList title="Species" items={batch.data.linkedSpecies} type="species" />
+  )}
+  {batch.data.linkedIngredients?.length && (
+    <RelationCardList title="Ingredients" items={batch.data.linkedIngredients} type="ingredient" />
+  )}
+  {batch.data.linkedObservations?.length && (
+    <RelationCardList title="Observations" items={batch.data.linkedObservations} type="observation" />
+  )}
+</div>
+

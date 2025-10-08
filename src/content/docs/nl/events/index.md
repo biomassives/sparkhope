@@ -1,6 +1,8 @@
 ---
 title: Aankomende evenementen
 description: Doe mee aan onze community-evenementen
+sidebar:
+  hidden: false
 ---
 
 # Aankomende evenementen

@@ -1,6 +1,8 @@
 ---
 title: منابع
 description: منابع و مستندات مفید
+sidebar:
+  hidden: false
 ---
 
 # منابع

@@ -1,0 +1,432 @@
+---
+// src/pages/index.astro - Dark theme with visible content
+import Layout from '../layouts/Layout.astro';
+import type { Batch, Recipe } from '../types';
+import { resolveRelations, type ResolvedRelations } from '../utils/resolveRelations';
+import RelationCardList from '../components/relations/RelationCardList.astro';
+
+// Load JSON data
+import batchesData from '../data/batches.json';
+import recipesData from '../data/recipes.json';
+
+// Type guard helpers
+const isBatchArray = (data: unknown): data is Batch[] =>
+  Array.isArray(data) && data.every(item => typeof item === 'object' && 'id' in item);
+
+const isRecipeArray = (data: unknown): data is Recipe[] =>
+  Array.isArray(data) && data.every(item => typeof item === 'object' && 'id' in item);
+
+// Ensure correct typing from JSON
+const batchesJson: Batch[] = isBatchArray(batchesData) ? batchesData : [];
+const recipesJson: Recipe[] = isRecipeArray(recipesData) ? recipesData : [];
+
+// Resolve relations for all batches
+const batchesWithRelations: (Batch & ResolvedRelations)[] = batchesJson.map((batch) => ({
+  ...batch,
+  ...resolveRelations(batch),
+}));
+
+// Resolve relations for all recipes
+const recipesWithRelations: (Recipe & ResolvedRelations)[] = recipesJson.map((recipe) => ({
+  ...recipe,
+  ...resolveRelations(recipe),
+}));
+
+export const prerender = false;
+---
+
+<Layout title="SparkHope - MycoLab">
+  <div class="hero">
+    <div class="hero-content">
+      <h1>🍄 SparkHope MycoLab</h1>
+      <p class="hero-subtitle">Mushroom Cultivation Laboratory</p>
+      <p class="hero-description">
+        Track your batches, recipes, species, and observations
+      </p>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Quick Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">{batchesWithRelations.length}</div>
+        <div class="stat-label">Batches</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{recipesWithRelations.length}</div>
+        <div class="stat-label">Recipes</div>
+      </div>
+    </div>
+
+    <!-- Batches Section -->
+    <section class="section">
+      <div class="section-header">
+        <h2>🧫 Batches</h2>
+        <a href="/batches" class="view-all-link">View All →</a>
+      </div>
+      
+      {batchesWithRelations.length === 0 ? (
+        <div class="empty-state">
+          <p>No batches found. Add your first batch to get started!</p>
+        </div>
+      ) : (
+        <div class="content-grid">
+          {batchesWithRelations.map((batch) => (
+            <div data-key={batch.id} class="content-card">
+              <div class="card-header">
+                <h3 class="card-title">{batch.title}</h3>
+                {batch.status && (
+                  <span class={`badge badge-${batch.status}`}>
+                    {batch.status}
+                  </span>
+                )}
+              </div>
+              
+              {batch.description && (
+                <p class="card-description">{batch.description}</p>
+              )}
+
+              <div class="card-relations">
+                <RelationCardList 
+                  title="Ingredients" 
+                  items={batch.linkedIngredients ?? []} 
+                  type="ingredient" 
+                />
+                <RelationCardList 
+                  title="Species" 
+                  items={batch.linkedSpecies ?? []} 
+                  type="species" 
+                />
+                <RelationCardList 
+                  title="Observations" 
+                  items={batch.linkedObservations ?? []} 
+                  type="observation" 
+                />
+              </div>
+
+              <div class="card-footer">
+                <a href={`/batches/${batch.id}`} class="card-link">
+                  View Details →
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+
+    <!-- Recipes Section -->
+    <section class="section">
+      <div class="section-header">
+        <h2>📋 Recipes</h2>
+        <a href="/recipes" class="view-all-link">View All →</a>
+      </div>
+      
+      {recipesWithRelations.length === 0 ? (
+        <div class="empty-state">
+          <p>No recipes found. Create your first recipe!</p>
+        </div>
+      ) : (
+        <div class="content-grid">
+          {recipesWithRelations.map((recipe) => (
+            <div data-key={recipe.id} class="content-card">
+              <div class="card-header">
+                <h3 class="card-title">{recipe.title}</h3>
+                {recipe.difficulty && (
+                  <span class={`badge badge-${recipe.difficulty}`}>
+                    {recipe.difficulty}
+                  </span>
+                )}
+              </div>
+              
+              {recipe.description && (
+                <p class="card-description">{recipe.description}</p>
+              )}
+
+              <div class="card-relations">
+                <RelationCardList 
+                  title="Ingredients" 
+                  items={recipe.linkedIngredients ?? []} 
+                  type="ingredient" 
+                />
+                <RelationCardList 
+                  title="Species" 
+                  items={recipe.linkedSpecies ?? []} 
+                  type="species" 
+                />
+                <RelationCardList 
+                  title="Observations" 
+                  items={recipe.linkedObservations ?? []} 
+                  type="observation" 
+                />
+              </div>
+
+              <div class="card-footer">
+                <a href={`/recipes/${recipe.id}`} class="card-link">
+                  View Details →
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .hero {
+    background: linear-gradient(135deg, var(--sl-color-accent) 0%, var(--sl-color-accent-low) 100%);
+    color: white;
+    padding: 3rem 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .hero-content h1 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    font-weight: 800;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  }
+
+  .hero-subtitle {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.95;
+  }
+
+  .hero-description {
+    font-size: 1rem;
+    opacity: 0.9;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
+  }
+
+  /* Stats Grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .stat-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.2s ease;
+  }
+
+  .stat-card:hover {
+    background: var(--color-bg-card-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  }
+
+  .stat-number {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--sl-color-accent-high);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 1rem;
+    color: var(--color-text-dim);
+    margin-top: 0.5rem;
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 3rem;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--color-border);
+  }
+
+  .section-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .view-all-link {
+    color: var(--sl-color-accent-high);
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+
+  .view-all-link:hover {
+    color: var(--sl-color-accent);
+  }
+
+  /* Content Grid */
+  .content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* Content Card */
+  .content-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .content-card:hover {
+    background: var(--color-bg-card-hover);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    transform: translateY(-2px);
+    border-color: var(--sl-color-accent);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+    flex: 1;
+  }
+
+  .card-description {
+    font-size: 0.875rem;
+    color: var(--color-text-dim);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .card-relations {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem 0;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .card-footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .card-link {
+    color: var(--sl-color-accent-high);
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition: color 0.2s ease;
+  }
+
+  .card-link:hover {
+    color: var(--sl-color-accent);
+  }
+
+  /* Badges */
+  .badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    white-space: nowrap;
+  }
+
+  .badge-active {
+    background: #065f46;
+    color: #d1fae5;
+  }
+
+  .badge-contaminated {
+    background: #7f1d1d;
+    color: #fee2e2;
+  }
+
+  .badge-completed {
+    background: #1e3a8a;
+    color: #dbeafe;
+  }
+
+  .badge-harvested {
+    background: #78350f;
+    color: #fef3c7;
+  }
+
+  .badge-beginner {
+    background: #065f46;
+    color: #d1fae5;
+  }
+
+  .badge-intermediate {
+    background: #78350f;
+    color: #fef3c7;
+  }
+
+  .badge-advanced {
+    background: #7f1d1d;
+    color: #fee2e2;
+  }
+
+  /* Empty State */
+  .empty-state {
+    background: var(--color-bg-card);
+    border: 2px dashed var(--color-border);
+    border-radius: 0.75rem;
+    padding: 3rem;
+    text-align: center;
+  }
+
+  .empty-state p {
+    color: var(--color-text-dim);
+    font-size: 1.125rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero-content h1 {
+      font-size: 2rem;
+    }
+
+    .content-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

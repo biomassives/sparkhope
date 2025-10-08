@@ -1,7 +1,9 @@
 ---
 title: DIY Malt Extract Agar from Sprouted Grains
-description: Complete guide to producing malt extract agar using homegrown sprouted grains, alternative cereals, and various extraction methods for mycology applications
-tags: 
+description: >-
+  Complete guide to producing malt extract agar using homegrown sprouted grains,
+  alternative cereals, and various extraction methods for mycology applications
+tags:
   - diy
   - malt-extract
   - agar
@@ -12,6 +14,7 @@ tags:
   - edible-mycelia
 sidebar:
   order: 6
+  hidden: false
 ---
 
 Malt Extract Agar (MEA) is one of the most effective general-purpose media for cultivating fungi, providing rich carbohydrates, proteins, and growth factors. By producing your own malt extract from sprouted grains, you can create high-quality growing medium while maintaining complete control over ingredients and costs.

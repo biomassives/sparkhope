@@ -1,6 +1,7 @@
 // src/scripts/recipes.js
 import recipes from '../data/recipes.json';
-import Chart from 'https://cdn.jsdelivr.net/npm/chart.js';
+//import Chart from 'https://cdn.jsdelivr.net/npm/chart.js';
+import { Chart } from 'chart.js'; // 👈 Use the installed package import
 
 // ---------- 1️⃣ Build the ingredient‑by‑recipe matrix ----------
 function buildIngredientMatrix() {

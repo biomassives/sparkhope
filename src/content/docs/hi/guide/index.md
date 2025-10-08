@@ -1,6 +1,8 @@
 ---
 title: शुरू करना
 description: हमारे प्लेटफॉर्म का उपयोग करना सीखें
+sidebar:
+  hidden: false
 ---
 
 # शुरू करना

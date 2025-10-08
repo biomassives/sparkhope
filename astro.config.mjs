@@ -5,11 +5,13 @@ import { loadEnv } from 'vite';
 const { SITE_URL } = loadEnv(import.meta.env.MODE, process.cwd(), '');
 
 export default defineConfig({
+  output: 'static', 
   site: SITE_URL || 'https://sparkhope.space',
-  
+  //base: '/docs',
+ 
   integrations: [
     starlight({
-      title: 'Biodyamic Mycology',
+      title: 'Sparkhope Myco',
       description: 'Wild sourcing, liquid culture, agar, and spawn feedstock preparation technique for resource dprived contexts',
       
       // Language configuration - 7
@@ -69,7 +71,7 @@ export default defineConfig({
         },
         {
           label: 'MycoLab Database',
-          autogenerate: { directory: 'mycolab',     link: '/mycolab/' },
+          autogenerate: { directory: 'mycolab', link: '/mycolab/' },
         },
         {
           label: 'Guide',
@@ -132,10 +134,12 @@ export default defineConfig({
     ssr: {
       noExternal: ['@astrojs/starlight'],
     },
+    resolve: {
+      alias: {
+        '~': '/src',
+      },
+    },
   },
-  
-  // Output configuration
-  output: 'static',
   
   // Build optimization
   build: {

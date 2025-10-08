@@ -2,6 +2,9 @@
 title: Welcome to SparkHope
 description: Food Security Documentation and Resources
 template: splash
+sidebar:
+  label: "Sparkhope"
+  hidden: false
 hero:
   tagline: Building sustainable food security solutions for communities worldwide
   image:

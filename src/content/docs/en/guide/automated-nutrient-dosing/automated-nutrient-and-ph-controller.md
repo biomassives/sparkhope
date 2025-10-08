@@ -1,11 +1,22 @@
 ---
-title: "Automated Nutrient and pH Controller for Mycology & Food Security"
-description: "Technical documentation for an open-source Arduino Due-based hydroponic controller featuring automated dosing, pH calibration, and Bluetooth remote control."
-pubDate: 2025-08-24
-author: "Gemini"
-tags: ["hydroponics", "arduino", "mycology", "food-security", "automation", "open-source"]
-license: "MIT"
-version: "1.0"
+title: Automated Nutrient and pH Controller for Mycology & Food Security
+description: >-
+  Technical documentation for an open-source Arduino Due-based hydroponic
+  controller featuring automated dosing, pH calibration, and Bluetooth remote
+  control.
+pubDate: 2025-08-24T00:00:00.000Z
+author: Gemini
+tags:
+  - hydroponics
+  - arduino
+  - mycology
+  - food-security
+  - automation
+  - open-source
+license: MIT
+version: '1.0'
+sidebar:
+  hidden: false
 ---
 
 

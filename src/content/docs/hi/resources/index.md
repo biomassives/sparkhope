@@ -1,6 +1,8 @@
 ---
 title: संसाधन
 description: उपयोगी संसाधन और दस्तावेज़
+sidebar:
+  hidden: false
 ---
 
 # संसाधन

@@ -1,0 +1,100 @@
+---
+// src/components/ObservationList.astro
+
+// 1. Import the static JSON data directly
+import observations from '../data/observations.json';
+
+// 2. Sort the observations by date (most recent first)
+const sortedObservations = observations.sort((a, b) => 
+  new Date(b.observation_date).getTime() - new Date(a.observation_date).getTime()
+);
+
+// Helper function for cleaner text output
+function capitalize(str: string | undefined) {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+---
+
+<h2>Latest Observations ({sortedObservations.length})</h2>
+
+<div class="observations-grid">
+  {sortedObservations.map((obs) => (
+    <div class="observation-entry">
+      <div class="obs-header">
+        <span class="obs-id">ID: {obs.id}</span>
+        <span class="obs-date">{obs.observation_date}</span>
+      </div>
+      
+      <p class="obs-notes">
+        <strong>{capitalize(obs.growth_stage)}</strong> &mdash; 
+        {obs.visual_assessment || 'No visual assessment provided.'}
+      </p>
+
+      {/* Conditional image rendering using the public path */}
+      {obs.image_path && (
+        <figure>
+          <img 
+            src={obs.image_path} 
+            alt={`Observation image for ${obs.id}`} 
+            loading="lazy"
+          />
+          <figcaption>Batch {obs.batch_id}</figcaption>
+        </figure>
+      )}
+
+      <ul class="obs-details">
+        <li>Type: {capitalize(obs.observation_type)}</li>
+        <li>Contamination: {obs.contamination ? 'Yes 🔴' : 'No 🟢'}</li>
+      </ul>
+    </div>
+  ))}
+</div>
+
+<style>
+  /* Basic grid and styling for readability */
+  .observations-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+  .observation-entry {
+    border: 1px solid var(--starlight-border-color);
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    background: var(--sl-color-bg-card);
+    transition: all 0.2s ease-in-out;
+  }
+  .observation-entry:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  }
+  .obs-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9em;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px dashed var(--starlight-border-color);
+  }
+  .obs-id { font-weight: bold; }
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin: 0.5rem 0;
+  }
+  figcaption {
+    font-style: italic;
+    font-size: 0.85em;
+    text-align: center;
+    color: var(--sl-color-text-lighter);
+  }
+  .obs-details {
+    list-style: none;
+    padding: 0;
+    margin-top: auto; /* Pushes details to the bottom */
+    font-size: 0.9em;
+  }
+</style>

@@ -1,0 +1,360 @@
+---
+// src/pages/recipes/index.astro - FIXED
+import Layout from '../../layouts/Layout.astro';
+import { initializeDataStore } from '../../lib/initData.js';
+
+const store = await initializeDataStore();
+const recipes = await store.recipes.getAll();
+
+// Get all ingredients and species for reference
+const allIngredients = await store.ingredients.getAll();
+const allSpecies = await store.species.getAll();
+
+// Group recipes by type
+const recipesByType = recipes.reduce((acc: any, recipe: any) => {
+  const type = recipe.type || 'other';
+  if (!acc[type]) acc[type] = [];
+  acc[type].push(recipe);
+  return acc;
+}, {});
+---
+
+<Layout title="Recipes - SparkHope">
+  <div class="hero-small">
+    <div class="container">
+      <h1>📋 Recipes</h1>
+      <p class="subtitle">Cultivation techniques and formulas</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="stats">
+      <div class="stat-card">
+        <span class="stat-number">{recipes.length}</span>
+        <span class="stat-label">Total Recipes</span>
+      </div>
+      {Object.entries(recipesByType).map(([type, items]: [string, any]) => (
+        <div class="stat-card">
+          <span class="stat-number">{items.length}</span>
+          <span class="stat-label">{type}</span>
+        </div>
+      ))}
+    </div>
+
+    {recipes.length === 0 ? (
+      <div class="empty-state">
+        <p>No recipes found. Create your first recipe to get started!</p>
+      </div>
+    ) : (
+      <div class="recipe-grid">
+        {recipes.map((recipe: any) => {
+          // Ingredients are nested in the recipe object
+          const recipeIngredients = recipe.ingredients || [];
+          
+          const recipeSpecies = recipe.suitable_species
+            ? allSpecies.filter((s: any) => recipe.suitable_species.includes(s.species_id || s.id))
+            : [];
+          
+          return (
+            <div class="recipe-card">
+              <div class="card-header">
+                <h2>{recipe.name || 'Untitled Recipe'}</h2>
+                <div class="card-badges">
+                  {recipe.type && (
+                    <span class="badge badge-type">{recipe.type}</span>
+                  )}
+                  {recipe.difficulty && (
+                    <span class={`badge badge-${recipe.difficulty}`}>
+                      {recipe.difficulty}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {recipe.description && (
+                <p class="recipe-description">{recipe.description}</p>
+              )}
+
+              {recipeIngredients.length > 0 && (
+                <div class="recipe-section">
+                  <h3>Ingredients ({recipeIngredients.length})</h3>
+                  <div class="tag-list">
+                    {recipeIngredients.map((ingredient: any) => (
+                      <span class="tag">
+                        {ingredient.name} {ingredient.amount && `(${ingredient.amount}${ingredient.unit || ''})`}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {recipeSpecies.length > 0 && (
+                <div class="recipe-section">
+                  <h3>Suitable Species ({recipeSpecies.length})</h3>
+                  <div class="tag-list">
+                    {recipeSpecies.map((species: any) => (
+                      <a href={`/species/${species.species_id || species.id}`} class="tag">
+                        {species.title || species.scientific_name}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {recipe.sterilization_method && (
+                <div class="recipe-meta">
+                  <strong>Sterilization:</strong> {recipe.sterilization_method}
+                </div>
+              )}
+
+              {recipe.yield && (
+                <div class="recipe-meta">
+                  <strong>Yield:</strong> {recipe.yield}
+                </div>
+              )}
+
+              <a href={`/recipes/${recipe.recipe_id || recipe.id}`} class="btn-primary">
+                View Recipe →
+              </a>
+            </div>
+          );
+        })}
+      </div>
+    )}
+  </div>
+</Layout>
+
+<style>
+  .hero-small {
+    background: linear-gradient(135deg, var(--sl-color-accent) 0%, var(--sl-color-accent-low) 100%);
+    color: white;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .hero-small h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: white;
+  }
+
+  .subtitle {
+    font-size: 1.125rem;
+    opacity: 0.9;
+    margin: 0;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
+  }
+
+  .stats {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .stat-card {
+    flex: 1;
+    min-width: 150px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    text-align: center;
+    transition: all 0.2s;
+  }
+
+  .stat-card:hover {
+    background: var(--color-bg-card-hover);
+    transform: translateY(-2px);
+  }
+
+  .stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--sl-color-accent-high);
+  }
+
+  .stat-label {
+    display: block;
+    color: var(--color-text-dim);
+    margin-top: 0.5rem;
+    text-transform: capitalize;
+  }
+
+  .recipe-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .recipe-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .recipe-card:hover {
+    background: var(--color-bg-card-hover);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    transform: translateY(-2px);
+    border-color: var(--sl-color-accent);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .card-header h2 {
+    font-size: 1.5rem;
+    margin: 0;
+    flex: 1;
+  }
+
+  .card-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .badge-type {
+    background: var(--color-bg-card-hover);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+  }
+
+  .badge-beginner {
+    background: #065f46;
+    color: #d1fae5;
+  }
+
+  .badge-intermediate {
+    background: #78350f;
+    color: #fef3c7;
+  }
+
+  .badge-advanced {
+    background: #7f1d1d;
+    color: #fee2e2;
+  }
+
+  .recipe-description {
+    color: var(--color-text-dim);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .recipe-section {
+    padding: 1rem 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .recipe-section h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-dim);
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: var(--color-bg-card-hover);
+    border: 1px solid var(--color-border);
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .tag:hover {
+    background: var(--color-bg-card);
+    border-color: var(--sl-color-accent);
+    color: var(--sl-color-accent-high);
+  }
+
+  .recipe-meta {
+    font-size: 0.875rem;
+    color: var(--color-text-dim);
+  }
+
+  .recipe-meta strong {
+    color: var(--color-text);
+  }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: var(--sl-color-accent);
+    color: white;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    text-align: center;
+    transition: all 0.2s;
+    margin-top: auto;
+  }
+
+  .btn-primary:hover {
+    background: var(--sl-color-accent-high);
+    transform: translateY(-2px);
+  }
+
+  .empty-state {
+    background: var(--color-bg-card);
+    border: 2px dashed var(--color-border);
+    border-radius: 0.75rem;
+    padding: 3rem;
+    text-align: center;
+  }
+
+  .empty-state p {
+    color: var(--color-text-dim);
+    font-size: 1.125rem;
+  }
+
+  @media (max-width: 768px) {
+    .recipe-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .card-header {
+      flex-direction: column;
+    }
+
+    .card-badges {
+      flex-direction: row;
+    }
+  }
+</style>

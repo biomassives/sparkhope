@@ -1,6 +1,8 @@
 ---
 title: Rasilimali
 description: Rasilimali na nyaraka muhimu
+sidebar:
+  hidden: false
 ---
 
 # Rasilimali

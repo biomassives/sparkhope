@@ -1,6 +1,8 @@
 ---
 title: شروع کار
 description: نحوه استفاده از پلتفرم ما را بیاموزید
+sidebar:
+  hidden: false
 ---
 
 # شروع کار

@@ -1,8 +1,10 @@
 ---
 title: MycoLab Overview
 ---
+import ObservationList from '../../components/ObservationList.astro';
 
-# 🧫 MycoLab Experimental Index
+# 🧫 Mycolab Research Logs
 
-Explore real-time experimental data and substrate references in the [MycoLab Database](/mycolab/).
+This section provides transparency into our liquid culture experiments, a key part of our open-source food security research.
 
+<ObservationList />

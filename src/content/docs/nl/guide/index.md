@@ -1,6 +1,8 @@
 ---
 title: Aan de slag
 description: Leer hoe u ons platform gebruikt
+sidebar:
+  hidden: false
 ---
 
 # Aan de slag

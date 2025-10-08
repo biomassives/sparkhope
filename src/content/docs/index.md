@@ -1,6 +1,8 @@
 ---
 title: Welcome to MycoLab
 description: Your mushroom cultivation database and documentation
+sidebar:
+  hidden: false
 ---
 
 ## MycoLab Database

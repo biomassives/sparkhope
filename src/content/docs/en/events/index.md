@@ -1,6 +1,8 @@
 ---
 title: Ongoing Research
 description: Hands-on approach to demonstrating food security techniques
+sidebar:
+  hidden: false
 ---
 
 ## Oyster Mushroom Mycelial Cake and Aerial Mycelium

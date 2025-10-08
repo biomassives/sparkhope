@@ -1,12 +1,21 @@
 ---
 title: Accessible Low‑Resource Microbial Testing for Mycelial Foods
-
-description: Concise, food‑grade liquid culture and agar recipes, a compact sterile workflow, sourcing guidance, and simple low‑resource tests for prototyping edible mycelial products. Not a substitute for regulatory testing or mycotoxin analysis.
-
-tags: [mycology, food-safety, low-resource, microbial-testing, liquid-culture, agar, DIY-lab]
-
+description: >-
+  Concise, food‑grade liquid culture and agar recipes, a compact sterile
+  workflow, sourcing guidance, and simple low‑resource tests for prototyping
+  edible mycelial products. Not a substitute for regulatory testing or mycotoxin
+  analysis.
+tags:
+  - mycology
+  - food-safety
+  - low-resource
+  - microbial-testing
+  - liquid-culture
+  - agar
+  - DIY-lab
 language: en-US
-
+sidebar:
+  hidden: false
 ---
 
 Designed for small-scale, food‑grade mycelial production and prototyping in low-resource settings
