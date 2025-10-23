@@ -1,0 +1,48 @@
+/* Botanical Theme - Shared across all language sites */
+
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
+:root {
+  /* Botanical Color Palette */
+  --botanical-cream: #f8f5f0;
+  --botanical-paper: #faf8f3;
+  --botanical-sepia: #8b7355;
+  --botanical-sage: #87a878;
+  --botanical-dusty-rose: #c4a69d;
+  --botanical-moss: #5a6e4f;
+  --botanical-terracotta: #b87560;
+  --botanical-ink: #3d3027;
+  --botanical-gold: #d4a574;
+
+  /* Starlight overrides */
+  --sl-color-accent-low: #87a878;
+  --sl-color-accent: #5a6e4f;
+  --sl-color-accent-high: #3d3027;
+  --sl-color-white: #faf8f3;
+  --sl-color-gray-1: #f8f5f0;
+  --sl-color-gray-2: #f0ebe3;
+  --sl-color-gray-3: #d9d1c4;
+  --sl-color-gray-4: #8b7355;
+  --sl-color-gray-5: #6b5d4f;
+  --sl-color-gray-6: #3d3027;
+  --sl-color-black: #2c2416;
+
+  /* Typography */
+  --sl-font: 'EB Garamond', 'Crimson Text', serif;
+  --sl-font-system: 'EB Garamond', serif;
+}
+
+body {
+  font-family: 'EB Garamond', 'Crimson Text', serif;
+  background: var(--botanical-cream);
+  background-image: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(139, 115, 85, 0.03) 2px,
+      rgba(139, 115, 85, 0.03) 4px
+    );
+}
+
+/* Add all your botanical styling from before here */

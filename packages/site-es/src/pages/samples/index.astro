@@ -1,0 +1,428 @@
+---
+import Layout from '../../layouts/Layout.astro';
+// Use static JSON data imports for self-contained functionality
+import samplesData from '../../data/samples.json';
+import racksData from '../../data/racks.json';
+import speciesData from '../../data/species.json';
+
+// --- Type Definitions ---
+interface Rack { id: string; name: string; capacity: number; }
+interface Species { id: string; common_name: string; scientific_name: string; }
+interface Sample {
+    id: string; batch_id?: string; species_id: string; sample_type: string; 
+    status: string; location_id?: string; position?: string;
+    contamination?: boolean; health_rating?: number; notes?: string;
+}
+
+const samples: Sample[] = samplesData as Sample[];
+const racks: Rack[] = racksData as Rack[];
+const allSpecies: Species[] = speciesData as Species[];
+
+// Group samples by type (e.g., Agar, Liquid_Culture, Grain_Spawn)
+const samplesByType = samples.reduce((acc: { [key: string]: Sample[] }, sample) => {
+    // Standardize type name for display
+    const type = sample.sample_type ? sample.sample_type.replace(/_/g, ' ') : 'Other';
+    if (!acc[type]) acc[type] = [];
+    acc[type].push(sample);
+    return acc;
+}, {});
+
+// Calculate stats
+const totalContaminated = samples.filter(s => s.contamination).length;
+const totalReady = samples.filter(s => s.status === 'Ready').length;
+const totalActive = samples.filter(s => s.status === 'Colonizing' || s.status === 'Active').length;
+
+// Status color mapping for badges (must match batch page for consistency)
+const statusClassMap: { [key: string]: string } = {
+    'Preparing': 'status-gold',
+    'Active': 'status-moss',
+    'Colonizing': 'status-moss-light',
+    'Fruiting': 'status-sage',
+    'Ready': 'status-sage-dark',
+    'Stored': 'status-sepia',
+    'Contaminated': 'status-terracotta',
+    'Aborted': 'status-terracotta'
+};
+
+// Filter out generic status stats already counted (Ready, Contaminated, Active)
+const dynamicStatTypes = Object.entries(samplesByType).filter(([type]) => 
+    !['Ready', 'Contaminated', 'Colonizing', 'Active'].includes(type.replace(/\s/g, '_')));
+
+---
+
+<Layout title="Sample Inventory - MycoLog">
+    <!-- Hero Header with Botanical Styling -->
+    <div class="hero-small">
+        <div class="container">
+            <h1>🧫 Sample Inventory</h1>
+            <p class="subtitle">Track culture health, storage, and specimen lineage.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            
+            <div class="stat-card stat-highlight">
+                <span class="stat-number">{samples.length}</span>
+                <span class="stat-label">Muestras Totales</span>
+            </div>
+            
+            <div class="stat-card">
+                <span class="stat-number">{totalActive}</span>
+                <span class="stat-label">Active / Colonizing</span>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-number">{totalReady}</span>
+                <span class="stat-label">Ready for Use</span>
+            </div>
+            
+            <div class="stat-card stat-contaminated">
+                <span class="stat-number">{totalContaminated}</span>
+                <span class="stat-label">Contaminated</span>
+            </div>
+            
+            <!-- Dynamic Stats by Type -->
+            {Object.entries(samplesByType).map(([type, items]: [string, any]) => (
+                <div class="stat-card stat-type">
+                    <span class="stat-number">{items.length}</span>
+                    <span class="stat-label">{type}</span>
+                </div>
+            ))}
+        </div>
+
+        {samples.length === 0 ? (
+            <div class="empty-state">
+                <p>No samples found. Begin logging your cultures and specimens!</p>
+                <a href="/samples/new" class="btn-primary">Add First Sample</a>
+            </div>
+        ) : (
+            <>
+                <!-- Table View -->
+                <div class="table-container">
+                    <table class="sample-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Type</th>
+                                <th>Species</th>
+                                <th>Batch Link</th>
+                                <th>Storage Location</th>
+                                <th>Status</th>
+                                <th class="text-center">Health</th>
+                                <th class="text-center">Contam.</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {samples.map((s: Sample) => {
+                                // Find related entities
+                                const rack = racks.find((r: Rack) => r.id === s.location_id);
+                                const species = allSpecies.find((sp: Species) => sp.id === s.species_id);
+                                const statusClass = statusClassMap[s.status] || 'status-sepia';
+
+                                return (
+                                    <tr>
+                                        <td><a href={`/samples/${s.id}`}>{s.id}</a></td>
+                                        <td>{s.sample_type.replace(/_/g, ' ')}</td>
+                                        <td>
+                                            {species ? (
+                                                <a href={`/species/${species.id}`}>{species.common_name}</a>
+                                            ) : s.species_id || 'Unknown'}
+                                        </td>
+                                        <td>
+                                            {s.batch_id ? (
+                                                <a href={`/batches/${s.batch_id}`}>{s.batch_id}</a>
+                                            ) : '—'}
+                                        </td>
+                                        <td>
+                                            {rack ? `${rack.name} / ${s.position || '?'}` : `Unstored / ${s.position || '?'}`}
+                                        </td>
+                                        <td>
+                                            <span class={`status-badge ${statusClass}`}>
+                                                {s.status}
+                                            </span>
+                                        </td>
+                                        <td class="health-cell text-center">
+                                            {s.health_rating ? '★'.repeat(s.health_rating) + '☆'.repeat(5 - s.health_rating) : '—'}
+                                        </td>
+                                        <td class="contam-cell text-center">
+                                            {s.contamination ? '⚠️' : '✓'}
+                                        </td>
+                                        <td class="notes-cell">{s.notes || '—'}</td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Add New Button -->
+                <div class="add-section">
+                    <a href="/samples/new" class="btn-secondary">+ Log New Sample</a>
+                </div>
+            </>
+        )}
+    </div>
+</Layout>
+
+<style>
+    /* Reset & Botanical Variables (Assuming external theme CSS provides the root vars) */
+    
+    .hero-small {
+        background: linear-gradient(135deg, var(--botanical-sage) 0%, var(--botanical-moss) 100%);
+        color: var(--botanical-cream);
+        padding: 3rem 2rem;
+        margin-bottom: 3rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .hero-small h1 {
+        font-family: var(--font-heading, 'EB Garamond', serif);
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+        color: white;
+    }
+
+    .subtitle {
+        font-size: 1.25rem;
+        opacity: 0.9;
+        margin: 0;
+        color: var(--botanical-cream);
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem 4rem;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .stat-card {
+        background: var(--botanical-paper);
+        border: 1px solid var(--botanical-dusty-rose);
+        padding: 1.5rem;
+        border-radius: 6px;
+        text-align: center;
+        transition: all 0.2s;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .stat-card:hover {
+        background: var(--botanical-cream);
+        transform: translateY(-2px);
+        border-color: var(--botanical-sage);
+    }
+
+    .stat-highlight {
+        border-width: 2px;
+        border-color: var(--botanical-moss);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .stat-contaminated {
+        border-color: var(--botanical-terracotta);
+    }
+
+    .stat-number {
+        display: block;
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--botanical-moss);
+    }
+    
+    .stat-contaminated .stat-number {
+        color: var(--botanical-terracotta);
+    }
+
+    .stat-label {
+        display: block;
+        color: var(--botanical-sepia);
+        margin-top: 0.5rem;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.05em;
+    }
+
+    /* Table Styles */
+    .table-container {
+        background: white;
+        border: 1px solid var(--botanical-dusty-rose);
+        border-radius: 6px;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .sample-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+
+    .sample-table th {
+        background: var(--botanical-cream);
+        color: var(--botanical-ink);
+        font-weight: 600;
+        text-align: left;
+        padding: 1rem;
+        border-bottom: 2px solid var(--botanical-dusty-rose);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .sample-table td {
+        padding: 0.8rem 1rem;
+        border-bottom: 1px solid #eee;
+        color: var(--botanical-ink);
+    }
+
+    .sample-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .sample-table tbody tr:hover {
+        background: var(--botanical-cream);
+    }
+
+    .sample-table td a {
+        color: var(--botanical-moss);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+    .sample-table td a:hover {
+        color: var(--botanical-sage);
+        text-decoration: underline;
+    }
+
+    /* Status Badges (Match Batch Detail Page) */
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        line-height: 1;
+        letter-spacing: 0.05em;
+    }
+    /* Status Color Classes (Matching BatchCard) */
+    .status-gold { background: var(--botanical-gold); color: white; }
+    .status-moss { background: var(--botanical-moss); color: white; } /* Active */
+    .status-moss-light { background: #91a882; color: var(--botanical-ink); } /* Colonizing */
+    .status-sage { background: var(--botanical-sage); color: var(--botanical-ink); } /* Fruiting */
+    .status-sage-dark { background: #5d754f; color: white; } /* Ready */
+    .status-terracotta { background: var(--botanical-terracotta); color: white; } /* Contam. / Aborted */
+    .status-sepia { background: var(--botanical-sepia); color: white; } /* Stored */
+    
+
+    .health-cell {
+        color: var(--botanical-gold);
+        font-size: 1.1rem;
+        letter-spacing: 0.05em;
+    }
+
+    .contam-cell {
+        font-size: 1.25rem;
+    }
+    
+    .text-center {
+        text-align: center;
+    }
+
+    .notes-cell {
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: var(--botanical-sepia);
+    }
+
+    /* Empty State */
+    .empty-state {
+        background: var(--botanical-paper);
+        border: 2px dashed var(--botanical-dusty-rose);
+        border-radius: 6px;
+        padding: 3rem;
+        text-align: center;
+        margin: 4rem 0;
+    }
+
+    .empty-state p {
+        color: var(--botanical-sepia);
+        font-size: 1.125rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Buttons (Using botanical colors) */
+    .btn-primary,
+    .btn-secondary {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: 600;
+        transition: all 0.2s;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .btn-primary {
+        background: var(--botanical-moss);
+        color: white;
+        border: 1px solid var(--botanical-moss);
+    }
+
+    .btn-primary:hover {
+        background: var(--botanical-sage);
+        border-color: var(--botanical-sage);
+        color: var(--botanical-ink);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .btn-secondary {
+        background: var(--botanical-paper);
+        color: var(--botanical-moss);
+        border: 1px solid var(--botanical-sage);
+    }
+
+    .btn-secondary:hover {
+        background: var(--botanical-cream);
+        border-color: var(--botanical-moss);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .add-section {
+        margin-top: 3rem;
+        text-align: center;
+    }
+
+    @media (max-width: 768px) {
+        .hero-small h1 {
+            font-size: 2.5rem;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .sample-table {
+            min-width: 900px;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        }
+    }
+</style>
+

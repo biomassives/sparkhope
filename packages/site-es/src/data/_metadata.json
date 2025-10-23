@@ -1,0 +1,12 @@
+{
+  "export_date": "2025-10-06T09:02:14.185210",
+  "transformed_date": "2025-10-06T18:42:52.097Z",
+  "source_file": "mycolab_export_20251006_090207.json",
+  "record_counts": {
+    "species": 12,
+    "ingredients": 25,
+    "recipes": 17,
+    "batches": 9,
+    "observations": 15
+  }
+}

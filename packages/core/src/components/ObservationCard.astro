@@ -1,0 +1,100 @@
+---
+// Define props, accepting the observation object and localized labels
+const { obs, labelSpecimen, labelStage, labelContam, labelNotesBinary, currentLocale = 'en-US' } = Astro.props;
+
+// Formatting logic remains local to the component, but uses the passed locale
+const observationDate = new Date(obs.observation_date || obs.created_at).toLocaleDateString(currentLocale, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+});
+---
+
+<article class="observation-card">
+    <div class="obs-header">
+        <time class="obs-date">
+            {observationDate}
+        </time>
+        {obs.contamination && (
+            <span class="obs-warning">⚠ {labelContam}</span>
+        )}
+    </div>
+
+    <div class="obs-id">
+        <span class="obs-label">{labelSpecimen}:</span> {obs.batch_id || obs.sample_id || obs.id}
+    </div>
+
+    {obs.growth_stage && (
+        <div class="obs-stage">
+            <span class="obs-label">{labelStage}:</span> {obs.growth_stage}
+        </div>
+    )}
+
+    {(obs.visual_assessment || obs.notes) && (
+        <p class="obs-notes">{obs.visual_assessment || obs.notes}</p>
+    )}
+
+    <div class="obs-binary">{labelNotesBinary}</div>
+</article>
+
+<style>
+    /* Assuming variables are accessible or defined with fallbacks */
+    .observation-card {
+        background: white;
+        border: 2px solid var(--botanical-sepia, #8b7355);
+        border-left: 6px solid var(--botanical-sage, #87a878);
+        padding: 1.5rem;
+        box-shadow: 4px 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .obs-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 0.75rem;
+        margin-bottom: 0.75rem;
+        border-bottom: 1px solid rgba(139, 115, 85, 0.3);
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .obs-date {
+        font-size: 0.9rem;
+        font-weight: 600;
+        font-variant: small-caps;
+    }
+
+    .obs-warning {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--botanical-terracotta, #b87560);
+        background: rgba(184, 117, 96, 0.1);
+        padding: 0.25rem 0.75rem;
+        border-radius: 4px;
+    }
+
+    .obs-id, .obs-stage {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .obs-label {
+        font-weight: 600;
+        color: var(--botanical-sepia, #8b7355);
+    }
+
+    .obs-notes {
+        font-size: 1rem;
+        line-height: 1.6;
+        margin: 1rem 0;
+    }
+
+    .obs-binary {
+        font-family: 'VT323', monospace;
+        font-size: 0.85rem;
+        color: var(--pixel-green, #00ff41);
+        text-align: center;
+        padding-top: 0.75rem;
+        border-top: 1px dashed var(--botanical-sepia, #8b7355);
+    }
+</style>

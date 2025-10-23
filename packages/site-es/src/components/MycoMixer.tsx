@@ -1,0 +1,393 @@
+import React, { useState, useEffect } from 'react';
+import { X, Droplet, Plus } from 'lucide-react';
+import { getAllIngredients } from '../utils/loadData';
+
+interface Ingredient {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  unit: string;
+  preparation_notes?: string;
+  storage_notes?: string;
+  usage_notes?: string;
+  rating?: number;
+  image_path?: string | null;
+}
+
+interface BottleConfig extends Ingredient {
+  color: string;
+  increment: number;
+  type: string;
+}
+
+const MycoMixer = () => {
+  const [ingredients, setIngredients] = useState<Record<string, number>>({});
+  const [ingredientDatabase, setIngredientDatabase] = useState<BottleConfig[]>([]);
+  const [clickedBottle, setClickedBottle] = useState<string | null>(null);
+
+  useEffect(() => {
+    const dbIngredients = getAllIngredients() as Ingredient[];
+    
+    // Category color mapping
+    const categoryColors: Record<string, string> = {
+      base: '#00ffff',      // Cyan for water bases
+      additive: '#00ff00',  // Green for additives
+      grain: '#ffaa00',     // Orange for grains
+      nutrient: '#ff00aa',  // Pink for nutrients
+      sugar: '#ffff00',     // Yellow for sugars
+      other: '#9900ff'      // Purple for other
+    };
+    
+    // Type mapping based on category
+    const categoryTypes: Record<string, string> = {
+      base: 'bottle-round',
+      additive: 'jar',
+      grain: 'bottle-tall',
+      nutrient: 'bottle-small',
+      sugar: 'jar-honey',
+      other: 'bottle-tall'
+    };
+    
+    // Map database ingredients to bottle configs
+    const bottles: BottleConfig[] = dbIngredients.map((ing) => ({
+      ...ing,
+      color: categoryColors[ing.category] || '#00ff00',
+      increment: ing.unit === 'ml' ? 50 : ing.unit === 'mg' ? 10 : 5,
+      type: categoryTypes[ing.category] || 'bottle-tall'
+    }));
+    
+    setIngredientDatabase(bottles);
+    
+    // Initialize ingredients state
+    const initialState: Record<string, number> = {};
+    bottles.forEach(b => {
+      initialState[b.id] = 0;
+    });
+    setIngredients(initialState);
+  }, []);
+
+  const addIngredient = (bottleId: string, increment: number) => {
+    setIngredients(prev => ({
+      ...prev,
+      [bottleId]: (prev[bottleId] || 0) + increment
+    }));
+    setClickedBottle(bottleId);
+    setTimeout(() => setClickedBottle(null), 300);
+  };
+
+  const updateIngredient = (name: string, value: number) => {
+    setIngredients(prev => ({ ...prev, [name]: Math.max(0, value) }));
+  };
+
+  const clearAll = () => {
+    const cleared: Record<string, number> = {};
+    ingredientDatabase.forEach(b => { cleared[b.id] = 0; });
+    setIngredients(cleared);
+  };
+
+  const totalVolume = Object.values(ingredients).reduce((a, b) => a + b, 0);
+  
+  const getPercentage = (amount: number) => totalVolume > 0 ? ((amount / totalVolume) * 100).toFixed(1) : '0';
+
+  const calculateNutrition = () => {
+    const totalSolids = Object.entries(ingredients)
+      .filter(([id]) => {
+        const ing = ingredientDatabase.find(b => b.id === id);
+        return ing && ing.unit === 'g';
+      })
+      .reduce((sum, [, amount]) => sum + amount, 0);
+    
+    const totalLiquid = Object.entries(ingredients)
+      .filter(([id]) => {
+        const ing = ingredientDatabase.find(b => b.id === id);
+        return ing && ing.unit === 'ml';
+      })
+      .reduce((sum, [, amount]) => sum + amount, 0);
+
+    return {
+      calories: Math.round(totalSolids * 3.5),
+      carbs: Math.round(totalSolids * 0.8),
+      protein: Math.round(totalSolids * 0.15),
+      fiber: Math.round(totalSolids * 0.05),
+      minerals: Math.round(totalLiquid * 0.03)
+    };
+  };
+
+  const nutrition = calculateNutrition();
+
+  const BottleSVG = ({ type, color, fillLevel }: { type: string; color: string; fillLevel: number }) => {
+    const fillPercent = Math.min(fillLevel, 100);
+    
+    if (type === 'bottle-tall') {
+      return (
+        <svg viewBox="0 0 60 100" className="w-full h-full">
+          <rect x="15" y="10" width="30" height="5" fill={color} opacity="0.3" />
+          <rect x="20" y="15" width="20" height="75" fill="none" stroke={color} strokeWidth="2" />
+          <rect x="22" y={90 - fillPercent * 0.7} width="16" height={fillPercent * 0.7} fill={color} opacity="0.6" />
+          <rect x="23" y={90 - fillPercent * 0.7} width="4" height={fillPercent * 0.3} fill="white" opacity="0.3" />
+          <rect x="22" y="10" width="16" height="5" fill={color} />
+        </svg>
+      );
+    }
+    
+    if (type === 'bottle-round') {
+      return (
+        <svg viewBox="0 0 60 100" className="w-full h-full">
+          <ellipse cx="30" cy="15" rx="8" ry="4" fill={color} />
+          <rect x="22" y="15" width="16" height="5" fill={color} />
+          <ellipse cx="30" cy="25" rx="15" ry="8" fill="none" stroke={color} strokeWidth="2" />
+          <rect x="15" y="25" width="30" height="65" fill="none" stroke={color} strokeWidth="2" />
+          <ellipse cx="30" cy="90" rx="15" ry="8" fill="none" stroke={color} strokeWidth="2" />
+          <ellipse cx="30" cy={90 - fillPercent * 0.6} rx="13" ry="6" fill={color} opacity="0.6" />
+          <rect x="17" y={90 - fillPercent * 0.6} width="26" height={fillPercent * 0.6} fill={color} opacity="0.6" />
+        </svg>
+      );
+    }
+    
+    if (type === 'jar' || type === 'jar-honey') {
+      return (
+        <svg viewBox="0 0 60 100" className="w-full h-full">
+          <rect x="12" y="20" width="36" height="70" fill="none" stroke={color} strokeWidth="2" rx="4" />
+          <rect x="14" y={90 - fillPercent * 0.65} width="32" height={fillPercent * 0.65} fill={color} opacity="0.6" rx="3" />
+          <rect x="10" y="15" width="40" height="7" fill={color} rx="2" />
+          <rect x="15" y="12" width="30" height="4" fill={color} opacity="0.8" />
+          <rect x="18" y="40" width="24" height="15" fill="black" opacity="0.7" stroke={color} strokeWidth="1" />
+        </svg>
+      );
+    }
+    
+    if (type === 'bottle-small') {
+      return (
+        <svg viewBox="0 0 60 100" className="w-full h-full">
+          <rect x="22" y="10" width="16" height="8" fill={color} />
+          <rect x="18" y="18" width="24" height="72" fill="none" stroke={color} strokeWidth="2" rx="3" />
+          <rect x="20" y={90 - fillPercent * 0.7} width="20" height={fillPercent * 0.7} fill={color} opacity="0.6" rx="2" />
+        </svg>
+      );
+    }
+    
+    return (
+      <svg viewBox="0 0 60 100" className="w-full h-full">
+        <rect x="20" y="15" width="20" height="75" fill="none" stroke={color} strokeWidth="2" />
+        <rect x="22" y={90 - fillPercent * 0.7} width="16" height={fillPercent * 0.7} fill={color} opacity="0.6" />
+        <rect x="22" y="10" width="16" height="5" fill={color} />
+      </svg>
+    );
+  };
+
+  const activeIngredients = ingredientDatabase.filter(b => ingredients[b.id] > 0);
+
+  return (
+    <div className="w-full max-w-6xl mx-auto bg-black border-4 border-red-600 rounded-lg p-6 font-mono relative">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6 pb-4 border-b-2 border-red-600">
+        <h1 className="text-2xl font-bold text-green-400 flex items-center gap-2">
+          <Droplet className="w-6 h-6" />
+          MOTHER CULTURE LAB - MIXER
+        </h1>
+        <div className="flex gap-2">
+          <button 
+            onClick={clearAll}
+            className="px-4 py-2 border-2 border-green-400 text-green-400 hover:bg-green-400 hover:text-black transition-colors text-sm"
+          >
+            CLEAR
+          </button>
+          <button className="px-4 py-2 border-2 border-yellow-400 bg-yellow-400 text-black hover:bg-yellow-500 transition-colors text-sm">
+            SAVE RECIPE
+          </button>
+        </div>
+      </div>
+
+      {/* Main content grid */}
+      <div className="grid grid-cols-3 gap-6 mb-6">
+        {/* Left: Active Mix Display */}
+        <div className="space-y-4">
+          <h2 className="text-lg text-cyan-400 border-b border-cyan-400 pb-2">ACTIVE MIX</h2>
+          
+          <div className="space-y-2 p-3 border-2 border-green-400 rounded max-h-80 overflow-y-auto">
+            {activeIngredients.length === 0 ? (
+              <div className="text-green-400 text-sm text-center py-8 opacity-50">
+                Click bottles below to add ingredients
+              </div>
+            ) : (
+              activeIngredients.map((bottle) => (
+                <div key={bottle.id} className="space-y-1">
+                  <div className="flex justify-between items-center text-xs">
+                    <span style={{ color: bottle.color }}>{bottle.name}</span>
+                    <div className="flex items-center gap-2">
+                      <span style={{ color: bottle.color }}>{ingredients[bottle.id]}{bottle.unit}</span>
+                      <button
+                        onClick={() => updateIngredient(bottle.id, ingredients[bottle.id] - bottle.increment)}
+                        className="w-5 h-5 border text-red-400 border-red-400 hover:bg-red-400 hover:text-black text-xs"
+                      >
+                        -
+                      </button>
+                    </div>
+                  </div>
+                  <div className="w-full h-2 bg-black border" style={{ borderColor: bottle.color }}>
+                    <div 
+                      className="h-full transition-all duration-300"
+                      style={{ 
+                        width: `${getPercentage(ingredients[bottle.id])}%`,
+                        background: bottle.color
+                      }}
+                    />
+                  </div>
+                </div>
+              ))
+            )}
+            
+            {activeIngredients.length > 0 && (
+              <div className="mt-4 pt-3 border-t border-green-400 text-center">
+                <div className="text-green-400 text-lg font-bold">
+                  TOTAL: {totalVolume.toFixed(1)}ml/g
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Center: Beaker Visualization */}
+        <div className="space-y-4">
+          <h2 className="text-lg text-green-400 border-b border-green-400 pb-2">MIXTURE</h2>
+          
+          <div className="relative w-full h-80 mx-auto border-4 border-green-400 rounded-b-lg overflow-hidden bg-gradient-to-b from-transparent to-black">
+            <div className="absolute bottom-0 left-0 right-0 transition-all duration-500 ease-out"
+                 style={{ 
+                   height: `${Math.min((totalVolume / 1000) * 100, 100)}%`,
+                   background: activeIngredients.length > 0 
+                     ? `linear-gradient(to top, ${activeIngredients.map((b, i) => 
+                         `${b.color}${Math.floor(30 + (i * 10)).toString(16)}`
+                       ).join(', ')})`
+                     : 'transparent'
+                 }}>
+              {totalVolume > 0 && [...Array(8)].map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute w-2 h-2 bg-green-400 rounded-full opacity-50 animate-pulse"
+                  style={{
+                    left: `${15 + i * 10}%`,
+                    bottom: `${10 + (i % 3) * 25}%`,
+                    animationDelay: `${i * 0.2}s`
+                  }}
+                />
+              ))}
+            </div>
+            
+            {[100, 200, 300, 400, 500, 600, 700, 800, 900].map(ml => (
+              <div
+                key={ml}
+                className="absolute left-0 right-0 border-t border-green-400 border-opacity-30"
+                style={{ bottom: `${(ml / 1000) * 100}%` }}
+              >
+                <span className="absolute right-2 -translate-y-1/2 text-xs text-green-400">
+                  {ml}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right: Nutrition */}
+        <div className="space-y-4">
+          <h2 className="text-lg text-green-400 border-b border-green-400 pb-2">ANALYSIS</h2>
+          
+          <div className="space-y-2 p-4 border-2 border-green-400 rounded">
+            <h3 className="text-green-400 text-sm mb-3">NUTRITIONAL PROFILE</h3>
+            {[
+              { label: 'CALORIES', value: nutrition.calories, unit: 'kcal', max: 500 },
+              { label: 'CARBS', value: nutrition.carbs, unit: 'g', max: 100 },
+              { label: 'PROTEIN', value: nutrition.protein, unit: 'g', max: 20 },
+              { label: 'FIBER', value: nutrition.fiber, unit: 'g', max: 10 },
+              { label: 'MINERALS', value: nutrition.minerals, unit: 'mg', max: 30 }
+            ].map(({ label, value, unit, max }) => (
+              <div key={label}>
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-green-400">{label}</span>
+                  <span className="text-green-400">{value}{unit}</span>
+                </div>
+                <div className="w-full h-2 bg-black border border-green-400">
+                  <div 
+                    className="h-full bg-green-400 transition-all duration-300"
+                    style={{ width: `${Math.min((value / max) * 100, 100)}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom: Ingredient Bottles Shelf */}
+      <div className="border-t-4 border-green-400 pt-4">
+        <div className="flex justify-between items-center mb-3">
+          <h2 className="text-sm text-green-400">🧪 INGREDIENT LIBRARY ({ingredientDatabase.length} items)</h2>
+          <div className="text-xs text-green-400 opacity-50">Click to add • Hover for details</div>
+        </div>
+        
+        <div className="relative bg-gradient-to-b from-transparent to-green-900 to-10% border-2 border-green-400 rounded-lg p-4">
+          <div className="absolute bottom-0 left-0 right-0 h-2 bg-green-400 opacity-30" />
+          
+          <div className="grid grid-cols-8 gap-2 max-h-48 overflow-y-auto">
+            {ingredientDatabase.map((bottle) => (
+              <button
+                key={bottle.id}
+                onClick={() => addIngredient(bottle.id, bottle.increment)}
+                className={`relative group transition-transform hover:scale-110 ${
+                  clickedBottle === bottle.id ? 'scale-95' : ''
+                }`}
+                title={`${bottle.name}: +${bottle.increment}${bottle.unit}\n${bottle.description}\n★ ${bottle.rating}/5`}
+              >
+                <div className="h-28 relative">
+                  <BottleSVG 
+                    type={bottle.type} 
+                    color={bottle.color}
+                    fillLevel={Math.min((ingredients[bottle.id] / 100) * 100, 100)}
+                  />
+                  
+                  <div 
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity blur-lg"
+                    style={{ 
+                      background: `radial-gradient(circle, ${bottle.color}40, transparent)`,
+                    }}
+                  />
+                  
+                  <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-black border-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                       style={{ borderColor: bottle.color }}>
+                    <Plus className="w-4 h-4" style={{ color: bottle.color }} />
+                  </div>
+                </div>
+                
+                <div 
+                  className="text-xs text-center mt-1 truncate"
+                  style={{ color: bottle.color }}
+                >
+                  {bottle.name}
+                </div>
+                
+                {ingredients[bottle.id] > 0 && (
+                  <div 
+                    className="absolute -top-1 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded text-xs font-bold text-black"
+                    style={{ background: bottle.color }}
+                  >
+                    {ingredients[bottle.id]}
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Scanline effect */}
+      <div className="absolute inset-0 pointer-events-none opacity-10"
+           style={{
+             background: 'repeating-linear-gradient(0deg, rgba(0, 255, 0, 0.1) 0px, transparent 2px, transparent 4px, rgba(0, 255, 0, 0.1) 6px)'
+           }}
+      />
+    </div>
+  );
+};
+
+export default MycoMixer;

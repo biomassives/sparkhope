@@ -1,0 +1,429 @@
+---
+import Navigation from '../components/Navigation.astro';
+import CreateButton from '../components/CreateButton.astro';
+import FuzzinessControl from '../components/FuzzinessControl.astro';
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <meta name="description" content="SparkHope MycoLab - Mycological Research" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="site-header arcade-header">
+    <div class="header-top">
+      <div class="header-content">
+        <a href="/" class="site-logo pixel-logo">
+          <span class="logo-icon">🍄</span>
+          <div class="logo-text">
+            <span class="logo-title">MYCOLAB</span>
+            <span class="logo-subtitle">Food Security</span>
+          </div>
+        </a>
+        
+        <div class="fuzz-control">
+
+          <FuzzinessControl />
+
+          <button id="theme-toggle" class="theme-toggle arcade-btn" aria-label="Toggle theme">
+            <span class="sun-icon">☀</span>
+            <span class="moon-icon">☾</span>
+          </button>
+        </div>
+
+
+
+      </div>
+    </div>
+    
+    <div class="nav-wrapper-container">
+      <Navigation />
+
+
+
+    </div>
+
+  </header>
+
+  <main class="site-main arcade-main">
+    <CreateButton />
+    <slot />
+  </main>
+
+  <footer class="site-footer arcade-footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3 class="footer-title">🍄 MYCOLAB</h3>
+        <p class="footer-tagline">MYCOLOGICAL RESEARCH</p>
+        <p class="footer-credits">EST. 2025</p>
+      </div>
+      
+      <div class="footer-section">
+        <p class="footer-copyright">© 2025 SPARKHOPE</p>
+        <p class="footer-credits">GAME OVER? INSERT COIN</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+        document.addEventListener("DOMContentLoaded", () => {
+        const slider = document.getElementById("fuzz-slider");
+
+        // Load saved fuzziness value
+        const saved = localStorage.getItem("fuzziness");
+        if (saved !== null) {
+          slider.value = saved;
+          applyFuzziness(saved);
+        } else {
+          applyFuzziness(slider.value);
+        }
+
+        // Apply when user changes slider
+        slider.addEventListener("input", (e) => {
+          const value = e.target.value;
+          applyFuzziness(value);
+          localStorage.setItem("fuzziness", value);
+        });
+
+        function applyFuzziness(value) {
+          // convert 0–100 → blur px and glow intensity
+          const blur = (100 - value) / 10; // less blur when slider right
+          const glow = (100 - value) / 20;
+          document.documentElement.style.setProperty("--fuzziness", `${blur}px`);
+          document.documentElement.style.setProperty("--glow-strength", glow);
+        }
+      });
+    
+    const themeToggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    html.setAttribute('data-theme', savedTheme);
+    
+    themeToggle?.addEventListener('click', () => {
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      
+      themeToggle.style.transform = 'scale(1.2)';
+      setTimeout(() => {
+        themeToggle.style.transform = '';
+      }, 200);
+    });
+  </script>
+</body>
+</html>
+
+<style is:global>
+  :root {
+    --bg-primary: #0a0a0a;
+    --bg-gradient-start: #000000;
+    --bg-gradient-end: #1a1a1a;
+    --text-primary: #00ff00;
+    --text-secondary: #00cc00;
+    --header-bg: #000000;
+    --header-text: #00ff00;
+    --border-color: #00ff00;
+    --card-bg: #0a0a0a;
+    --footer-bg: #000000;
+  }
+
+  [data-theme="light"] {
+    --bg-primary: #1a1a1a;
+    --bg-gradient-start: #0f0f0f;
+    --bg-gradient-end: #2a2a2a;
+    --text-primary: #00ff00;
+    --text-secondary: #00cc00;
+    --header-bg: #0a0a0a;
+    --header-text: #00ff00;
+    --border-color: #00ff00;
+    --card-bg: #1a1a1a;
+    --footer-bg: #000000;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html {
+    transition: background-color 0.2s;
+  }
+
+  body {
+    font-family: 'VT323', monospace;
+    background: var(--bg-gradient-start);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    image-rendering: pixelated;
+  }
+
+
+
+
+  .fuzz-control {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #0f0;
+    font-size: 0.6rem;
+  }
+
+  input[type="range"] {
+    width: 100px;
+    accent-color: #39ff14;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    background: #0f0;
+  }
+
+  #theme-toggle {
+    background: none;
+    border: 1px solid #0f0;
+    color: #0f0;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    padding: 0.3rem 0.6rem;
+    transition: background 0.2s;
+  }
+
+  #theme-toggle:hover {
+    background: rgba(0, 255, 0, 0.15);
+  }
+
+
+
+  .arcade-header {
+    background: var(--header-bg);
+    position: relative;
+    z-index: 100;
+  }
+
+  .header-top {
+    padding: 1.5rem 2rem 1rem;
+    position: relative;
+    z-index: 110;
+  }
+
+  .header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 120;
+  }
+
+  .pixel-logo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: var(--header-text);
+    position: relative;
+    z-index: 130;
+  }
+
+  .logo-icon {
+    font-size: 3rem;
+    filter: drop-shadow(0 0 10px #00ff00);
+    animation: float-pixel 2s ease-in-out infinite;
+    position: relative;
+    z-index: 140;
+  }
+
+  @keyframes float-pixel {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+
+  .logo-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    position: relative;
+    z-index: 140;
+  }
+
+  .logo-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 1.5rem;
+    letter-spacing: 0.1em;
+    color: var(--header-text);
+    text-shadow: 0 0 10px currentColor;
+    position: relative;
+    z-index: 150;
+  }
+
+  .logo-subtitle {
+    font-family: 'VT323', monospace;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.15em;
+    position: relative;
+    z-index: 150;
+  }
+
+  .arcade-btn {
+    width: 50px;
+    height: 50px;
+    border: 3px solid var(--border-color);
+    background: #000;
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 1.5rem;
+    transition: all 0.1s;
+    box-shadow: 0 0 10px var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 130;
+  }
+
+  .arcade-btn:hover {
+    background: var(--text-primary);
+    color: #000;
+    transform: scale(1.1);
+  }
+
+  .sun-icon,
+  .moon-icon {
+    position: absolute;
+    transition: all 0.2s;
+  }
+
+  [data-theme="light"] .moon-icon {
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  [data-theme="light"] .sun-icon {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  [data-theme="dark"] .sun-icon {
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  [data-theme="dark"] .moon-icon {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .nav-wrapper-container {
+    display: flex;
+    justify-content: center;
+    padding: 0 2rem 1.5rem;
+    position: relative;
+    z-index: 105;
+  }
+
+  .arcade-main {
+    flex: 1;
+    width: 100%;
+    padding: 2rem;
+    background: repeating-linear-gradient(
+      0deg,
+      #000 0px,
+      #000 2px,
+      #0a0a0a 2px,
+      #0a0a0a 4px
+    );
+  }
+
+  .sample-table {
+    background: var(--footer-bg);
+    color: var(--text-primary);
+    padding: 2rem;
+    border-top: 4px solid var(--border-color);
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+  }
+
+  .arcade-footer {
+    background: var(--footer-bg);
+    color: var(--text-primary);
+    padding: 2rem;
+    border-top: 4px solid var(--border-color);
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+  }
+
+  .footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+  }
+
+  .footer-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 8px currentColor;
+  }
+
+  .footer-tagline,
+  .footer-copyright,
+  .footer-credits {
+    font-family: 'VT323', monospace;
+    font-size: 1.1rem;
+    opacity: 0.9;
+  }
+
+  @media (max-width: 768px) {
+    .header-top {
+      padding: 1.25rem 1.5rem 0.75rem;
+    }
+
+    .logo-icon {
+      font-size: 2.5rem;
+    }
+
+    .logo-title {
+      font-size: 1.2rem;
+    }
+
+    .logo-subtitle {
+      font-size: 0.9rem;
+    }
+
+    .arcade-btn {
+      width: 45px;
+      height: 45px;
+      font-size: 1.3rem;
+    }
+
+    .arcade-main {
+      padding: 1.5rem 1rem;
+    }
+
+    .footer-content {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

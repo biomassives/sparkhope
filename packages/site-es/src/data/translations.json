@@ -1,0 +1,23 @@
+{
+  "es": {
+    "nav.home": "Inicio",
+    "nav.campaigns": "Campañas",
+    "nav.about": "Acerca de",
+    "nav.donate": "Donar",
+    
+    "hero.title": "¡Transforma Vidas Hoy!",
+    "hero.subtitle": "Únete a miles de personas que están haciendo la diferencia",
+    "hero.cta": "Comienza Tu Campaña",
+    
+    "campaign.raised": "Recaudado",
+    "campaign.goal": "Meta",
+    "campaign.backers": "Patrocinadores",
+    "campaign.daysLeft": "días restantes",
+    "campaign.donate": "Donar Ahora",
+    
+    "common.loading": "Cargando...",
+    "common.error": "¡Ups! Algo salió mal",
+    "common.readMore": "Leer Más",
+    "common.shareNow": "Compartir Ahora"
+  }
+}

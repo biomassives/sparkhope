@@ -1,0 +1,95 @@
+---
+/**
+ * Shared FuzzinessControl Component
+ * 
+ * This component renders a fuzziness slider that adjusts the global blur intensity.
+ * The setting is saved in localStorage and restored on load.
+ * Usage:
+ *   import FuzzinessControl from '../components/FuzzinessControl.astro';
+ *   <FuzzinessControl />
+ */
+---
+
+<div id="fuzziness-control" class="fuzziness-control">
+  <label>
+    <span class="label-text">🌀 Fuzziness</span>
+    <input id="fuzziness-slider" type="range" min="0" max="6" step="0.2" value="0" />
+  </label>
+</div>
+
+<script client:load>
+  const root = document.documentElement;
+  const slider = document.getElementById('fuzziness-slider');
+
+  // Restore saved setting (or default to 0)
+  const saved = parseFloat(localStorage.getItem('fuzziness') || '0');
+  root.style.setProperty('--fuzziness', `${saved}px`);
+  if (slider) slider.value = saved;
+
+  // Listen for changes
+  slider?.addEventListener('input', (e) => {
+    const val = parseFloat(e.target.value);
+    root.style.setProperty('--fuzziness', `${val}px`);
+    localStorage.setItem('fuzziness', val);
+  });
+</script>
+
+<style>
+  :root {
+    --fuzziness: 0px;
+  }
+
+  /* Apply the blur globally */
+  body, main, .page-container {
+    filter: blur(var(--fuzziness));
+    transition: filter 0.3s ease;
+  }
+
+  .fuzziness-control {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid #00ffcc88;
+    border-radius: 0.75rem;
+    box-shadow: 0 0 6px #00ffcc44;
+  }
+
+  .label-text {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.6rem;
+    color: #00ffcc;
+    letter-spacing: 0.05em;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, #00ffcc 0%, #0088aa 100%);
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: #00ffcc;
+    border-radius: 50%;
+    box-shadow: 0 0 4px #00ffccaa;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: #00ffcc;
+    border-radius: 50%;
+    border: none;
+    box-shadow: 0 0 4px #00ffccaa;
+  }
+</style>

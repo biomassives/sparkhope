@@ -1,0 +1,144 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Basidiomycetes Liquid Cultures - MycoLab">
+  <div class="page-container">
+    <h1 class="page-title">🍄 BASIDIOMYCETES LIQUID CULTURES</h1>
+    
+    <!-- Tab navigation -->
+    <div class="tabs">
+      <div class="tab active" data-tab="1">Overview</div>
+      <div class="tab" data-tab="2">Standard LC Media</div>
+      <div class="tab" data-tab="3">Inoculation</div>
+      <div class="tab" data-tab="4">Observation</div>
+    </div>
+
+    <!-- Tab content panels -->
+    <div id="tab-contents">
+      <div class="tab-content active" data-tab="1">
+        <div class="content-card">
+          <h2>Overview</h2>
+          <p>Basidiomycetes represent the primary group for culinary and medicinal mushroom cultivation. Liquid Culture (LC) production is essential for rapidly expanding mycelial mass and accelerating colonization times, offering substantially faster results than spore syringes (7–14 days versus 14–30 days) with lower contamination risk when proper aseptic technique is maintained.</p>
+        </div>
+      </div>
+
+      <div class="tab-content" data-tab="2">
+        <div class="content-card">
+          <h2>Standard LC Media Formulation</h2>
+          <p>Typical recipes include 4% light malt extract or a combination of 2% honey and 0.2% peptone in distilled water. Sterilize via pressure cooker (15 PSI for 20–25 min). Optionally, include trace yeast extract to improve nutrient diversity.</p>
+        </div>
+      </div>
+
+      <div class="tab-content" data-tab="3">
+        <div class="content-card">
+          <h2>Inoculation Process</h2>
+          <p>Transfer a wedge of mycelium from an agar plate using sterile technique. Use magnetic stirring or occasional shaking to ensure even mycelial distribution.</p>
+        </div>
+      </div>
+
+      <div class="tab-content" data-tab="4">
+        <div class="content-card">
+          <h2>Observation and Maintenance</h2>
+          <p>Inspect daily for uniform white mycelial growth. Contamination manifests as discoloration or turbidity. Store mature LC in refrigeration (4°C) to slow metabolism until needed.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation arrows -->
+    <div class="nav-arrows">
+      <button id="prev-btn" class="arrow-btn">← Previous</button>
+      <button id="next-btn" class="arrow-btn">Next →</button>
+    </div>
+  </div>
+
+  <style>
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 2px solid var(--border, #ddd);
+      margin-bottom: 1rem;
+    }
+    .tab {
+      padding: 0.6rem 1rem;
+      cursor: pointer;
+      border-radius: 0.4rem 0.4rem 0 0;
+      background: #e2e8f0;
+      transition: background 0.2s;
+      user-select: none;
+    }
+    .tab.active {
+      background: #94a3b8;
+      color: white;
+    }
+    .tab:hover {
+      background: #cbd5e1;
+    }
+
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .nav-arrows {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
+      align-items: center;
+    }
+    .arrow-btn {
+      background: #e2e8f0;
+      border: none;
+      border-radius: 0.4rem;
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .arrow-btn:hover {
+      background: #cbd5e1;
+    }
+    .arrow-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const tabs = document.querySelectorAll('.tab');
+      const contents = document.querySelectorAll('.tab-content');
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      let current = 0;
+
+      function showTab(index) {
+        tabs.forEach(t => t.classList.remove('active'));
+        contents.forEach(c => c.classList.remove('active'));
+        tabs[index].classList.add('active');
+        contents[index].classList.add('active');
+        current = index;
+        prevBtn.disabled = current === 0;
+        nextBtn.disabled = current === tabs.length - 1;
+      }
+
+      tabs.forEach((tab, i) => tab.addEventListener('click', () => showTab(i)));
+      prevBtn.addEventListener('click', () => { if (current > 0) showTab(current - 1); });
+      nextBtn.addEventListener('click', () => { if (current < tabs.length - 1) showTab(current + 1); });
+
+      // Keyboard navigation
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft' && current > 0) showTab(current - 1);
+        if (e.key === 'ArrowRight' && current < tabs.length - 1) showTab(current + 1);
+      });
+    });
+  </script>
+</Layout>

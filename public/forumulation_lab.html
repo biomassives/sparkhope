@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coprophilous Culture Lab</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* === Additions for Nutrient Bars + Controls === */
+    .nutrient-tooltip {
+      position: absolute;
+      background: rgba(0,0,0,0.9);
+      color: #ffa;
+      border: 1px solid #550;
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-size: 0.75rem;
+      pointer-events: none;
+      display: none;
+      z-index: 9999;
+    }
+    .nutrient-total {
+      margin-top: 10px;
+      border-top: 1px dashed #333;
+      padding-top: 8px;
+      color: #9f9;
+      font-family: monospace;
+    }
+    .nutrient-bars {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+      margin-top: 6px;
+    }
+    .nutrient-bar {
+      height: 4px;
+      border-radius: 2px;
+      background: linear-gradient(90deg,#333,#666);
+      position: relative;
+    }
+    .nutrient-bar::after {
+      content: '';
+      position: absolute;
+      top:0;left:0;bottom:0;
+      background: limegreen;
+      width: var(--val,0%);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+    .ingredient-controls {
+      display: inline-flex;
+      gap: 4px;
+      margin-left: 6px;
+    }
+    .ingredient-controls button {
+      background: #111;
+      color: #0f0;
+      border: 1px solid #060;
+      border-radius: 4px;
+      font-size: 0.8em;
+      width: 22px;
+      height: 22px;
+      line-height: 1;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .ingredient-controls button:hover {
+      background: #030;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🍄 COPROPHILOUS CULTURE LAB</h1>
+    <button id="clearBtn">CLEAR</button>
+    <button id="saveBtn">SAVE MIX</button>
+  </header>
+
+  <main>
+    <section id="spawn-substrate" class="mix-section">
+      <h2>SPAWN SUBSTRATE</h2>
+      <div class="mix-list"></div>
+      <div class="total">Total: <span class="total-weight">0g</span></div>
+    </section>
+
+    <section id="substrate-layers" class="mix-section">
+      <h2>SUBSTRATE LAYERS</h2>
+      <div class="layer-stack"></div>
+      <div id="mixTotals" class="nutrient-total"></div>
+    </section>
+
+    <section id="fruiting-substrate" class="mix-section">
+      <h2>FRUITING SUBSTRATE</h2>
+      <div class="mix-list"></div>
+      <div class="total">Total: <span class="total-weight">0g</span></div>
+    </section>
+  </main>
+
+  <footer>
+    <h3>SUBSTRATE LIBRARY</h3>
+    <div id="library" class="ingredient-library"></div>
+  </footer>
+
+  <!-- Tooltip -->
+  <div id="nutrientTooltip" class="nutrient-tooltip"></div>
+
+  <script>
+    /***********************
+     * INGREDIENT DATA
+     ***********************/
+    const ingredients = [
+      { id:"rye", name:"Rye Grain", nutrients:{N:1.5,P:0.5,K:0.4,Ca:0.1,OM:45}},
+      { id:"millet", name:"Millet", nutrients:{N:1.6,P:0.6,K:0.5,Ca:0.1,OM:44}},
+      { id:"wbs", name:"Wild Bird Seed", nutrients:{N:1.4,P:0.5,K:0.3,Ca:0.1,OM:46}},
+      { id:"rice", name:"Brown Rice", nutrients:{N:1.2,P:0.4,K:0.2,Ca:0.1,OM:43}},
+      { id:"soy", name:"Soy Hulls", nutrients:{N:2.8,P:0.8,K:0.6,Ca:0.3,OM:55}},
+      { id:"bran", name:"Wheat Bran", nutrients:{N:2.0,P:0.6,K:0.5,Ca:0.2,OM:52}},
+      { id:"sawdust", name:"Hardwood Sawdust", nutrients:{N:0.3,P:0.1,K:0.2,Ca:0.1,OM:80}},
+      { id:"coir", name:"Coconut Coir", nutrients:{N:0.6,P:0.2,K:0.6,Ca:0.1,OM:78}},
+      { id:"gypsum", name:"Gypsum", nutrients:{N:0,P:0,K:0,Ca:18,OM:0}},
+      { id:"lime", name:"Hydrated Lime", nutrients:{N:0,P:0,K:0,Ca:25,OM:0}},
+      { id:"compost1", name:"Mushroom Compost", nutrients:{N:1.0,P:0.4,K:0.8,Ca:0.5,OM:55}},
+      { id:"compost2", name:"Aged Horse Manure", nutrients:{N:1.2,P:0.5,K:0.9,Ca:0.4,OM:58}},
+      { id:"compost3", name:"Cow Manure Compost", nutrients:{N:0.9,P:0.4,K:0.7,Ca:0.3,OM:57}},
+      { id:"enriched1", name:"Enriched Wood Blend", nutrients:{N:1.5,P:0.5,K:0.5,Ca:0.2,OM:65}},
+      { id:"enriched2", name:"Gypsum-Enriched Compost", nutrients:{N:1.1,P:0.4,K:0.7,Ca:6,OM:52}},
+      { id:"vermiculite", name:"Vermiculite", nutrients:{N:0,P:0,K:0,Ca:0,OM:0}},
+      { id:"alfalfa", name:"Alfalfa Meal", nutrients:{N:3.0,P:0.6,K:2.0,Ca:2.5,OM:55}},
+      { id:"cottonseed", name:"Cottonseed Meal", nutrients:{N:6.0,P:2.5,K:1.5,Ca:1.0,OM:50}},
+      { id:"bloodmeal", name:"Blood Meal", nutrients:{N:12.0,P:1.0,K:0.5,Ca:0.5,OM:40}},
+      { id:"feathermeal", name:"Feather Meal", nutrients:{N:15.0,P:0.3,K:0.3,Ca:0.2,OM:40}},
+      { id:"coffee", name:"Spent Coffee Grounds", nutrients:{N:2.1,P:0.3,K:0.6,Ca:0.2,OM:55}},
+      { id:"peat", name:"Peat Moss", nutrients:{N:1.0,P:0.2,K:0.2,Ca:0.1,OM:70}},
+    ];
+
+    /***********************
+     * RENDER LIBRARY
+     ***********************/
+    const libEl = document.getElementById('library');
+    ingredients.forEach(ing => {
+      const card = document.createElement('div');
+      card.className = 'ingredient-card';
+      card.draggable = true;
+      card.dataset.id = ing.id;
+      card.innerHTML = `<span>${ing.name}</span>`;
+      libEl.appendChild(card);
+
+      card.addEventListener('mouseenter', e=>{
+        const tip = document.getElementById('nutrientTooltip');
+        const n = ing.nutrients;
+        tip.innerHTML = `<strong>${ing.name}</strong><br>
+          N:${n.N}% P:${n.P}% K:${n.K}% Ca:${n.Ca}% OM:${n.OM}%`;
+        tip.style.display = 'block';
+      });
+      card.addEventListener('mousemove', e=>{
+        const tip = document.getElementById('nutrientTooltip');
+        tip.style.left = e.pageX + 15 + 'px';
+        tip.style.top = e.pageY + 15 + 'px';
+      });
+      card.addEventListener('mouseleave', e=>{
+        document.getElementById('nutrientTooltip').style.display = 'none';
+      });
+      card.addEventListener('dragstart', e=>{
+        e.dataTransfer.setData('text/plain', ing.id);
+      });
+    });
+
+    /***********************
+     * MIX HANDLING
+     ***********************/
+    const mixData = { spawn: [], layers: [], fruit: [] };
+
+    document.querySelectorAll('.mix-section').forEach(section=>{
+      section.addEventListener('dragover', e=> e.preventDefault());
+      section.addEventListener('drop', e=>{
+        e.preventDefault();
+        const id = e.dataTransfer.getData('text/plain');
+        const ing = ingredients.find(i=>i.id===id);
+        const key = section.id.includes('spawn') ? 'spawn'
+                   : section.id.includes('fruit') ? 'fruit' : 'layers';
+        mixData[key].push({...ing, weight:100});
+        renderMix(key);
+        updateTotals();
+      });
+    });
+
+    function renderMix(key){
+      const container = document.querySelector(
+        key==='layers'? '#substrate-layers .layer-stack'
+        : `#${key}-substrate .mix-list`);
+      container.innerHTML = '';
+      mixData[key].forEach((item, idx)=>{
+        const div = document.createElement('div');
+        div.innerHTML = `
+          ${item.name} <span>${item.weight}g</span>
+          <span class="ingredient-controls">
+            <button class="dec">–</button><button class="inc">+</button>
+          </span>
+        `;
+        // add listeners
+        div.querySelector('.inc').addEventListener('click',()=>{
+          item.weight += 25;
+          renderMix(key);
+          updateTotals();
+        });
+        div.querySelector('.dec').addEventListener('click',()=>{
+          item.weight = Math.max(0,item.weight-25);
+          renderMix(key);
+          updateTotals();
+        });
+        container.appendChild(div);
+      });
+      const total = mixData[key].reduce((a,b)=>a+b.weight,0);
+      document.querySelector(`#${key}-substrate .total-weight`).textContent = total + 'g';
+    }
+
+    /***********************
+     * TOTAL CALCULATION
+     ***********************/
+    function updateTotals(){
+      const all = [...mixData.spawn, ...mixData.layers, ...mixData.fruit];
+      if (all.length===0){ document.getElementById('mixTotals').innerHTML=''; return; }
+      let sums = {N:0,P:0,K:0,Ca:0,OM:0,mass:0};
+      all.forEach(i=>{
+        const w = i.weight;
+        sums.mass += w;
+        for (let k in i.nutrients) sums[k] += i.nutrients[k]*w;
+      });
+      for (let k of ['N','P','K','Ca','OM'])
+        sums[k] = (sums[k]/sums.mass).toFixed(2);
+
+      document.getElementById('mixTotals').innerHTML = `
+        <strong>TOTAL MIX</strong><br>
+        N:${sums.N}% P:${sums.P}% K:${sums.K}% Ca:${sums.Ca}% OM:${sums.OM}%
+        <div class="nutrient-bars">
+          ${['N','P','K','Ca','OM'].map(k=>`
+            <div class="nutrient-bar" style="--val:${Math.min(sums[k]*3,100)}%"></div>
+          `).join('')}
+        </div>`;
+    }
+  </script>
+</body>
+</html>
+

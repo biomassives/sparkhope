@@ -1,0 +1,85 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getAllSamples, getSampleById, getSpeciesById } from '../../utils/loadData';
+
+export function getStaticPaths() {
+  const samples = getAllSamples();
+  return samples.map((sample: any) => ({
+    params: { id: sample.id }
+  }));
+}
+
+const { id } = Astro.params;
+const sample = getSampleById(getAllSamples(), id);
+
+if (!sample) {
+  return Astro.redirect('/samples');
+}
+
+const species = sample.species_id ? getSpeciesById(sample.species_id) : null;
+---
+
+<Layout title={`${sample.id} - SparkHope MycoLab`}>
+  <div style="max-width: 1200px; margin: 0 auto; padding: 2rem;">
+    <a href="/samples" style="display: inline-block; margin-bottom: 2rem; color: #87a878; text-decoration: none; font-weight: 600;">
+      ← Back to Specimens
+    </a>
+    
+    <div style="background: white; border: 3px solid #8b7355; padding: 2rem; border-radius: 8px;">
+      <h1 style="font-size: 2rem; margin-bottom: 1rem;">{sample.id}</h1>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+        <div>
+          <h2 style="font-size: 1.25rem; margin-bottom: 1rem; color: #5a6e4f;">Information</h2>
+          <dl style="display: grid; grid-template-columns: auto 1fr; gap: 0.75rem 1rem;">
+            <dt style="font-weight: 600; color: #666;">Type:</dt>
+            <dd>{sample.sample_type || '—'}</dd>
+            
+            <dt style="font-weight: 600; color: #666;">Status:</dt>
+            <dd>
+              <span style={`padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.85rem; background: ${sample.status === 'ready' ? '#d1fae5' : '#fef3c7'}; color: ${sample.status === 'ready' ? '#065f46' : '#78350f'};`}>
+                {sample.status || 'active'}
+              </span>
+            </dd>
+            
+            {species && (
+              <>
+                <dt style="font-weight: 600; color: #666;">Species:</dt>
+                <dd>
+                  <a href={`/species/${species.id}`} style="color: #87a878; text-decoration: none;">
+                    {species.common_name}
+                  </a>
+                </dd>
+              </>
+            )}
+            
+            {sample.batch_id && (
+              <>
+                <dt style="font-weight: 600; color: #666;">Batch:</dt>
+                <dd>
+                  <a href={`/batches/${sample.batch_id}`} style="color: #87a878; text-decoration: none;">
+                    {sample.batch_id}
+                  </a>
+                </dd>
+              </>
+            )}
+            
+            {sample.location_id && (
+              <>
+                <dt style="font-weight: 600; color: #666;">Location:</dt>
+                <dd>{sample.location_id}</dd>
+              </>
+            )}
+          </dl>
+        </div>
+      </div>
+
+      {sample.notes && (
+        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #ddd;">
+          <h2 style="font-size: 1.25rem; margin-bottom: 1rem; color: #5a6e4f;">Notes</h2>
+          <p style="line-height: 1.6; color: #444;">{sample.notes}</p>
+        </div>
+      )}
+    </div>
+  </div>
+</Layout>

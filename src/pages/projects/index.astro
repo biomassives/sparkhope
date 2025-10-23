@@ -1,0 +1,648 @@
+---
+// src/pages/projects/index.astro - ADAPTED FROM RACKS INDEX
+import Layout from '../../layouts/Layout.astro';
+import { initializeDataStore } from '../../lib/initData.js';
+
+const store = await initializeDataStore();
+// 1. Rename 'racks' to 'projects'
+const projects = await store.projects.getAll();
+
+// 2. Load associated data (Racks and Species are relevant to projects)
+const allRacks = await store.racks.getAll();
+const allSpecies = await store.species.getAll();
+
+// 3. Group projects by relevant fields (Type and Status)
+// Group projects by type
+const projectsByType = projects.reduce((acc: any, project: any) => {
+  const type = project.project_type || 'General';
+  if (!acc[type]) acc[type] = [];
+  acc[type].push(project);
+  return acc;
+}, {});
+
+// Group projects by status
+const projectsByStatus = projects.reduce((acc: any, project: any) => {
+  const status = project.status || 'Planning';
+  if (!acc[status]) acc[status] = [];
+  acc[status].push(project);
+  return acc;
+}, {});
+
+
+// 4. Calculate project-level metrics
+// Total projects
+const totalProjects = projects.length;
+
+// Total associated racks (sum of all unique racks linked to any project)
+const allAssociatedRackIds = new Set(projects.flatMap((p: any) => p.associated_racks || []));
+const totalAssociatedRacks = allAssociatedRackIds.size;
+
+// Average project progress
+const totalProgress = projects.reduce((sum: number, project: any) => sum + (project.progress_percentage || 0), 0);
+const averageProgress = totalProjects > 0 ? Math.round(totalProgress / totalProjects) : 0;
+
+// Count high priority projects
+const highPriorityCount = projects.filter((p: any) => (p.priority || '').toLowerCase() === 'high').length;
+---
+
+<Layout title="Projects - SparkHope">
+  <div class="hero-small">
+    <div class="container">
+      <h1>🔬 Biodiversity Projects</h1>
+      <p class="subtitle">Track goals, progress, and resources for research and cultivation</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="stats">
+      <div class="stat-card stat-highlight">
+        <span class="stat-number">{totalProjects}</span>
+        <span class="stat-label">Total Projects</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{averageProgress}%</span>
+        <span class="stat-label">Average Progress</span>
+        <div class="mini-progress">
+          <div class="mini-progress-fill" style={`width: ${averageProgress}%`}></div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{highPriorityCount}</span>
+        <span class="stat-label">High Priority</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{totalAssociatedRacks}</span>
+        <span class="stat-label">Associated Racks</span>
+      </div>
+    </div>
+
+    {/* Group by Status Section (More relevant than location for projects) */}
+    {Object.entries(projectsByStatus).length > 1 && (
+      <div class="filter-section">
+        <h2>By Status</h2>
+        <div class="filter-chips">
+          {Object.entries(projectsByStatus).map(([status, items]: [string, any]) => (
+            <div class="filter-chip">
+              <span class="chip-label">{status}</span>
+              <span class="chip-count">{items.length}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {projects.length === 0 ? (
+      <div class="empty-state">
+        <p>No biodiversity projects have been initiated yet. Start a new project to organize your research efforts!</p>
+        <a href="/projects/new" class="btn-primary">Initiate First Project</a>
+      </div>
+    ) : (
+      <div class="rack-grid"> {/* Renaming to project-grid is optional, using rack-grid style for consistency */}
+        {projects.map((project: any) => {
+          // Get project-level metrics
+          const projectProgress = project.progress_percentage || 0;
+
+          // Get racks associated with this project
+          const associatedRacks = allRacks.filter((r: any) => (project.associated_racks || []).includes(r.id));
+          const rackCount = associatedRacks.length;
+
+          // Get species involved in this project
+          const speciesCount = (project.current_species || []).length;
+          
+          return (
+            <div class="rack-card">
+              <div class="card-header">
+                <div class="header-left">
+                  <h2>{project.name || 'Untitled Project'}</h2>
+                  {project.manager && (
+                    <p class="rack-location">👤 {project.manager}</p>
+                  )}
+                </div>
+                <div class="card-badges">
+                  {project.project_type && (
+                    <span class="badge badge-type">{project.project_type.replace(/_/g, ' ')}</span>
+                  )}
+                  {project.priority && (
+                    <span class={`badge badge-priority badge-${project.priority.toLowerCase()}`}>
+                      {project.priority}
+                    </span>
+                  )}
+                  {project.status && (
+                    <span class={`badge badge-status badge-${project.status.toLowerCase()}`}>
+                      {project.status}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Progress Display (Adapted from Occupancy) */}
+              <div class="rack-occupancy">
+                <div class="occupancy-header">
+                  <span class="occupancy-label">Progress</span>
+                  <span class="occupancy-value">{projectProgress}%</span>
+                </div>
+                <div class="progress-bar">
+                  <div
+                    class={`progress-fill ${projectProgress >= 90 ? 'progress-full' : projectProgress >= 70 ? 'progress-high' : ''}`}
+                    style={`width: ${projectProgress}%`}
+                  ></div>
+                </div>
+                <span class="occupancy-percent">Target: {project.end_date ? new Date(project.end_date).toLocaleDateString() : 'Ongoing'}</span>
+              </div>
+
+              {/* Quick Stats (Adapted for Project) */}
+              <div class="quick-stats">
+                <div class="stat-row">
+                  <div class="stat-item">
+                    <span class="stat-icon">🧬</span>
+                    <span class="stat-text">{speciesCount} Species</span>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-icon">🗄️</span>
+                    <span class="stat-text">{rackCount} Racks</span>
+                  </div>
+                </div>
+                
+                {project.start_date && (
+                  <div class="stat-row">
+                    <div class="stat-item">
+                      <span class="stat-icon">▶️</span>
+                      <span class="stat-text">Start: {new Date(project.start_date).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Grid Info is not relevant to project, replacing with key goal/metric */}
+              {project.key_goal && (
+                <div class="grid-info">
+                  <span class="grid-icon">🎯</span>
+                  <span class="grid-text">
+                    Goal: {project.key_goal}
+                  </span>
+                </div>
+              )}
+
+              {project.notes && (
+                <p class="rack-notes">{project.notes.slice(0, 100)}...</p>
+              )}
+
+              <a href={`/projects/${project.id}`} class="btn-primary">
+                View Project →
+              </a>
+            </div>
+          );
+        })}
+      </div>
+    )}
+
+    {/* Add New Project Button */}
+    {projects.length > 0 && (
+      <div class="add-section">
+        <a href="/projects/new" class="btn-secondary">+ Initiate New Project</a>
+      </div>
+    )}
+  </div>
+</Layout>
+
+<style>
+  /* --- Styles: Minimal required additions for Project context --- */
+  
+  .badge-priority.badge-low { background: #15803d; color: #dcfce7; }
+  .badge-priority.badge-medium { background: #f59e0b; color: #fffbeb; }
+  .badge-priority.badge-high { background: #dc2626; color: #fee2e2; }
+
+  .badge-status.badge-active { /* Retaining Active status color */
+      background: #065f46;
+      color: #d1fae5;
+  }
+  .badge-status.badge-planning { /* New status color */
+      background: #1e3a8a;
+      color: #dbeafe;
+  }
+  .badge-status.badge-completed { /* New status color */
+      background: #374151;
+      color: #d1d5db;
+  }
+  /* --- All other styles from the original racks/index.astro file can be kept as is. --- */
+  /* For brevity, I've omitted the rest of the styles, but you should paste the original <style> block here. */
+
+  /* Paste the complete original style block here: */
+  .hero-small {
+    background: linear-gradient(135deg, var(--sl-color-accent) 0%, var(--sl-color-accent-low) 100%);
+    color: white;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .hero-small h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: white;
+  }
+
+  .subtitle {
+    font-size: 1.125rem;
+    opacity: 0.9;
+    margin: 0;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    text-align: center;
+    transition: all 0.2s;
+  }
+
+  .stat-card:hover {
+    background: var(--color-bg-card-hover);
+    transform: translateY(-2px);
+  }
+
+  .stat-highlight {
+    border-color: var(--sl-color-accent);
+  }
+
+  .stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--sl-color-accent-high);
+  }
+
+  .stat-label {
+    display: block;
+    color: var(--color-text-dim);
+    margin-top: 0.5rem;
+    text-transform: capitalize;
+  }
+
+  .mini-progress {
+    width: 100%;
+    height: 4px;
+    background: var(--color-bg-card-hover);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 0.75rem;
+  }
+
+  .mini-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #059669);
+    transition: width 0.3s ease;
+  }
+
+  .filter-section {
+    margin-bottom: 2rem;
+  }
+
+  .filter-section h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: var(--color-text);
+  }
+
+  .filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .filter-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+  }
+
+  .filter-chip:hover {
+    background: var(--color-bg-card-hover);
+    border-color: var(--sl-color-accent);
+  }
+
+  .chip-label {
+    color: var(--color-text);
+    text-transform: capitalize;
+  }
+
+  .chip-count {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    padding: 0 0.5rem;
+    background: var(--sl-color-accent);
+    color: white;
+    border-radius: 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .rack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .rack-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .rack-card:hover {
+    background: var(--color-bg-card-hover);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    transform: translateY(-2px);
+    border-color: var(--sl-color-accent);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .header-left {
+    flex: 1;
+  }
+
+  .card-header h2 {
+    font-size: 1.5rem;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .rack-location {
+    font-size: 0.875rem;
+    color: var(--color-text-dim);
+    margin: 0;
+  }
+
+  .card-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    white-space: nowrap;
+    text-align: center;
+  }
+
+  .badge-type {
+    background: var(--color-bg-card-hover);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+  }
+
+  .badge-climate {
+    background: #1e3a8a;
+    color: #dbeafe;
+  }
+
+  .badge-status.badge-active {
+    background: #065f46;
+    color: #d1fae5;
+  }
+
+  .badge-status.badge-inactive {
+    background: #78350f;
+    color: #fef3c7;
+  }
+
+  .rack-occupancy {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+  }
+
+  .occupancy-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .occupancy-label {
+    font-size: 0.875rem;
+    color: var(--color-text-dim);
+    font-weight: 600;
+  }
+
+  .occupancy-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--color-bg-card-hover);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #059669);
+    transition: width 0.3s ease;
+  }
+
+  .progress-fill.progress-high {
+    background: linear-gradient(90deg, #fbbf24, #f59e0b);
+  }
+
+  .progress-fill.progress-full {
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+  }
+
+  .occupancy-percent {
+    font-size: 0.75rem;
+    color: var(--color-text-dim);
+  }
+
+  .quick-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .stat-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+  }
+
+  .stat-ready {
+    border-color: #10b981;
+  }
+
+  .stat-warning {
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+  }
+
+  .stat-icon {
+    font-size: 1rem;
+  }
+
+  .stat-text {
+    color: var(--color-text);
+    font-weight: 500;
+  }
+
+  .grid-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    color: var(--color-text-dim);
+  }
+
+  .grid-icon {
+    font-size: 1rem;
+  }
+
+  .grid-text {
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
+  .grid-dimensions {
+    color: var(--color-text-dim);
+    font-size: 0.75rem;
+  }
+
+  .rack-notes {
+    color: var(--color-text-dim);
+    line-height: 1.6;
+    margin: 0;
+    font-size: 0.875rem;
+    font-style: italic;
+    padding: 0.75rem;
+    background: var(--color-bg);
+    border-left: 3px solid var(--color-border);
+  }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: var(--sl-color-accent);
+    color: white;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    text-align: center;
+    transition: all 0.2s;
+    margin-top: auto;
+  }
+
+  .btn-primary:hover {
+    background: var(--sl-color-accent-high);
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: var(--color-bg-card);
+    color: var(--color-text);
+    text-decoration: none;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    font-weight: 500;
+    text-align: center;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover {
+    background: var(--color-bg-card-hover);
+    border-color: var(--sl-color-accent);
+  }
+
+  .empty-state {
+    background: var(--color-bg-card);
+    border: 2px dashed var(--color-border);
+    border-radius: 0.75rem;
+    padding: 3rem;
+    text-align: center;
+  }
+
+  .empty-state p {
+    color: var(--color-text-dim);
+    font-size: 1.125rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .add-section {
+    margin-top: 2rem;
+    text-align: center;
+  }
+
+  @media (max-width: 768px) {
+    .rack-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .card-header {
+      flex-direction: column;
+    }
+
+    .card-badges {
+      flex-direction: row;
+    }
+
+    .stats {
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+  }
+</style>

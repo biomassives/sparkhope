@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MycoLab Research Library - Technical Literacy</title>
+    <style>
+        /* --- NEON AESTHETIC STYLES --- */
+        
+        :root {
+            --color-neon-green: #00FF7F;
+            --color-neon-cyan: #00FFFF;
+            --color-neon-yellow: #FFFF00;
+            --color-neon-red: #FF0040;
+            --color-background-dark: #000000;
+        }
+
+        body {
+            font-family: 'Consolas', 'Courier New', monospace;
+            background-color: var(--color-background-dark);
+            margin: 0;
+            padding: 0;
+        }
+
+   .resource-container {
+            background-color: var(--color-background-dark);
+            color: var(--color-neon-green);
+            padding: 30px;
+            border: 3px solid var(--color-neon-red);
+            max-width: 1400px;
+            margin: 30px auto;
+            box-shadow: 0 0 20px rgba(255, 0, 64, 0.5);
+            min-height: 80vh;
+        }
+
+        h1 {
+            color: var(--color-neon-yellow);
+            text-align: center;
+            border-bottom: 2px solid var(--color-neon-cyan);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 5px var(--color-neon-yellow);
+        }
+
+        /* --- TAB NAVIGATION STYLES --- */
+
+   .tabs-list {
+            display: flex;
+            flex-wrap: wrap;
+            border-bottom: 2px solid var(--color-neon-green);
+            margin-bottom: 20px;
+            justify-content: flex-start;
+        }
+
+   .tab-button {
+            background-color: transparent;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            color: #E0FFE0;
+            font-size: 1em;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+   .tab-button:hover {
+            color: var(--color-neon-yellow);
+            text-shadow: 0 0 3px var(--color-neon-yellow);
+        }
+
+   .tab-button.active {
+            color: var(--color-neon-cyan);
+            border-bottom: 3px solid var(--color-neon-cyan);
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0, 255, 255, 0.5);
+        }
+        
+        /* --- CONTENT CARD STYLES --- */
+
+   .tab-content {
+            display: none;
+        }
+
+   .tab-content.active {
+            display: block;
+        }
+
+   .resource-section h2 {
+            color: var(--color-neon-green);
+            border-left: 4px solid var(--color-neon-green);
+            padding-left: 10px;
+            margin: 20px 0 15px;
+            text-transform: none;
+        }
+
+   .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+   .link-card {
+            border: 2px solid var(--color-neon-green);
+            padding: 15px;
+            text-decoration: none;
+            color: #E0FFE0;
+            display: block;
+            position: relative;
+            background-color: rgba(0, 0, 0, 0.7);
+            transition: all 0.2s ease-in-out;
+            min-height: 80px;
+            cursor: pointer;
+            box-shadow: 0 0 5px var(--color-neon-green);
+        }
+
+   .link-card:hover {
+            border-color: var(--color-neon-yellow);
+            box-shadow: 0 0 15px var(--color-neon-yellow);
+            z-index: 10;
+        }
+
+   .link-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: var(--color-neon-cyan);
+        }
+        
+        /* --- SYNOPSIS (HOVER) STYLES --- */
+        
+   .synopsis {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.98);
+            border: 2px solid var(--color-neon-yellow);
+            box-sizing: border-box;
+            color: #FFFFFF;
+            overflow: auto;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+   .link-card:hover.synopsis {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+   .synopsis-text {
+            font-size: 0.9em;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+
+   .synopsis-citations {
+            font-size: 0.8em;
+            color: var(--color-neon-red);
+            font-style: italic;
+        }
+        #loading-message {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+
+<div class="resource-container">
+    <h1>MycoLab Research Library: Technical and Educational Resources</h1>
+    
+    <div id="resources-output">
+        <div id="tabs-list" class="tabs-list"></div>
+        <div id="tabs-content"></div>
+        <p id="loading-message">Loading MycoLab Resources...</p>
+    </div>
+</div>
+
+<script>
+    // --- 1. EMBEDDED DATA STRUCTURE (FIXED: Defined as a JavaScript Array Literal) ---
+    const resourceData ="
+                },
+                {
+                    "title": "Mushroom Production for Nutritional Security and Economic Development",
+                    "url": "https://www.easpublisher.com/get-articles/4510",
+                    "synopsis": "Mushroom production is a low-capital industry utilizing agro-forestry waste ('waste-to-wealth') that provides nutritional security, poverty alleviation, and job opportunities in developing nations.",
+                    "citations": "[2]"
+                },
+                {
+                    "title": "Case Study: Sustainable Mushroom Growing for Livelihood Improvement in Uganda",
+                    "url": "https://www.unesco.org/en/articles/sustainable-vegetable-mushroom-growing-sustainable-livelihood-improvement",
+                    "synopsis": "NGO Eco-Agric Uganda successfully trained 678 women using low-cost, locally available materials. Trained women reported earning 30% more income, validating the economic impact of decentralized mycology.",
+                    "citations": "[3]"
+                },
+                {
+                    "title": "Mushroom Good Agricultural Practices (MGAP) Standards for Food Safety",
+                    "url": "https://www.ams.usda.gov/sites/default/files/media/fresh%20mushroom%20food%20safety%20standards.pdf",
+                    "synopsis": "MGAP provides the essential framework for standardized food safety covering worker hygiene, water safety, and traceability, developed by Penn State University and the American Mushroom Institute. Adherence is critical for safe, reliable food production.",
+                    "citations": "[4, 5]"
+                }
+            ]
+        },
+        {
+            "section": "II. Aseptic Technique and Improvised Equipment (SAB/LFH)",
+            "links":"
+                },
+                {
+                    "title": "DIY LFH Alternatives: Box Fan and MERV 13/16 Filters",
+                    "url": "https://www.reddit.com/r/mycology/comments/1fhq5tn/making_a_homemade_laminar_flow_hood_lowtek/",
+                    "synopsis": "A budget LFH alternative uses a box fan taped to a high-efficiency HVAC filter (MERV 13 or 16). Note that MERV 16 captures >95% of particles, lower performance than true HEPA (99.97% @ 0.3 µm).",
+                    "citations": ""
+                },
+                {
+                    "title": "The Importance of MERV 8 Pre-Filters for Protecting HEPA Filters",
+                    "url": "https://flocube.com/2024/04/08/why-merv-8-pre-filters-are-essential-for-mycologists-and-plant-tissue-culture-enthusiasts/",
+                    "synopsis": "A cheaper MERV 8 pre-filter extends the life of expensive HEPA filters by capturing larger debris (dust, hair, large spores), preventing premature clogging.",
+                    "citations": ""
+                },
+                {
+                    "title": "Improvised Still Air Box (SAB) Construction Guide",
+                    "url": "https://fungiacademy.com/the-complete-still-air-box-guide/",
+                    "synopsis": "A functional SAB can be constructed in 10 minutes for less than $20 using a clear plastic tote. Heating a tuna tin can on a hob to cut armholes ensures smooth edges and minimizes contamination risk.",
+                    "citations": "[3, 9, 10]"
+                }
+            ]
+        },
+        {
+            "section": "III. Substrate Sterilization, Pasteurization, and Chemicals",
+            "links":"
+                },
+                {
+                    "title": "Lime Bath Treatment Protocol for Straw Substrate (Alkaline pH > 10)",
+                    "url": "https://namyco.org/interests/cultivation/preparation-of-mushroom-growing-substrates/",
+                    "synopsis": "Cold Lime Bath Pasteurization uses 4 cups of Calcium hydroxide per 45-gallon drum of water to raise the pH above 10. This selectively kills most contaminants while allowing beneficial bacteria to survive, supporting robust fungi like *Pleurotus*.",
+                    "citations": ""
+                },
+                {
+                    "title": "Hydrogen Peroxide ($H_2O_2$): Post-Inoculation Defense",
+                    "url": "https://www.scribd.com/document/108335902/Growing-Mushrooms-the-Easy-Way-Cultivation-With-Hydrogen-Peroxide",
+                    "synopsis": "$H_2O_2$ is not a sterilant but is decomposed by established mycelium. It can be added post-inoculation to suppress aerobic contaminants in non-sterile environments, protecting the culture medium (not the mycelium itself).",
+                    "citations": "[5, 12]"
+                },
+                {
+                    "title": "Vinegar Bath Pasteurization (Acidic pH 3.5 to 4.0)",
+                    "url": "https://grocycle.com/how-to-pasteurize-mushroom-substrate/",
+                    "synopsis": "Vinegar lowers the pH (targeting 3.5 to 4.0) for cold pasteurization, achieved by adding 5% white vinegar at a rate of 2% of water weight. The substrate is soaked for 16–20 hours.",
+                    "citations": "[13]"
+                }
+            ]
+        },
+        {
+            "section": "IV. Liquid Culture (LC) and Mycelial Biomass Production",
+            "links":"
+                },
+                {
+                    "title": "SmF Yields: *Pleurotus sajor-caju* reaching $8.2 \text{ g/L}$ dry biomass",
+                    "url": "https://www.researchgate.net/figure/Mycelial-biomass-and-substrate-consumption-during-submerged-cultivation-of-Pleurotus_fig2_51422532",
+                    "synopsis": "Submerged Fermentation (SmF) of *Pleurotus* in a stirred bioreactor resulted in a high yield of $8.2 \text{ g/L}$ dry mycelium with $32\%$ protein content, confirming its efficiency for rapid protein production.",
+                    "citations": "[15]"
+                },
+                {
+                    "title": "Optimal LC Sugar Concentration and Nutrient Additives",
+                    "url": "https://www.out-grow.com/blogs/growing-mushrooms/how-to-make-liquid-culture",
+                    "synopsis": "The optimal concentration for LC media is approximately $4\%$ sugar by weight ($40\text{g}$ per $1,000\text{ml}$ solution). Higher concentrations risk caramelization during sterilization, but robust species like *Pleurotus* may tolerate up to $6\%$.",
+                    "citations": ""
+                },
+                {
+                    "title": "Mycelial Foods: Oncom and Tempeh via Solid-State Fermentation (SSF)",
+                    "url": "https://www.mdpi.com/2076-2607/10/4/753",
+                    "synopsis": "Traditional SSF foods like Tempeh (*Rhizopus*) and Oncom (*Neurospora*) ferment agricultural waste into protein-rich products. Oncom quality is often unstable due to the lack of specific inoculum, highlighting the need for good culture management.",
+                    "citations": ""
+                }
+            ]
+        },
+        {
+            "section": "V. Culture Acquisition, Tracking, and Education",
+            "links":"
+                },
+                {
+                    "title": "MycoManager: Professional Lab Management System for Culture Genealogy",
+                    "url": "https://liquidfungi.com/pages/interested-in-using-mycomanager-at-your-laboratory",
+                    "synopsis": "A management system for tracking genetics, samples, and complete genealogical relationships between cultures to maintain pristine QA records and trace the source of any issues.",
+                    "citations": "[17]"
+                },
+                {
+                    "title": "Low-Cost Technique: Stem Butt Cloning onto Cardboard/Wood Chips",
+                    "url": "https://www.reddit.com/r/MushroomGrowers/comments/18kmj12/technique_stem_butt_clones_onto_wood_or_cardboard/",
+                    "synopsis": "A highly improvised method for robust decomposers where stem butts are placed directly onto damp cardboard or wood chips, often successfully bypassing pasteurization or sterilization for rapid spawn creation.",
+                    "citations": "[18]"
+                },
+                {
+                    "title": "Tissue Culture: Effect of Tissue Size on Mycelial Growth",
+                    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5061704/",
+                    "synopsis": "Research showed that for species like *Pleurotus ostreatus* and *P. eryngii*, large tissue plugs produced faster mycelial growth and higher aerobic mycelium density compared with small ones. This emphasizes the need for species-specific cloning techniques.",
+                    "citations": "[19]"
+                }
+            ]
+        }
+    ];
+
+
+    // --- 2. EMBEDDED JAVASCRIPT LOGIC ---
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        const tabsList = document.getElementById('tabs-list');
+        const tabsContent = document.getElementById('tabs-content');
+        const loadingMessage = document.getElementById('loading-message');
+        
+        if (!tabsList ||!tabsContent) return;
+
+        if (resourceData.length === 0) {
+            loadingMessage.textContent = "Error: Resource data is empty or unavailable.";
+            return;
+        }
+        
+        loadingMessage.style.display = 'none';
+
+        let firstTabId = null;
+
+        /**
+         * Core Tab Management Function: Controls which tab content is visible.
+         * @param {string} tabId - The unique ID of the tab to display.
+         */
+        function openTab(tabId) {
+            // Deactivate all
+            document.querySelectorAll('.tab-content').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Activate selected
+            const selectedPanel = document.getElementById(tabId);
+            if (selectedPanel) {
+                selectedPanel.classList.add('active');
+            }
+            const selectedButton = document.querySelector(`[data-tab-id="${tabId}"]`);
+            if (selectedButton) {
+                selectedButton.classList.add('active');
+            }
+        }
+
+        // --- Data Rendering Loop ---
+        resourceData.forEach((section, index) => {
+            
+            // Generate unique, clean ID from section name
+            const tabId = 'tab-' + section.section.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            if (index === 0) {
+                firstTabId = tabId;
+            }
+
+            // 1. Create Tab Button
+            const button = document.createElement('button');
+            button.className = 'tab-button';
+            // Clean up the section title for the button text (removes leading Roman numeral and period)
+            const buttonTextMatch = section.section.match(/^[IVX]+\.\s*(.*)/);
+            const buttonText = buttonTextMatch? buttonTextMatch[20] : section.section;
+            button.textContent = buttonText.trim(); 
+            button.setAttribute('data-tab-id', tabId);
+            
+            button.addEventListener('click', () => {
+                openTab(tabId);
+            });
+            tabsList.appendChild(button);
+
+            // 2. Create Content Panel
+            const contentDiv = document.createElement('div');
+            contentDiv.id = tabId;
+            contentDiv.className = 'tab-content';
+            
+            // Inner Section Title (H2)
+            const sectionTitle = document.createElement('h2');
+            sectionTitle.textContent = section.section;
+            contentDiv.appendChild(sectionTitle);
+
+            // 3. Create Grid Container for Links
+            const linksGrid = document.createElement('div');
+            linksGrid.className = 'links-grid';
+
+            section.links.forEach(link => {
+                // 4. Create Link Card (<a> element)
+                const card = document.createElement('a');
+                card.href = link.url;
+                card.className = 'link-card';
+                card.target = '_blank';
+                card.rel = 'noopener noreferrer';
+
+                // Static Title
+                const staticTitle = document.createElement('div');
+                staticTitle.className = 'link-title';
+                staticTitle.textContent = link.title;
+                card.appendChild(staticTitle);
+                
+                // Synopsis Overlay (Appears on Hover)
+                const synopsisDiv = document.createElement('div');
+                synopsisDiv.className = 'synopsis';
+                
+                const synopsisText = document.createElement('p');
+                synopsisText.className = 'synopsis-text';
+                synopsisText.textContent = link.synopsis;
+                synopsisDiv.appendChild(synopsisText);
+
+                const citations = document.createElement('p');
+                citations.className = 'synopsis-citations';
+                citations.textContent = `Source IDs: ${link.citations |
+
+| 'N/A'}`; 
+                synopsisDiv.appendChild(citations);
+
+                card.appendChild(synopsisDiv);
+                linksGrid.appendChild(card);
+            });
+
+            contentDiv.appendChild(linksGrid);
+            tabsContent.appendChild(contentDiv);
+        });
+
+        // 5. Initialize the first tab as active
+        if (firstTabId) {
+            openTab(firstTabId);
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,2754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liquid Culture Formulation Lab - Mycological Medium Designer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000814;
+            color: #00f5ff;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(0, 245, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(138, 43, 226, 0.1) 0%, transparent 50%),
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 245, 255, 0.02) 2px,
+                    rgba(0, 245, 255, 0.02) 4px
+                );
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: rgba(0, 8, 20, 0.95);
+            border: 3px solid #00f5ff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 
+                0 0 60px rgba(0, 245, 255, 0.3),
+                inset 0 0 30px rgba(0, 245, 255, 0.05);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #00f5ff;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #00f5ff, #8a2be2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .title::before {
+            content: "🧪";
+            font-size: 32px;
+            -webkit-text-fill-color: initial;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: 2px solid;
+            background: transparent;
+            color: inherit;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .btn-primary {
+            border-color: #00f5ff;
+            color: #00f5ff;
+        }
+
+        .btn-primary:hover {
+            background: #00f5ff;
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.5);
+        }
+
+        .btn-save {
+            border-color: #8a2be2;
+            background: linear-gradient(135deg, #8a2be2, #00f5ff);
+            color: #fff;
+        }
+
+        .btn-save:hover {
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.6);
+        }
+
+        .btn-danger {
+            border-color: #ff0066;
+            color: #ff0066;
+        }
+
+        .btn-danger:hover {
+            background: #ff0066;
+            color: #fff;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .section {
+            background: rgba(0, 20, 40, 0.6);
+            border: 1px solid rgba(0, 245, 255, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-size: 16px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(0, 245, 255, 0.5);
+            color: #00f5ff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .flask-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .flask {
+            position: relative;
+            width: 200px;
+            height: 320px;
+        }
+
+        .flask-neck {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 80px;
+            border-left: 3px solid #00f5ff;
+            border-right: 3px solid #00f5ff;
+        }
+
+        .flask-body {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 180px;
+            height: 240px;
+            border: 3px solid #00f5ff;
+            border-radius: 50% 50% 50% 50% / 10% 10% 60% 60%;
+            overflow: hidden;
+            background: linear-gradient(to bottom, 
+                rgba(0, 245, 255, 0.05),
+                rgba(0, 20, 40, 0.8));
+        }
+
+        .flask-cap {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 20px;
+            background: #8a2be2;
+            border-radius: 50% 50% 0 0;
+            border: 2px solid #6a1b9a;
+        }
+
+        .liquid {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            transition: all 0.5s ease;
+            overflow: hidden;
+        }
+
+        .liquid-surface {
+            position: absolute;
+            top: 0;
+            left: -10%;
+            width: 120%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            animation: wave 3s infinite ease-in-out;
+        }
+
+        @keyframes wave {
+            0%, 100% { transform: translateY(0) rotateX(0); }
+            50% { transform: translateY(-5px) rotateX(20deg); }
+        }
+
+        .bubble {
+            position: absolute;
+            background: radial-gradient(circle, rgba(255,255,255,0.8), rgba(255,255,255,0.3));
+            border-radius: 50%;
+            animation: bubble-rise 4s infinite;
+        }
+
+        @keyframes bubble-rise {
+            0% { 
+                bottom: 10%; 
+                opacity: 0;
+                transform: translateX(0) scale(0.5);
+            }
+            20% { 
+                opacity: 0.8;
+                transform: translateX(10px) scale(1);
+            }
+            100% { 
+                bottom: 90%; 
+                opacity: 0;
+                transform: translateX(-10px) scale(0.8);
+            }
+        }
+
+        .measurement-marks {
+            position: absolute;
+            left: -40px;
+            top: 20%;
+            height: 60%;
+            width: 30px;
+        }
+
+        .mark {
+            position: absolute;
+            right: 0;
+            width: 20px;
+            height: 1px;
+            background: rgba(0, 245, 255, 0.5);
+        }
+
+        .mark-label {
+            position: absolute;
+            right: 25px;
+            font-size: 10px;
+            color: rgba(0, 245, 255, 0.7);
+            transform: translateY(-50%);
+        }
+
+        .formula-display {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00f5ff;
+            border-radius: 4px;
+            padding: 12px;
+            margin-bottom: 16px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .formula-line {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(0, 245, 255, 0.2);
+        }
+
+        .formula-line:last-child {
+            border-bottom: none;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 2px solid #00f5ff;
+            font-weight: bold;
+        }
+
+        .ingredient-grid {
+            display: grid;
+            gap: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .ingredient-card {
+            background: rgba(0, 40, 80, 0.4);
+            border: 1px solid rgba(0, 245, 255, 0.3);
+            border-radius: 4px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .ingredient-card:hover {
+            background: rgba(0, 245, 255, 0.1);
+            border-color: #00f5ff;
+            transform: translateX(4px);
+        }
+
+        .ingredient-card.active {
+            background: rgba(138, 43, 226, 0.2);
+            border-color: #8a2be2;
+        }
+
+        .ingredient-name {
+            font-size: 12px;
+            font-weight: bold;
+            color: #00f5ff;
+        }
+
+        .ingredient-info {
+            font-size: 10px;
+            color: #88ccff;
+            margin-top: 4px;
+        }
+
+        .ingredient-amount {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #8a2be2;
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .control-panel {
+            display: grid;
+            gap: 12px;
+        }
+
+        .control-group {
+            background: rgba(0, 20, 40, 0.8);
+            padding: 12px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 245, 255, 0.2);
+        }
+
+        .control-label {
+            font-size: 11px;
+            color: #88ccff;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .control-input {
+            width: 100%;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(0, 245, 255, 0.3);
+            color: #00f5ff;
+            font-family: inherit;
+            border-radius: 4px;
+        }
+
+        .control-input:focus {
+            outline: none;
+            border-color: #00f5ff;
+            box-shadow: 0 0 10px rgba(0, 245, 255, 0.3);
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .slider {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 6px;
+            background: rgba(0, 245, 255, 0.2);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #00f5ff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 245, 255, 0.6);
+        }
+
+        .slider-value {
+            min-width: 60px;
+            text-align: right;
+            font-weight: bold;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .stat-card {
+            background: rgba(0, 20, 40, 0.8);
+            padding: 12px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 245, 255, 0.3);
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: #88ccff;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .stat-unit {
+            font-size: 12px;
+            color: #88ccff;
+            margin-left: 4px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-left: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        .status-good {
+            background: #00ff00;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.6);
+        }
+
+        .status-warning {
+            background: #ffaa00;
+            box-shadow: 0 0 10px rgba(255, 170, 0, 0.6);
+        }
+
+        .status-danger {
+            background: #ff0066;
+            box-shadow: 0 0 10px rgba(255, 0, 102, 0.6);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            border-bottom: 2px solid rgba(0, 245, 255, 0.2);
+        }
+
+        .tab {
+            padding: 8px 16px;
+            background: transparent;
+            border: none;
+            color: #88ccff;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .tab:hover {
+            color: #00f5ff;
+        }
+
+        .tab.active {
+            color: #00f5ff;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #00f5ff;
+            box-shadow: 0 0 10px rgba(0, 245, 255, 0.6);
+        }
+
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .preset-btn {
+            padding: 8px;
+            background: rgba(138, 43, 226, 0.1);
+            border: 1px solid #8a2be2;
+            color: #8a2be2;
+            cursor: pointer;
+            font-size: 10px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .preset-btn:hover {
+            background: rgba(138, 43, 226, 0.3);
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+        }
+
+        .warning-message {
+            background: rgba(255, 0, 102, 0.1);
+            border: 1px solid #ff0066;
+            border-radius: 4px;
+            padding: 8px;
+            margin-top: 12px;
+            font-size: 11px;
+            color: #ff6699;
+        }
+
+        .success-message {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #00ff00;
+            border-radius: 4px;
+            padding: 8px;
+            margin-top: 12px;
+            font-size: 11px;
+            color: #00ff00;
+        }
+
+        /* Recipe Overlay */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 8, 20, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .overlay.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .recipe-card {
+            background: linear-gradient(135deg, rgba(0, 20, 40, 0.98), rgba(0, 8, 20, 0.98));
+            border: 2px solid #00f5ff;
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 0 60px rgba(0, 245, 255, 0.4);
+            position: relative;
+        }
+
+        .recipe-header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #00f5ff;
+        }
+
+        .recipe-title {
+            font-size: 24px;
+            color: #00f5ff;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .recipe-date {
+            font-size: 12px;
+            color: #88ccff;
+        }
+
+        .recipe-section {
+            margin-bottom: 24px;
+        }
+
+        .recipe-section-title {
+            font-size: 14px;
+            color: #8a2be2;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid rgba(138, 43, 226, 0.3);
+        }
+
+        .recipe-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .recipe-table th {
+            text-align: left;
+            padding: 8px;
+            background: rgba(0, 245, 255, 0.1);
+            color: #00f5ff;
+            font-size: 11px;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(0, 245, 255, 0.3);
+        }
+
+        .recipe-table td {
+            padding: 8px;
+            font-size: 12px;
+            color: #fff;
+            border-bottom: 1px solid rgba(0, 245, 255, 0.1);
+        }
+
+        .recipe-table tr:hover {
+            background: rgba(0, 245, 255, 0.05);
+        }
+
+        .recipe-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .recipe-stat {
+            background: rgba(0, 40, 80, 0.3);
+            padding: 12px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 245, 255, 0.2);
+        }
+
+        .recipe-stat-label {
+            font-size: 10px;
+            color: #88ccff;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .recipe-stat-value {
+            font-size: 18px;
+            color: #00f5ff;
+            font-weight: bold;
+        }
+
+        .recipe-instructions {
+            background: rgba(138, 43, 226, 0.1);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            border-radius: 4px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .recipe-instructions ol {
+            margin-left: 20px;
+            color: #fff;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .recipe-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: transparent;
+            border: 2px solid #ff0066;
+            color: #ff0066;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            background: #ff0066;
+            color: #fff;
+            transform: rotate(90deg);
+        }
+
+        /* Ingredient Detail Modal */
+        .ingredient-detail-modal {
+            background: linear-gradient(135deg, rgba(0, 20, 40, 0.98), rgba(0, 8, 20, 0.98));
+            border: 2px solid #8a2be2;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 0 60px rgba(138, 43, 226, 0.4);
+            position: relative;
+        }
+
+        .ingredient-detail-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #8a2be2;
+        }
+
+        .ingredient-detail-title {
+            font-size: 20px;
+            color: #00f5ff;
+            margin-bottom: 4px;
+        }
+
+        .ingredient-detail-subtitle {
+            font-size: 11px;
+            color: #88ccff;
+            text-transform: uppercase;
+        }
+
+        .composition-section {
+            margin-bottom: 16px;
+        }
+
+        .composition-title {
+            font-size: 12px;
+            color: #8a2be2;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .composition-list {
+            background: rgba(0, 40, 80, 0.3);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 11px;
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        .composition-item {
+            padding: 2px 0;
+        }
+
+        .composition-item::before {
+            content: "• ";
+            color: #8a2be2;
+        }
+
+        .benefits-section {
+            background: rgba(138, 43, 226, 0.1);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            border-radius: 4px;
+            padding: 12px;
+            margin-top: 16px;
+        }
+
+        .benefits-title {
+            font-size: 11px;
+            color: #8a2be2;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .benefit-item {
+            font-size: 11px;
+            color: #fff;
+            padding: 3px 0;
+            line-height: 1.5;
+        }
+
+        .benefit-item::before {
+            content: "✓ ";
+            color: #00ff00;
+            margin-right: 4px;
+        }
+
+        .natural-tab-info {
+            background: rgba(138, 43, 226, 0.1);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            border-radius: 4px;
+            padding: 8px;
+            margin-bottom: 12px;
+            font-size: 10px;
+            color: #88ccff;
+            line-height: 1.5;
+        }
+
+        .natural-tab-info strong {
+            color: #00f5ff;
+        }
+
+        .species-guide {
+            background: linear-gradient(135deg, rgba(0, 40, 80, 0.4), rgba(138, 43, 226, 0.2));
+            border: 1px solid rgba(0, 245, 255, 0.3);
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 12px;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .species-guide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(0, 245, 255, 0.3);
+        }
+
+        .species-guide-title {
+            font-size: 11px;
+            color: #00f5ff;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .species-guide-toggle {
+            background: transparent;
+            border: 1px solid #00f5ff;
+            color: #00f5ff;
+            padding: 2px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 9px;
+            transition: all 0.3s;
+        }
+
+        .species-guide-toggle:hover {
+            background: #00f5ff;
+            color: #000;
+        }
+
+        .species-guide-content {
+            font-size: 10px;
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        .species-guide-section {
+            margin-bottom: 8px;
+        }
+
+        .species-guide-label {
+            color: #8a2be2;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .species-recommended-item {
+            display: inline-block;
+            background: rgba(0, 245, 255, 0.1);
+            border: 1px solid rgba(0, 245, 255, 0.3);
+            padding: 2px 6px;
+            margin: 2px;
+            border-radius: 3px;
+            font-size: 9px;
+            color: #00f5ff;
+        }
+
+        .species-tip {
+            background: rgba(138, 43, 226, 0.1);
+            border-left: 3px solid #8a2be2;
+            padding: 6px 8px;
+            margin-top: 6px;
+            font-size: 9px;
+            color: #88ccff;
+        }
+
+        .species-tip::before {
+            content: "💡 ";
+            margin-right: 4px;
+        }
+
+        .optimal-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #00ff00, #00cc00);
+            color: #000;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: bold;
+            margin-left: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        .needs-improvement {
+            display: inline-block;
+            background: rgba(255, 170, 0, 0.2);
+            border: 1px solid #ffaa00;
+            color: #ffaa00;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 9px;
+            margin-top: 6px;
+        }
+
+        .auto-fill-btn {
+            background: linear-gradient(135deg, #8a2be2, #00f5ff);
+            border: none;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 10px;
+            width: 100%;
+            margin-top: 8px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .auto-fill-btn:hover {
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.6);
+            transform: translateY(-1px);
+        }
+
+        .info-icon {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: rgba(138, 43, 226, 0.3);
+            border: 1px solid #8a2be2;
+            color: #8a2be2;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .info-icon:hover {
+            background: #8a2be2;
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        .view-details-btn {
+            background: linear-gradient(135deg, #8a2be2, #00f5ff);
+            border: none;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-top: 12px;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .view-details-btn:hover {
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+            transform: translateY(-2px);
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            
+            .recipe-card, .recipe-card * {
+                visibility: visible;
+            }
+            
+            .recipe-card {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                max-width: none;
+                border: 1px solid #000;
+                box-shadow: none;
+                background: white;
+                color: black;
+            }
+            
+            .recipe-title {
+                color: black;
+            }
+            
+            .recipe-table th {
+                background: #f0f0f0;
+                color: black;
+            }
+            
+            .recipe-table td {
+                color: black;
+            }
+            
+            .close-btn,
+            .recipe-buttons {
+                display: none;
+            }
+            
+            .recipe-stat {
+                border: 1px solid #ccc;
+            }
+            
+            .recipe-instructions {
+                border: 1px solid #ccc;
+                background: #f9f9f9;
+            }
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 20, 40, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #00f5ff;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00ccff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">LIQUID CULTURE FORMULATION LAB</h1>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn btn-primary" id="clearBtn">RESET</button>
+                <button class="btn btn-save" id="saveBtn">SAVE FORMULA</button>
+                <button class="btn btn-danger" id="closeBtn">EXIT</button>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <!-- Ingredients Panel -->
+            <div class="section">
+                <h2 class="section-title">Nutrient Library</h2>
+                
+                <div class="tabs">
+                    <button class="tab active" data-tab="sugars">Sugars</button>
+                    <button class="tab" data-tab="nutrients">Nutrients</button>
+                    <button class="tab" data-tab="natural">Natural</button>
+                    <button class="tab" data-tab="minerals">Minerals</button>
+                    <button class="tab" data-tab="vitamins">Vitamins</button>
+                </div>
+                
+                <div class="ingredient-grid" id="ingredientGrid"></div>
+                
+                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(0, 245, 255, 0.2);">
+                    <div class="control-label">Quick Presets</div>
+                    <div class="preset-buttons">
+                        <button class="preset-btn" data-preset="basic">Basic LC</button>
+                        <button class="preset-btn" data-preset="enriched">Enriched</button>
+                        <button class="preset-btn" data-preset="mea">MEA Based</button>
+                        <button class="preset-btn" data-preset="potato">PDA Based</button>
+                        <button class="preset-btn" data-preset="zerowaste">Zero Waste</button>
+                        <button class="preset-btn" data-preset="natural">All Natural</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flask Visualization -->
+            <div class="section">
+                <h2 class="section-title">Culture Flask</h2>
+                
+                <div class="flask-container">
+                    <div class="flask">
+                        <div class="flask-cap"></div>
+                        <div class="flask-neck"></div>
+                        <div class="flask-body">
+                            <div class="liquid" id="liquidLevel">
+                                <div class="liquid-surface"></div>
+                            </div>
+                            <div class="measurement-marks">
+                                <div class="mark" style="bottom: 20%;"></div>
+                                <div class="mark-label" style="bottom: 20%;">200ml</div>
+                                <div class="mark" style="bottom: 40%;"></div>
+                                <div class="mark-label" style="bottom: 40%;">400ml</div>
+                                <div class="mark" style="bottom: 60%;"></div>
+                                <div class="mark-label" style="bottom: 60%;">600ml</div>
+                                <div class="mark" style="bottom: 80%;"></div>
+                                <div class="mark-label" style="bottom: 80%;">800ml</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="formula-display" id="formulaDisplay">
+                    <div class="formula-line">
+                        <span style="color: #88ccff;">No ingredients selected</span>
+                        <span>—</span>
+                    </div>
+                </div>
+                
+                <button class="view-details-btn" id="viewDetailsBtn">VIEW DETAILED RECIPE</button>
+                
+                <div style="text-align: center; margin-top: 8px;">
+                    <span style="font-size: 10px; color: #666;">Press Ctrl+D for details • Ctrl+P to print</span>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">pH Level</div>
+                        <div class="stat-value">
+                            <span id="phValue">7.0</span>
+                            <span class="status-indicator status-good"></span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Osmolarity</div>
+                        <div class="stat-value">
+                            <span id="osmolarityValue">0</span>
+                            <span class="stat-unit">mOsm</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Sugar Content</div>
+                        <div class="stat-value">
+                            <span id="sugarValue">0</span>
+                            <span class="stat-unit">%</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Nutrient Score</div>
+                        <div class="stat-value">
+                            <span id="nutrientScore">0</span>
+                            <span class="stat-unit">/100</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Control Panel -->
+            <div class="section">
+                <h2 class="section-title">Parameters</h2>
+                
+                <div class="control-panel">
+                    <div class="control-group">
+                        <div class="control-label">Total Volume (ml)</div>
+                        <div class="slider-container">
+                            <input type="range" class="slider" id="volumeSlider" min="100" max="2000" value="1000" step="100">
+                            <div class="slider-value"><span id="volumeValue">1000</span>ml</div>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <div class="control-label">Target pH</div>
+                        <div class="slider-container">
+                            <input type="range" class="slider" id="phSlider" min="4.0" max="8.0" value="6.5" step="0.1">
+                            <div class="slider-value"><span id="phTarget">6.5</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <div class="control-label">Sterilization Method</div>
+                        <select class="control-input" id="sterilizationMethod">
+                            <option value="autoclave">Autoclave (121°C, 15psi)</option>
+                            <option value="pressure">Pressure Cooker (15psi)</option>
+                            <option value="peroxide">Diluted Hydrogen Peroxide Solution</option>
+                            <option value="filter">Filter Sterilization</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group">
+                        <div class="control-label">Target Species</div>
+                        <select class="control-input" id="targetSpecies">
+                            <option value="psilocybe">Psilocybe cubensis</option>
+                            <option value="panaeolus">Panaeolus cyanescens</option>
+                            <option value="oyster">Pleurotus (Oyster)</option>
+                            <option value="lions">Hericium (Lion's Mane)</option>
+                            <option value="shiitake">Lentinula (Shiitake)</option>
+                            <option value="reishi">Ganoderma (Reishi)</option>
+                            <option value="cordyceps">Cordyceps militaris</option>
+                        </select>
+                        
+                        <div class="species-guide" id="speciesGuide">
+                            <div class="species-guide-header">
+                                <div class="species-guide-title" id="speciesGuideName">Species Guide</div>
+                                <button class="species-guide-toggle" id="toggleGuide">HIDE</button>
+                            </div>
+                            <div class="species-guide-content" id="speciesGuideContent"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <div class="control-label">Growth Rate</div>
+                        <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+                            <span style="color: #88ccff; font-size: 11px;">Colonization:</span>
+                            <span style="color: #00ff00; font-weight: bold;"><span id="colonizationDays">7-10</span> days</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-top: 4px;">
+                            <span style="color: #88ccff; font-size: 11px;">Vigor:</span>
+                            <span id="vigorRating" style="color: #ffaa00;">⭐⭐⭐☆☆</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="messageArea"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ingredient Detail Modal -->
+    <div class="overlay" id="ingredientDetailOverlay">
+        <div class="ingredient-detail-modal">
+            <button class="close-btn" id="closeIngredientDetail">×</button>
+            
+            <div class="ingredient-detail-header">
+                <div class="ingredient-detail-title" id="detailIngredientName"></div>
+                <div class="ingredient-detail-subtitle" id="detailIngredientInfo"></div>
+            </div>
+            
+            <div id="detailComposition"></div>
+            
+            <div class="benefits-section">
+                <div class="benefits-title">Benefits for Mycelium</div>
+                <div id="detailBenefits"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recipe Overlay (THIS WAS MISSING!) -->
+    <div class="overlay" id="recipeOverlay">
+        <div class="recipe-card">
+            <button class="close-btn" id="closeOverlay">×</button>
+            
+            <div class="recipe-header">
+                <div class="recipe-title">🧪 Liquid Culture Recipe</div>
+                <div class="recipe-date" id="recipeDate"></div>
+            </div>
+            
+            <div class="recipe-section">
+                <div class="recipe-section-title">Ingredients</div>
+                <table class="recipe-table" id="ingredientTable">
+                    <thead>
+                        <tr>
+                            <th>Ingredient</th>
+                            <th>Type</th>
+                            <th>Concentration</th>
+                            <th>Amount</th>
+                            <th>%</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            
+            <div class="recipe-section">
+                <div class="recipe-section-title">Statistics</div>
+                <div class="recipe-stats">
+                    <div class="recipe-stat">
+                        <div class="recipe-stat-label">Total Volume</div>
+                        <div class="recipe-stat-value" id="recipeTotalVolume">1000ml</div>
+                    </div>
+                    <div class="recipe-stat">
+                        <div class="recipe-stat-label">Total Weight</div>
+                        <div class="recipe-stat-value" id="recipeTotalWeight">0g</div>
+                    </div>
+                    <div class="recipe-stat">
+                        <div class="recipe-stat-label">pH</div>
+                        <div class="recipe-stat-value" id="recipePh">6.5</div>
+                    </div>
+                    <div class="recipe-stat">
+                        <div class="recipe-stat-label">Osmolarity</div>
+                        <div class="recipe-stat-value" id="recipeOsmolarity">0 mOsm</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="recipe-section">
+                <div class="recipe-section-title">Target Species</div>
+                <div style="padding: 8px; background: rgba(0, 245, 255, 0.05); border-radius: 4px;">
+                    <span id="recipeSpecies" style="color: #00f5ff; font-weight: bold;">Psilocybe cubensis</span>
+                </div>
+            </div>
+            
+            <div class="recipe-section">
+                <div class="recipe-section-title">Preparation Instructions</div>
+                <div class="recipe-instructions">
+                    <ol>
+                        <li>Measure <span id="instructVolume">1000</span>ml of distilled or spring water into a clean container</li>
+                        <li>Add each ingredient in the order listed above, stirring thoroughly between additions</li>
+                        <li>Adjust pH to target value of <span id="instructPh">6.5</span> if necessary using citric acid or baking soda</li>
+                        <li>Transfer to sterilizable jars or bottles, filling only 2/3 full to allow for expansion</li>
+                        <li>Sterilize using <span id="instructSterilize">Autoclave (121°C, 15psi)</span> for 15-20 minutes</li>
+                        <li>Allow to cool to room temperature before inoculation</li>
+                        <li>Inoculate with desired culture using sterile technique</li>
+                        <li>Incubate at appropriate temperature (typically 70-75°F / 21-24°C)</li>
+                        <li>Expected colonization time: <span id="instructDays">7-10</span> days</li>
+                        <li>Shake gently every 2-3 days to distribute mycelium</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="recipe-buttons">
+                <button class="btn btn-save" id="exportBtn">EXPORT JSON</button>
+                <button class="btn btn-primary" onclick="window.print()">PRINT RECIPE</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Ingredient Database with Detailed Composition
+        const ingredientDB = {
+            sugars: [
+                { 
+                    id: 'dextrose', name: 'Dextrose', concentration: 10, unit: 'g/L', ph: 6.5, osmotic: 55, 
+                    info: 'Simple sugar, fast uptake',
+                    composition: {
+                        sugars: ['D-Glucose (100%)'],
+                        minerals: ['None'],
+                        other: ['Pure monosaccharide', 'Directly metabolizable']
+                    },
+                    benefits: ['Fastest carbon source', 'No breakdown required', 'Immediate energy', 'Promotes rapid growth']
+                },
+                { 
+                    id: 'honey', name: 'Raw Honey', concentration: 10, unit: 'g/L', ph: 4.0, osmotic: 60, 
+                    info: 'Natural enzymes & minerals',
+                    composition: {
+                        sugars: ['Fructose (38%)', 'Glucose (31%)', 'Maltose (7%)', 'Sucrose (1%)'],
+                        enzymes: ['Invertase', 'Diastase', 'Glucose oxidase', 'Catalase'],
+                        amino_acids: ['Proline', 'Phenylalanine', 'Tyrosine', 'Lysine', 'Glutamic acid'],
+                        vitamins: ['B1', 'B2', 'B3', 'B5', 'B6', 'Vitamin C'],
+                        minerals: ['Potassium', 'Calcium', 'Magnesium', 'Phosphorus', 'Iron', 'Zinc', 'Copper', 'Manganese'],
+                        other: ['Phenolic compounds', 'Organic acids', 'Antioxidants', 'Flavonoids']
+                    },
+                    benefits: ['Natural antimicrobial properties', 'Enzyme-rich for nutrient breakdown', 'Trace minerals support growth', 'Antioxidants protect culture']
+                },
+                { 
+                    id: 'karo', name: 'Light Corn Syrup', concentration: 10, unit: 'g/L', ph: 5.0, osmotic: 58, 
+                    info: 'Clear, consistent results',
+                    composition: {
+                        sugars: ['Glucose (20%)', 'Maltose (15%)', 'Maltotriose', 'Higher oligosaccharides'],
+                        minerals: ['Sodium', 'Potassium (trace)'],
+                        other: ['Clear liquid', 'No particulates', 'Consistent composition']
+                    },
+                    benefits: ['Predictable fermentation', 'Clean appearance', 'Long-term stability', 'No crystallization']
+                },
+                { 
+                    id: 'malt', name: 'Malt Extract', concentration: 15, unit: 'g/L', ph: 5.5, osmotic: 65, 
+                    info: 'Complex sugars, slower release',
+                    composition: {
+                        sugars: ['Maltose (50%)', 'Maltotriose (18%)', 'Glucose (15%)', 'Dextrins'],
+                        amino_acids: ['All 20 essential amino acids', 'Proline-rich'],
+                        vitamins: ['B-complex vitamins', 'Niacin', 'Riboflavin'],
+                        minerals: ['Phosphorus', 'Magnesium', 'Potassium', 'Calcium'],
+                        other: ['Proteins (4-6%)', 'Beta-glucans', 'Natural enzymes']
+                    },
+                    benefits: ['Sustained energy release', 'Complete amino acid profile', 'Natural pH buffering', 'Enhanced flavor compounds']
+                },
+                { 
+                    id: 'sucrose', name: 'Table Sugar', concentration: 10, unit: 'g/L', ph: 6.8, osmotic: 58, 
+                    info: 'Readily available',
+                    composition: {
+                        sugars: ['Sucrose (99.9%)'],
+                        minerals: ['None (refined)'],
+                        other: ['Pure disaccharide', 'Requires invertase']
+                    },
+                    benefits: ['Inexpensive', 'Widely available', 'Long shelf life', 'Clean fermentation']
+                },
+                { 
+                    id: 'molasses', name: 'Blackstrap Molasses', concentration: 5, unit: 'g/L', ph: 5.0, osmotic: 70, 
+                    info: 'Rich in minerals',
+                    composition: {
+                        sugars: ['Sucrose (35%)', 'Invert sugars (20%)'],
+                        minerals: ['Iron (15% DV)', 'Calcium (20% DV)', 'Magnesium (25% DV)', 'Potassium (15% DV)', 'Copper', 'Manganese', 'Selenium'],
+                        vitamins: ['B6 (14% DV)', 'Niacin', 'Riboflavin'],
+                        other: ['Organic acids', 'Phenolic compounds', 'Dark pigments']
+                    },
+                    benefits: ['Extremely mineral-rich', 'Supports enzymatic functions', 'Buffering capacity', 'Vigorous growth']
+                },
+                { 
+                    id: 'agave', name: 'Agave Nectar', concentration: 8, unit: 'g/L', ph: 4.5, osmotic: 62, 
+                    info: 'Low glycemic index',
+                    composition: {
+                        sugars: ['Fructose (90%)', 'Glucose (10%)'],
+                        minerals: ['Calcium', 'Potassium', 'Magnesium', 'Iron (trace)'],
+                        vitamins: ['Vitamin C (trace)', 'B-vitamins (minimal)'],
+                        other: ['Inulin (prebiotic fiber)', 'Saponins']
+                    },
+                    benefits: ['Slow sugar release', 'Prebiotic properties', 'Less osmotic stress', 'Steady growth rate']
+                },
+                { 
+                    id: 'maple', name: 'Maple Syrup', concentration: 10, unit: 'g/L', ph: 5.5, osmotic: 66, 
+                    info: 'Natural minerals',
+                    composition: {
+                        sugars: ['Sucrose (60%)', 'Glucose (3%)', 'Fructose (1%)'],
+                        minerals: ['Manganese (33% DV)', 'Zinc (18% DV)', 'Calcium', 'Potassium', 'Iron', 'Magnesium'],
+                        vitamins: ['Riboflavin', 'Niacin'],
+                        other: ['Phenolic compounds (24+ types)', 'Organic acids', 'Natural flavor compounds']
+                    },
+                    benefits: ['High manganese for enzymes', 'Antioxidant properties', 'Natural antimicrobials', 'Unique flavor profile']
+                }
+            ],
+            nutrients: [
+                { 
+                    id: 'peptone', name: 'Peptone', concentration: 2, unit: 'g/L', ph: 7.0, osmotic: 20, 
+                    info: 'Protein hydrolysate',
+                    composition: {
+                        amino_acids: ['All 20 amino acids', 'Short peptides', 'Free amino acids'],
+                        minerals: ['Sodium', 'Chloride', 'Phosphates'],
+                        vitamins: ['B-complex (degraded during processing)'],
+                        other: ['Peptide bonds', 'Nitrogen source (12-15%)', 'Easy to assimilate']
+                    },
+                    benefits: ['Rapid protein synthesis', 'Pre-digested nitrogen', 'Consistent composition', 'Supports dense growth']
+                },
+                { 
+                    id: 'yeast', name: 'Yeast Extract', concentration: 2, unit: 'g/L', ph: 6.8, osmotic: 25, 
+                    info: 'B vitamins, amino acids',
+                    composition: {
+                        amino_acids: ['Glutamic acid (high)', 'All essential amino acids', 'Nucleotides'],
+                        vitamins: ['B1 (Thiamine)', 'B2 (Riboflavin)', 'B3 (Niacin)', 'B6 (Pyridoxine)', 'B12 (if fortified)', 'Folic acid', 'Biotin'],
+                        minerals: ['Phosphorus', 'Potassium', 'Magnesium', 'Zinc', 'Iron'],
+                        other: ['RNA/DNA fragments', 'Glutathione', 'Beta-glucans', 'Mannan oligosaccharides']
+                    },
+                    benefits: ['Complete vitamin B complex', 'Nucleotide building blocks', 'Immune-modulating compounds', 'Rich umami flavor']
+                },
+                { 
+                    id: 'potato', name: 'Potato Dextrose', concentration: 4, unit: 'g/L', ph: 5.6, osmotic: 30, 
+                    info: 'Starch-based nutrient',
+                    composition: {
+                        sugars: ['Dextrose', 'Maltodextrins', 'Starch fragments'],
+                        amino_acids: ['Potato-derived proteins', 'Glutamic acid', 'Aspartic acid'],
+                        vitamins: ['Vitamin C', 'B6', 'Niacin', 'Folate'],
+                        minerals: ['Potassium (high)', 'Phosphorus', 'Magnesium', 'Iron'],
+                        other: ['Soluble fiber', 'Natural potato extracts']
+                    },
+                    benefits: ['Traditional mycology standard', 'Natural growth factors', 'Broad spectrum nutrients', 'Time-tested formulation']
+                },
+                { 
+                    id: 'soy', name: 'Soy Peptone', concentration: 2, unit: 'g/L', ph: 7.2, osmotic: 22, 
+                    info: 'Plant-based proteins',
+                    composition: {
+                        amino_acids: ['Complete plant protein', 'Lysine-rich', 'Branched-chain amino acids'],
+                        minerals: ['Iron', 'Calcium', 'Magnesium', 'Phosphorus', 'Potassium'],
+                        vitamins: ['B-complex', 'Vitamin K'],
+                        other: ['Isoflavones', 'Saponins', 'Phytic acid (low)', 'Plant sterols']
+                    },
+                    benefits: ['Vegan protein source', 'High bioavailability', 'Plant growth factors', 'Cost-effective']
+                },
+                { 
+                    id: 'wheat', name: 'Wheat Germ', concentration: 3, unit: 'g/L', ph: 6.5, osmotic: 28, 
+                    info: 'Vitamins E & B complex',
+                    composition: {
+                        amino_acids: ['Complete protein (23%)', 'Octacosanol'],
+                        vitamins: ['Vitamin E (high)', 'B1', 'B2', 'B6', 'Folate', 'Niacin'],
+                        minerals: ['Magnesium', 'Phosphorus', 'Zinc', 'Iron', 'Manganese', 'Selenium'],
+                        other: ['Omega-3 fatty acids', 'Phytosterols', 'Fiber', 'Polyunsaturated fats']
+                    },
+                    benefits: ['Powerful antioxidants', 'Essential fatty acids', 'Promotes vigorous growth', 'Nutrient-dense']
+                },
+                { 
+                    id: 'nutritional', name: 'Nutritional Yeast', concentration: 1, unit: 'g/L', ph: 6.0, osmotic: 15, 
+                    info: 'Deactivated, B12 rich',
+                    composition: {
+                        amino_acids: ['Complete protein (50%)', 'All 9 essential amino acids'],
+                        vitamins: ['B12 (fortified)', 'B1', 'B2', 'B3', 'B6', 'Folate'],
+                        minerals: ['Zinc', 'Selenium', 'Chromium', 'Iron'],
+                        other: ['Beta-glucans', 'Glutathione', 'Trehalose']
+                    },
+                    benefits: ['Deactivated (no competition)', 'Bioavailable B12', 'Immune support', 'Savory flavor']
+                },
+                { 
+                    id: 'spirulina', name: 'Spirulina', concentration: 0.5, unit: 'g/L', ph: 9.0, osmotic: 10, 
+                    info: 'Micronutrients, alkaline',
+                    composition: {
+                        amino_acids: ['Complete protein (60-70%)', 'Gamma-linolenic acid (GLA)'],
+                        vitamins: ['B12 (analog)', 'Vitamin K', 'Beta-carotene', 'B-complex'],
+                        minerals: ['Iron (non-heme)', 'Copper', 'Magnesium', 'Potassium', 'Manganese'],
+                        other: ['Phycocyanin (blue pigment)', 'Chlorophyll', 'Carotenoids', 'SOD enzyme']
+                    },
+                    benefits: ['Alkalizing properties', 'Photosynthetic pigments', 'Powerful antioxidants', 'Micronutrient boost']
+                },
+                { 
+                    id: 'bran', name: 'Rice Bran Extract', concentration: 2, unit: 'g/L', ph: 6.2, osmotic: 18, 
+                    info: 'Fiber, minerals',
+                    composition: {
+                        amino_acids: ['Protein (13-15%)', 'Essential amino acids'],
+                        vitamins: ['Vitamin E (tocotrienols)', 'B-complex', 'Thiamine'],
+                        minerals: ['Phosphorus', 'Magnesium', 'Potassium', 'Iron', 'Zinc'],
+                        other: ['Gamma-oryzanol', 'Ferulic acid', 'Phytic acid', 'Dietary fiber', 'Rice bran oil components']
+                    },
+                    benefits: ['Unique antioxidants', 'Slow-release nutrients', 'Natural growth regulators', 'Stabilizes pH']
+                }
+            ],
+            minerals: [
+                { id: 'mgso4', name: 'Magnesium Sulfate', concentration: 0.5, unit: 'g/L', ph: 6.0, osmotic: 8, info: 'Enzyme cofactor',
+                    composition: { minerals: ['Magnesium (Mg²⁺)', 'Sulfate (SO₄²⁻)'], other: ['Epsom salt', 'Highly soluble'] },
+                    benefits: ['Activates 300+ enzymes', 'ATP synthesis', 'Chlorophyll analog', 'Sulfur source']
+                },
+                { id: 'cacl2', name: 'Calcium Chloride', concentration: 0.1, unit: 'g/L', ph: 6.5, osmotic: 5, info: 'Cell wall structure',
+                    composition: { minerals: ['Calcium (Ca²⁺)', 'Chloride (Cl⁻)'], other: ['Food-grade', 'Hygroscopic'] },
+                    benefits: ['Cell wall integrity', 'Signal transduction', 'Structural support', 'Enzyme activation']
+                },
+                { id: 'kh2po4', name: 'Potassium Phosphate', concentration: 0.5, unit: 'g/L', ph: 4.5, osmotic: 10, info: 'Buffer, phosphorus',
+                    composition: { minerals: ['Potassium (K⁺)', 'Phosphate (H₂PO₄⁻)'], other: ['pH buffer', 'Monobasic'] },
+                    benefits: ['pH stabilization', 'DNA/RNA synthesis', 'Energy metabolism (ATP)', 'Enzyme cofactor']
+                },
+                { id: 'feso4', name: 'Iron Sulfate', concentration: 0.01, unit: 'g/L', ph: 3.0, osmotic: 2, info: 'Trace element',
+                    composition: { minerals: ['Iron (Fe²⁺)', 'Sulfate (SO₄²⁻)'], other: ['Ferrous form', 'Essential micronutrient'] },
+                    benefits: ['Electron transport', 'Cytochrome synthesis', 'Oxygen metabolism', 'Enzyme component']
+                },
+                { id: 'znso4', name: 'Zinc Sulfate', concentration: 0.01, unit: 'g/L', ph: 5.5, osmotic: 2, info: 'Enzyme function',
+                    composition: { minerals: ['Zinc (Zn²⁺)', 'Sulfate (SO₄²⁻)'], other: ['Trace mineral', 'Catalytic cofactor'] },
+                    benefits: ['100+ enzymes', 'Protein synthesis', 'Gene expression', 'Immune function']
+                },
+                { id: 'mnso4', name: 'Manganese Sulfate', concentration: 0.01, unit: 'g/L', ph: 5.0, osmotic: 2, info: 'Metabolic processes',
+                    composition: { minerals: ['Manganese (Mn²⁺)', 'Sulfate (SO₄²⁻)'], other: ['Essential trace element'] },
+                    benefits: ['Antioxidant enzymes', 'Carbohydrate metabolism', 'Bone formation', 'Free radical protection']
+                },
+                { id: 'cuso4', name: 'Copper Sulfate', concentration: 0.005, unit: 'g/L', ph: 4.0, osmotic: 1, info: 'Trace element',
+                    composition: { minerals: ['Copper (Cu²⁺)', 'Sulfate (SO₄²⁻)'], other: ['Blue vitriol', 'Use sparingly'] },
+                    benefits: ['Electron transport', 'Oxidative enzymes', 'Iron metabolism', 'Antimicrobial (low conc.)']
+                },
+                { id: 'nacl', name: 'Sodium Chloride', concentration: 0.1, unit: 'g/L', ph: 7.0, osmotic: 6, info: 'Osmotic balance',
+                    composition: { minerals: ['Sodium (Na⁺)', 'Chloride (Cl⁻)'], other: ['Table salt', 'Ionic strength'] },
+                    benefits: ['Osmotic regulation', 'Ion balance', 'Membrane potential', 'Stress tolerance']
+                }
+            ],
+            vitamins: [
+                { id: 'thiamine', name: 'Thiamine (B1)', concentration: 0.001, unit: 'g/L', ph: 6.5, osmotic: 0.5, info: 'Carbohydrate metabolism',
+                    composition: { vitamins: ['Thiamine HCl'], other: ['Water-soluble', 'Heat-sensitive'] },
+                    benefits: ['Pyruvate decarboxylation', 'Krebs cycle', 'Nerve function', 'Energy production']
+                },
+                { id: 'biotin', name: 'Biotin', concentration: 0.0001, unit: 'g/L', ph: 7.0, osmotic: 0.1, info: 'Fatty acid synthesis',
+                    composition: { vitamins: ['Vitamin B7/H'], other: ['Coenzyme', 'Essential micronutrient'] },
+                    benefits: ['Fatty acid synthesis', 'Amino acid catabolism', 'Gluconeogenesis', 'Cell growth']
+                },
+                { id: 'riboflavin', name: 'Riboflavin (B2)', concentration: 0.001, unit: 'g/L', ph: 6.0, osmotic: 0.5, info: 'Energy production',
+                    composition: { vitamins: ['Vitamin B2'], other: ['Yellow fluorescent', 'Flavoprotein precursor'] },
+                    benefits: ['FAD/FMN synthesis', 'Electron transport', 'Redox reactions', 'Cellular respiration']
+                },
+                { id: 'niacin', name: 'Niacin (B3)', concentration: 0.001, unit: 'g/L', ph: 6.5, osmotic: 0.5, info: 'NAD/NADP synthesis',
+                    composition: { vitamins: ['Nicotinic acid'], other: ['NAD+ precursor', 'Essential coenzyme'] },
+                    benefits: ['NAD+/NADP+ synthesis', 'Energy metabolism', 'DNA repair', 'Cell signaling']
+                },
+                { id: 'pantothenic', name: 'Pantothenic Acid', concentration: 0.001, unit: 'g/L', ph: 7.0, osmotic: 0.5, info: 'CoA synthesis',
+                    composition: { vitamins: ['Vitamin B5'], other: ['Coenzyme A precursor'] },
+                    benefits: ['CoA synthesis', 'Fatty acid metabolism', 'Krebs cycle', 'Neurotransmitter synthesis']
+                },
+                { id: 'pyridoxine', name: 'Pyridoxine (B6)', concentration: 0.001, unit: 'g/L', ph: 6.8, osmotic: 0.5, info: 'Amino acid metabolism',
+                    composition: { vitamins: ['Vitamin B6'], other: ['PLP precursor', 'Pyridoxal phosphate'] },
+                    benefits: ['Amino acid metabolism', 'Neurotransmitter synthesis', 'Hemoglobin synthesis', 'Gene expression']
+                },
+                { id: 'folic', name: 'Folic Acid', concentration: 0.001, unit: 'g/L', ph: 7.5, osmotic: 0.5, info: 'DNA synthesis',
+                    composition: { vitamins: ['Vitamin B9'], other: ['Folate', 'THF precursor'] },
+                    benefits: ['Cell membrane structure', 'Signal transduction', 'Osmotic stress', 'Cell membrane structure']
+                }
+            ],
+            natural: [
+                { 
+                    id: 'bean_water', name: 'Bean Soak Water', concentration: 50, unit: 'ml/L', ph: 6.2, osmotic: 35, 
+                    info: 'Kitchen waste nutrient source',
+                    composition: {
+                        amino_acids: ['Lysine', 'Leucine', 'Phenylalanine', 'Arginine', 'Free amino acids'],
+                        minerals: ['Potassium (high)', 'Magnesium', 'Iron', 'Zinc', 'Calcium', 'Phosphorus'],
+                        vitamins: ['B1', 'B6', 'Folate', 'Niacin'],
+                        sugars: ['Oligosaccharides', 'Stachyose', 'Raffinose'],
+                        other: ['Saponins', 'Phytic acid', 'Soluble fiber', 'Protein fragments']
+                    },
+                    benefits: ['Zero-waste nutrition', 'Complete mineral profile', 'Cheap and accessible', 'Pre-soaked = readily available nutrients', 'Multiple amino acids']
+                },
+                { 
+                    id: 'compost_tea', name: 'Compost Tea', concentration: 100, unit: 'ml/L', ph: 6.8, osmotic: 45, 
+                    info: 'Full-spectrum living nutrients',
+                    composition: {
+                        amino_acids: ['Full spectrum from decomposition'],
+                        minerals: ['N-P-K', 'All trace minerals', 'Humic minerals', 'Chelated forms'],
+                        vitamins: ['B-complex', 'Vitamin K', 'Folate'],
+                        enzymes: ['Cellulase', 'Protease', 'Amylase', 'Various decomposition enzymes'],
+                        other: ['Humic acids', 'Fulvic acids', 'Beneficial metabolites', 'Organic acids', 'Growth hormones', 'Microbial metabolites']
+                    },
+                    benefits: ['Most complete natural nutrient', 'Living enzymes', 'Natural chelation', 'Immune-boosting compounds', 'Growth hormones', 'Mimics natural substrate']
+                },
+                { 
+                    id: 'pasta_water', name: 'Pasta/Grain Water', concentration: 100, unit: 'ml/L', ph: 6.5, osmotic: 40, 
+                    info: 'Starchy cooking water',
+                    composition: {
+                        sugars: ['Starch (gelatinized)', 'Maltodextrins', 'Simple sugars'],
+                        minerals: ['Sodium (if salted)', 'Potassium', 'Phosphorus', 'Magnesium'],
+                        amino_acids: ['Wheat proteins (dissolved)', 'Glutamine', 'Proline'],
+                        other: ['Gelatinized starches', 'Easy-to-digest carbs', 'Emulsifiers']
+                    },
+                    benefits: ['Readily available starch', 'Cloudy = high nutrient density', 'Free byproduct', 'Pre-cooked = easier breakdown', 'Natural thickening agents']
+                },
+                { 
+                    id: 'cardboard_extract', name: 'Cardboard Soak Water', concentration: 30, unit: 'ml/L', ph: 6.0, osmotic: 15, 
+                    info: 'Cellulose breakdown products',
+                    composition: {
+                        sugars: ['Cellobiose', 'Glucose (from cellulose)', 'Xylose', 'Arabinose'],
+                        other: ['Lignin compounds', 'Cellulose fibers', 'Hemicellulose breakdown products', 'Trace heavy metals (avoid printed cardboard)']
+                    },
+                    benefits: ['Mushrooms LOVE cellulose', 'Slow-release carbon', 'Mimics wood substrate', 'Encourages cellulase production', 'Natural for wood-loving species']
+                },
+                { 
+                    id: 'coffee_extract', name: 'Coffee Grounds Extract', concentration: 20, unit: 'ml/L', ph: 5.5, osmotic: 25, 
+                    info: 'Nitrogen-rich, stimulating',
+                    composition: {
+                        amino_acids: ['Protein remnants', 'Amino acids'],
+                        minerals: ['Potassium (very high)', 'Magnesium', 'Phosphorus', 'Nitrogen (2%)'],
+                        vitamins: ['Niacin', 'Riboflavin'],
+                        other: ['Caffeine (trace)', 'Chlorogenic acids', 'Lipids', 'Melanoidins', 'Antioxidants']
+                    },
+                    benefits: ['High nitrogen source', 'Coffee waste utilization', 'Potassium boost', 'May stimulate growth', 'Natural antimicrobials', 'Darkens culture']
+                },
+                { 
+                    id: 'veggie_water', name: 'Vegetable Cooking Water', concentration: 100, unit: 'ml/L', ph: 6.5, osmotic: 30, 
+                    info: 'Water-soluble nutrients',
+                    composition: {
+                        minerals: ['Potassium', 'Magnesium', 'Calcium', 'Phosphorus', 'Iron (from greens)'],
+                        vitamins: ['Vitamin C (degraded)', 'B-vitamins', 'Folate', 'Water-soluble vitamins'],
+                        sugars: ['Vegetable sugars', 'Oligosaccharides'],
+                        other: ['Flavonoids', 'Phenolic compounds', 'Organic acids']
+                    },
+                    benefits: ['Captures leached nutrients', 'Zero waste', 'Multiple vegetable = complex profile', 'Rich in minerals', 'Natural pH buffering']
+                },
+                { 
+                    id: 'oat_soak', name: 'Oat Soak Water', concentration: 50, unit: 'ml/L', ph: 6.3, osmotic: 38, 
+                    info: 'Beta-glucans and proteins',
+                    composition: {
+                        sugars: ['Beta-glucans (soluble fiber)', 'Starch', 'Oligosaccharides'],
+                        amino_acids: ['Complete protein profile', 'Avenin proteins'],
+                        minerals: ['Manganese (high)', 'Phosphorus', 'Magnesium', 'Iron', 'Zinc'],
+                        vitamins: ['B1', 'B5', 'Folate'],
+                        other: ['Avenanthramides (antioxidants)', 'Phytic acid', 'Lipids']
+                    },
+                    benefits: ['Beta-glucans = immune support', 'High in beneficial fiber', 'Complete nutrition', 'Manganese for enzymes', 'Oats = traditional substrate']
+                },
+                { 
+                    id: 'seed_water', name: 'Seed Soak Water (Sunflower)', concentration: 30, unit: 'ml/L', ph: 6.0, osmotic: 28, 
+                    info: 'Fats, proteins, minerals',
+                    composition: {
+                        amino_acids: ['Complete protein', 'Arginine', 'Tryptophan'],
+                        minerals: ['Selenium (extremely high)', 'Copper', 'Manganese', 'Phosphorus', 'Magnesium', 'Zinc'],
+                        vitamins: ['Vitamin E', 'B1', 'B6', 'Folate', 'Niacin'],
+                        other: ['Unsaturated fats', 'Phytosterols', 'Lignans', 'Phenolic acids']
+                    },
+                    benefits: ['Selenium for antioxidant enzymes', 'Essential fatty acids', 'Vitamin E protects cells', 'Mineral-rich', 'Energy-dense']
+                },
+                { 
+                    id: 'mushroom_rehydrate', name: 'Dried Mushroom Rehydrate', concentration: 50, unit: 'ml/L', ph: 6.5, osmotic: 30, 
+                    info: 'Mycelium growth factors',
+                    composition: {
+                        amino_acids: ['Mushroom proteins', 'Ergothioneine', 'Free amino acids'],
+                        vitamins: ['Vitamin D2', 'B-vitamins', 'Niacin'],
+                        minerals: ['Selenium', 'Potassium', 'Copper', 'Phosphorus'],
+                        other: ['Beta-glucans', 'Chitin fragments', 'Mushroom growth factors', 'Ergosterol', 'Trehalose']
+                    },
+                    benefits: ['Contains natural mycelium signals', 'Growth-promoting compounds', 'Species recognition molecules', 'Vitamin D boost', 'Familiar nutrient profile']
+                },
+                { 
+                    id: 'kelp_extract', name: 'Kelp/Seaweed Extract', concentration: 10, unit: 'ml/L', ph: 8.0, osmotic: 50, 
+                    info: 'Trace minerals and growth hormones',
+                    composition: {
+                        minerals: ['Iodine (very high)', 'All trace minerals', 'Calcium', 'Magnesium', 'Iron', 'Zinc', '60+ minerals'],
+                        vitamins: ['A', 'B-complex', 'C', 'E', 'K'],
+                        amino_acids: ['All amino acids'],
+                        other: ['Alginates', 'Plant growth hormones (auxins, cytokinins)', 'Polysaccharides', 'Mannitol', 'Fucoidan']
+                    },
+                    benefits: ['Complete mineral spectrum', 'Natural growth hormones', 'Chelated minerals (easy absorption)', 'Alkalizing', 'Immune support', 'Enhanced vigor']
+                }
+            ]
+        };
+
+        // Species-specific guidance
+        const speciesGuide = {
+            psilocybe: {
+                name: 'Psilocybe cubensis',
+                optimalPh: { min: 6.0, max: 6.8, ideal: 6.5 },
+                preferredSugars: ['dextrose', 'honey', 'karo'],
+                preferredNutrients: ['yeast', 'peptone', 'nutritional'],
+                naturalExtracts: ['bean_water', 'oat_soak'],
+                avoidInhibitory: ['High sugar (>2%)', 'Heavy metals', 'Copper above trace'],
+                tips: [
+                    'Prefers simple sugars for fast colonization',
+                    'Benefits from yeast extract for B-vitamins',
+                    'Slightly acidic pH (6.3-6.5) is optimal',
+                    'Low nutrient concentration = less contamination risk',
+                    'Coffee extract may boost alkaloid production'
+                ],
+                sugarRange: { min: 0.5, max: 2.0, ideal: 1.0 },
+                description: 'Fast colonizer, prefers lean media with simple sugars and basic nitrogen sources.',
+                recommendedFormula: {
+                    dextrose: 10,
+                    yeast: 1,
+                    kh2po4: 0.5
+                }
+            },
+            panaeolus: {
+                name: 'Panaeolus cyanescens',
+                optimalPh: { min: 6.5, max: 7.2, ideal: 7.0 },
+                preferredSugars: ['dextrose', 'malt'],
+                preferredNutrients: ['peptone', 'yeast', 'bran'],
+                naturalExtracts: ['compost_tea', 'veggie_water'],
+                avoidInhibitory: ['Overly rich media', 'High osmolarity'],
+                tips: [
+                    'Prefers neutral to slightly alkaline pH',
+                    'More demanding than Psilocybe - needs richer media',
+                    'Benefits from trace minerals (Mg, Fe)',
+                    'Manure-based species - compost tea works great',
+                    'Slower colonizer but vigorous fruiter'
+                ],
+                sugarRange: { min: 1.0, max: 2.5, ideal: 1.5 },
+                description: 'Coprophilous species that thrives with richer nutrients and slightly alkaline conditions.',
+                recommendedFormula: {
+                    dextrose: 15,
+                    peptone: 2,
+                    yeast: 1,
+                    compost_tea: 50,
+                    mgso4: 0.5
+                }
+            },
+            oyster: {
+                name: 'Pleurotus (Oyster)',
+                optimalPh: { min: 6.0, max: 7.5, ideal: 6.5 },
+                preferredSugars: ['dextrose', 'malt', 'sucrose'],
+                preferredNutrients: ['bran', 'wheat', 'soy'],
+                naturalExtracts: ['cardboard_extract', 'oat_soak', 'pasta_water'],
+                avoidInhibitory: ['None - very adaptable'],
+                tips: [
+                    'Extremely fast and aggressive colonizer',
+                    'Loves cellulose - cardboard extract is perfect',
+                    'Can handle high sugar concentrations (2-3%)',
+                    'Agricultural waste extracts work excellently',
+                    'Very contamination resistant',
+                    'Benefits from wheat/grain-based nutrients'
+                ],
+                sugarRange: { min: 1.0, max: 3.0, ideal: 2.0 },
+                description: 'Vigorous wood-decomposer, highly adaptable to various nutrient sources.',
+                recommendedFormula: {
+                    dextrose: 20,
+                    bran: 2,
+                    cardboard_extract: 30,
+                    oat_soak: 50
+                }
+            },
+            lions: {
+                name: 'Hericium (Lion\'s Mane)',
+                optimalPh: { min: 5.5, max: 6.5, ideal: 6.0 },
+                preferredSugars: ['dextrose', 'malt', 'honey'],
+                preferredNutrients: ['yeast', 'wheat', 'peptone'],
+                naturalExtracts: ['cardboard_extract', 'oat_soak', 'seed_water'],
+                avoidInhibitory: ['High pH (>7.0)', 'Heavy nitrogen'],
+                tips: [
+                    'Prefers hardwood nutrients - cardboard perfect',
+                    'Slightly acidic pH optimal',
+                    'Benefits from wheat germ for Vitamin E',
+                    'Slower colonizer - patience required',
+                    'Selenium from seed soak may boost bioactives',
+                    'Keep sugar moderate (1-1.5%)'
+                ],
+                sugarRange: { min: 0.8, max: 1.5, ideal: 1.2 },
+                description: 'Medicinal wood-decomposer requiring patience and hardwood-mimicking nutrients.',
+                recommendedFormula: {
+                    dextrose: 12,
+                    yeast: 1,
+                    wheat: 2,
+                    cardboard_extract: 30,
+                    seed_water: 20
+                }
+            },
+            shiitake: {
+                name: 'Lentinula (Shiitake)',
+                optimalPh: { min: 5.0, max: 6.5, ideal: 5.5 },
+                preferredSugars: ['malt', 'dextrose'],
+                preferredNutrients: ['yeast', 'bran', 'wheat'],
+                naturalExtracts: ['cardboard_extract', 'oat_soak', 'mushroom_rehydrate'],
+                avoidInhibitory: ['Alkaline pH', 'High nitrogen'],
+                tips: [
+                    'Prefers acidic conditions (pH 5.0-5.5)',
+                    'Loves oak/hardwood mimicking nutrients',
+                    'Malt extract closely mimics natural substrate',
+                    'Very slow colonizer (14-21 days)',
+                    'Benefits from mushroom rehydrate (recognition signals)',
+                    'Rice bran extract traditional addition'
+                ],
+                sugarRange: { min: 1.0, max: 2.0, ideal: 1.5 },
+                description: 'Premium hardwood decomposer requiring acidic pH and patience, rewards with quality.',
+                recommendedFormula: {
+                    malt: 15,
+                    yeast: 2,
+                    bran: 2,
+                    cardboard_extract: 30,
+                    mushroom_rehydrate: 30
+                }
+            },
+            reishi: {
+                name: 'Ganoderma (Reishi)',
+                optimalPh: { min: 5.5, max: 6.5, ideal: 6.0 },
+                preferredSugars: ['dextrose', 'malt', 'honey'],
+                preferredNutrients: ['yeast', 'peptone', 'bran'],
+                naturalExtracts: ['cardboard_extract', 'kelp_extract', 'mushroom_rehydrate'],
+                avoidInhibitory: ['High pH', 'Low minerals'],
+                tips: [
+                    'Very slow colonizer (14-18 days) - be patient',
+                    'Benefits greatly from trace minerals',
+                    'Kelp extract provides growth hormones',
+                    'Slightly acidic pH preferred',
+                    'Can tolerate higher sugar (2-2.5%)',
+                    'Magnesium and zinc particularly important',
+                    'Cardboard mimics natural wood substrate'
+                ],
+                sugarRange: { min: 1.5, max: 2.5, ideal: 2.0 },
+                description: 'Medicinal polypore requiring mineral-rich media and extended colonization time.',
+                recommendedFormula: {
+                    dextrose: 20,
+                    yeast: 2,
+                    peptone: 1,
+                    kelp_extract: 10,
+                    cardboard_extract: 30,
+                    mgso4: 0.5,
+                    znso4: 0.01
+                }
+            },
+            cordyceps: {
+                name: 'Cordyceps militaris',
+                optimalPh: { min: 6.0, max: 7.0, ideal: 6.5 },
+                preferredSugars: ['dextrose', 'honey', 'sucrose'],
+                preferredNutrients: ['peptone', 'yeast', 'soy'],
+                naturalExtracts: ['bean_water', 'seed_water', 'oat_soak'],
+                avoidInhibitory: ['Low protein', 'Acidic pH (<5.5)'],
+                tips: [
+                    'Requires higher protein than most species',
+                    'Bean water provides excellent amino acids',
+                    'Slower colonizer (21-28 days)',
+                    'Benefits from peptone/amino acids',
+                    'Neutral pH preferred',
+                    'Higher sugar tolerated (2-3%)',
+                    'Seed extracts may boost bioactive compounds',
+                    'Traditionally grown on insect pupae - high protein!'
+                ],
+                sugarRange: { min: 2.0, max: 3.0, ideal: 2.5 },
+                description: 'Entomopathogenic species requiring high protein and sugar, very different from wood decomposers.',
+                recommendedFormula: {
+                    dextrose: 25,
+                    peptone: 3,
+                    soy: 2,
+                    bean_water: 50,
+                    seed_water: 30
+                }
+            }
+        };
+
+        // Preset Formulas
+        const presets = {
+            basic: {
+                name: 'Basic LC',
+                ingredients: {
+                    dextrose: 10,
+                    yeast: 1
+                }
+            },
+            enriched: {
+                name: 'Enriched LC',
+                ingredients: {
+                    honey: 10,
+                    malt: 5,
+                    peptone: 2,
+                    yeast: 2,
+                    mgso4: 0.5,
+                    kh2po4: 0.5
+                }
+            },
+            mea: {
+                name: 'MEA Based',
+                ingredients: {
+                    malt: 20,
+                    yeast: 2,
+                    peptone: 1
+                }
+            },
+            potato: {
+                name: 'PDA Based',
+                ingredients: {
+                    potato: 4,
+                    dextrose: 20
+                }
+            },
+            zerowaste: {
+                name: 'Zero Waste Kitchen',
+                ingredients: {
+                    bean_water: 50,
+                    pasta_water: 100,
+                    coffee_extract: 20
+                }
+            },
+            natural: {
+                name: 'All Natural Extract',
+                ingredients: {
+                    compost_tea: 100,
+                    oat_soak: 50,
+                    kelp_extract: 10
+                }
+            }
+        };
+
+        // Main LC Formulator Class
+        class LiquidCultureFormulator {
+            constructor() {
+                this.formula = {};
+                this.volume = 1000;
+                this.targetPh = 6.5;
+                this.currentTab = 'sugars';
+                this.guideVisible = true;
+                this.setupEventListeners();
+                this.render();
+                this.updateSpeciesGuide();
+            }
+
+            setupEventListeners() {
+                // Header buttons
+                document.getElementById('clearBtn').addEventListener('click', () => this.clearFormula());
+                document.getElementById('saveBtn').addEventListener('click', () => this.saveFormula());
+                document.getElementById('closeBtn').addEventListener('click', () => this.close());
+                
+                // View Details button
+                document.getElementById('viewDetailsBtn').addEventListener('click', () => this.showRecipeOverlay());
+                
+                // Overlay controls - Recipe
+                document.getElementById('closeOverlay').addEventListener('click', () => this.hideRecipeOverlay());
+                document.getElementById('recipeOverlay').addEventListener('click', (e) => {
+                    if (e.target.id === 'recipeOverlay') {
+                        this.hideRecipeOverlay();
+                    }
+                });
+                
+                // Overlay controls - Ingredient Detail
+                document.getElementById('closeIngredientDetail').addEventListener('click', () => this.hideIngredientDetail());
+                document.getElementById('ingredientDetailOverlay').addEventListener('click', (e) => {
+                    if (e.target.id === 'ingredientDetailOverlay') {
+                        this.hideIngredientDetail();
+                    }
+                });
+                
+                document.getElementById('exportBtn').addEventListener('click', () => this.exportRecipe());
+                
+                // Tabs
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        this.currentTab = e.target.dataset.tab;
+                        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.renderIngredients();
+                    });
+                });
+                
+                // Presets
+                document.querySelectorAll('.preset-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        this.loadPreset(e.target.dataset.preset);
+                    });
+                });
+                
+                // Sliders
+                document.getElementById('volumeSlider').addEventListener('input', (e) => {
+                    this.volume = parseInt(e.target.value);
+                    document.getElementById('volumeValue').textContent = this.volume;
+                    this.render();
+                });
+                
+                document.getElementById('phSlider').addEventListener('input', (e) => {
+                    this.targetPh = parseFloat(e.target.value);
+                    document.getElementById('phTarget').textContent = this.targetPh;
+                    this.checkFormula();
+                });
+                
+                // Species selection
+                document.getElementById('targetSpecies').addEventListener('change', () => {
+                    this.updateGrowthRate();
+                    this.updateSpeciesGuide();
+                    this.checkFormula();
+                });
+                
+                // Species guide toggle
+                document.getElementById('toggleGuide').addEventListener('click', () => {
+                    this.guideVisible = !this.guideVisible;
+                    const content = document.getElementById('speciesGuideContent');
+                    const btn = document.getElementById('toggleGuide');
+                    if (this.guideVisible) {
+                        content.style.display = 'block';
+                        btn.textContent = 'HIDE';
+                    } else {
+                        content.style.display = 'none';
+                        btn.textContent = 'SHOW';
+                    }
+                });
+                
+                // Sterilization method
+                document.getElementById('sterilizationMethod').addEventListener('change', () => {
+                    this.checkSterilization();
+                });
+                
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        if (document.getElementById('ingredientDetailOverlay').classList.contains('active')) {
+                            this.hideIngredientDetail();
+                        } else if (document.getElementById('recipeOverlay').classList.contains('active')) {
+                            this.hideRecipeOverlay();
+                        }
+                    }
+                    if (e.ctrlKey && e.key === 'd') {
+                        e.preventDefault();
+                        this.showRecipeOverlay();
+                    }
+                    if (e.ctrlKey && e.key === 'p' && document.getElementById('recipeOverlay').classList.contains('active')) {
+                        e.preventDefault();
+                        window.print();
+                    }
+                });
+            }
+
+            addIngredient(ingredientId) {
+                const allIngredients = [...ingredientDB.sugars, ...ingredientDB.nutrients, ...ingredientDB.natural, ...ingredientDB.minerals, ...ingredientDB.vitamins];
+                const ingredient = allIngredients.find(i => i.id === ingredientId);
+                
+                if (ingredient) {
+                    if (this.formula[ingredientId]) {
+                        this.formula[ingredientId] += ingredient.concentration;
+                    } else {
+                        this.formula[ingredientId] = ingredient.concentration;
+                    }
+                    this.render();
+                }
+            }
+
+            removeIngredient(ingredientId) {
+                if (this.formula[ingredientId]) {
+                    delete this.formula[ingredientId];
+                    this.render();
+                }
+            }
+
+            loadPreset(presetName) {
+                const preset = presets[presetName];
+                if (preset) {
+                    this.formula = { ...preset.ingredients };
+                    this.render();
+                    this.showMessage(`Loaded ${preset.name} formula`, 'success');
+                }
+            }
+
+            clearFormula() {
+                this.formula = {};
+                this.render();
+            }
+
+            calculateStats() {
+                let totalPh = 0;
+                let phWeight = 0;
+                let totalOsmolarity = 0;
+                let totalSugar = 0;
+                let nutrientScore = 0;
+                
+                const allIngredients = [...ingredientDB.sugars, ...ingredientDB.nutrients, ...ingredientDB.natural, ...ingredientDB.minerals, ...ingredientDB.vitamins];
+                
+                Object.entries(this.formula).forEach(([id, concentration]) => {
+                    const ingredient = allIngredients.find(i => i.id === id);
+                    if (ingredient) {
+                        // pH calculation (weighted average)
+                        totalPh += ingredient.ph * concentration;
+                        phWeight += concentration;
+                        
+                        // Osmolarity
+                        totalOsmolarity += (ingredient.osmotic * concentration) / ingredient.concentration;
+                        
+                        // Sugar content
+                        if (ingredientDB.sugars.find(s => s.id === id)) {
+                            totalSugar += concentration;
+                        }
+                        
+                        // Nutrient score
+                        if (ingredientDB.nutrients.find(n => n.id === id)) {
+                            nutrientScore += 15;
+                        } else if (ingredientDB.natural.find(n => n.id === id)) {
+                            nutrientScore += 20; // Natural extracts get high score
+                        } else if (ingredientDB.minerals.find(m => m.id === id)) {
+                            nutrientScore += 5;
+                        } else if (ingredientDB.vitamins.find(v => v.id === id)) {
+                            nutrientScore += 3;
+                        } else if (ingredientDB.sugars.find(s => s.id === id)) {
+                            nutrientScore += 10;
+                        }
+                    }
+                });
+                
+                const finalPh = phWeight > 0 ? (totalPh / phWeight).toFixed(1) : 7.0;
+                const sugarPercent = ((totalSugar / this.volume) * 100).toFixed(1);
+                
+                return {
+                    ph: finalPh,
+                    osmolarity: Math.round(totalOsmolarity),
+                    sugar: sugarPercent,
+                    nutrientScore: Math.min(100, nutrientScore)
+                };
+            }
+
+            renderFlask() {
+                const liquid = document.getElementById('liquidLevel');
+                const flaskBody = document.querySelector('.flask-body');
+                
+                // Calculate fill level
+                const totalConcentration = Object.values(this.formula).reduce((sum, c) => sum + c, 0);
+                const fillPercent = Math.min((this.volume / 1000) * 60, 90);
+                
+                liquid.style.height = `${fillPercent}%`;
+                
+                // Create gradient based on ingredients
+                const colors = [];
+                if (Object.keys(this.formula).length > 0) {
+                    Object.keys(this.formula).forEach(id => {
+                        const sugar = ingredientDB.sugars.find(s => s.id === id);
+                        const nutrient = ingredientDB.nutrients.find(n => n.id === id);
+                        
+                        if (sugar) colors.push('rgba(255, 200, 0, 0.3)');
+                        if (nutrient) colors.push('rgba(138, 43, 226, 0.2)');
+                    });
+                    
+                    if (colors.length > 0) {
+                        liquid.style.background = `linear-gradient(to top, ${colors.join(', ')})`;
+                    } else {
+                        liquid.style.background = 'rgba(0, 245, 255, 0.2)';
+                    }
+                } else {
+                    liquid.style.background = 'rgba(0, 100, 200, 0.1)';
+                }
+                
+                // Add bubbles
+                liquid.querySelectorAll('.bubble').forEach(b => b.remove());
+                if (totalConcentration > 0) {
+                    for (let i = 0; i < 5; i++) {
+                        const bubble = document.createElement('div');
+                        bubble.className = 'bubble';
+                        bubble.style.width = `${4 + Math.random() * 4}px`;
+                        bubble.style.height = bubble.style.width;
+                        bubble.style.left = `${10 + Math.random() * 80}%`;
+                        bubble.style.animationDelay = `${i * 0.8}s`;
+                        bubble.style.animationDuration = `${3 + Math.random() * 2}s`;
+                        liquid.appendChild(bubble);
+                    }
+                }
+            }
+
+            renderFormula() {
+                const display = document.getElementById('formulaDisplay');
+                display.innerHTML = '';
+                
+                const allIngredients = [...ingredientDB.sugars, ...ingredientDB.nutrients, ...ingredientDB.natural, ...ingredientDB.minerals, ...ingredientDB.vitamins];
+                let totalCost = 0;
+                let ingredientCount = 0;
+                
+                if (Object.keys(this.formula).length === 0) {
+                    display.innerHTML = '<div class="formula-line"><span style="color: #88ccff;">No ingredients selected</span><span>—</span></div>';
+                    return;
+                }
+                
+                Object.entries(this.formula).forEach(([id, concentration]) => {
+                    const ingredient = allIngredients.find(i => i.id === id);
+                    if (ingredient) {
+                        const amount = (concentration * this.volume / 1000).toFixed(2);
+                        const line = document.createElement('div');
+                        line.className = 'formula-line';
+                        line.innerHTML = `
+                            <span style="color: #00f5ff;">${ingredient.name}</span>
+                            <span>${amount}g <span style="color: #666;">(${concentration}g/L)</span></span>
+                        `;
+                        display.appendChild(line);
+                        totalCost += parseFloat(amount);
+                        ingredientCount++;
+                    }
+                });
+                
+                // Total line
+                const totalLine = document.createElement('div');
+                totalLine.className = 'formula-line';
+                totalLine.innerHTML = `
+                    <span style="color: #8a2be2;">TOTAL (${ingredientCount} ingredients)</span>
+                    <span>${totalCost.toFixed(2)}g in ${this.volume}ml</span>
+                `;
+                display.appendChild(totalLine);
+            }
+
+            renderIngredients() {
+                const grid = document.getElementById('ingredientGrid');
+                grid.innerHTML = '';
+                
+                const ingredients = ingredientDB[this.currentTab];
+                if (!ingredients) return;
+                
+                // Add info panel for Natural tab
+                if (this.currentTab === 'natural') {
+                    const infoPanel = document.createElement('div');
+                    infoPanel.className = 'natural-tab-info';
+                    infoPanel.innerHTML = `
+                        <strong>🌱 Natural Extracts:</strong> Zero-waste nutrition from kitchen byproducts! 
+                        Simply soak these materials in water for 12-24 hours, strain, and use the nutrient-rich liquid. 
+                        <strong>Note:</strong> Use cardboard without print/ink. Always strain well before adding to LC.
+                    `;
+                    grid.appendChild(infoPanel);
+                }
+                
+                ingredients.forEach(ingredient => {
+                    const card = document.createElement('div');
+                    card.className = 'ingredient-card';
+                    if (this.formula[ingredient.id]) {
+                        card.classList.add('active');
+                    }
+                    
+                    card.innerHTML = `
+                        ${this.formula[ingredient.id] ? `<div class="ingredient-amount">${this.formula[ingredient.id]}g/L</div>` : ''}
+                        <div class="ingredient-name">${ingredient.name}</div>
+                        <div class="ingredient-info">${ingredient.info}</div>
+                        <div class="ingredient-info" style="margin-top: 4px; color: #666;">
+                            ${ingredient.concentration}${ingredient.unit} • pH ${ingredient.ph}
+                        </div>
+                        <div class="info-icon" title="View detailed composition">ℹ</div>
+                    `;
+                    
+                    // Click on card (but not info icon) to add/remove
+                    card.addEventListener('click', (e) => {
+                        if (!e.target.classList.contains('info-icon')) {
+                            if (this.formula[ingredient.id]) {
+                                this.removeIngredient(ingredient.id);
+                            } else {
+                                this.addIngredient(ingredient.id);
+                            }
+                        }
+                    });
+                    
+                    // Click on info icon to show details
+                    const infoIcon = card.querySelector('.info-icon');
+                    infoIcon.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.showIngredientDetail(ingredient);
+                    });
+                    
+                    grid.appendChild(card);
+                });
+            }
+
+            updateGrowthRate() {
+                const species = document.getElementById('targetSpecies').value;
+                const colonizationEl = document.getElementById('colonizationDays');
+                const vigorEl = document.getElementById('vigorRating');
+                
+                const growthRates = {
+                    psilocybe: { days: '7-10', vigor: 4 },
+                    panaeolus: { days: '5-7', vigor: 5 },
+                    oyster: { days: '3-5', vigor: 5 },
+                    lions: { days: '10-14', vigor: 3 },
+                    shiitake: { days: '14-21', vigor: 3 },
+                    reishi: { days: '14-18', vigor: 2 },
+                    cordyceps: { days: '21-28', vigor: 2 }
+                };
+                
+                const rate = growthRates[species];
+                if (rate) {
+                    colonizationEl.textContent = rate.days;
+                    
+                    let stars = '';
+                    for (let i = 0; i < 5; i++) {
+                        stars += i < rate.vigor ? '⭐' : '☆';
+                    }
+                    vigorEl.textContent = stars;
+                }
+            }
+
+            updateSpeciesGuide() {
+                const species = document.getElementById('targetSpecies').value;
+                const guide = speciesGuide[species];
+                
+                if (!guide) return;
+                
+                document.getElementById('speciesGuideName').textContent = guide.name;
+                
+                const content = document.getElementById('speciesGuideContent');
+                content.innerHTML = '';
+                
+                // Description
+                const descSection = document.createElement('div');
+                descSection.className = 'species-guide-section';
+                descSection.innerHTML = `<div style="color: #88ccff; font-style: italic; margin-bottom: 8px;">${guide.description}</div>`;
+                content.appendChild(descSection);
+                
+                // Optimal pH
+                const phSection = document.createElement('div');
+                phSection.className = 'species-guide-section';
+                phSection.innerHTML = `
+                    <div class="species-guide-label">Optimal pH Range:</div>
+                    <div>${guide.optimalPh.min} - ${guide.optimalPh.max} (ideal: ${guide.optimalPh.ideal})</div>
+                `;
+                content.appendChild(phSection);
+                
+                // Sugar content
+                const sugarSection = document.createElement('div');
+                sugarSection.className = 'species-guide-section';
+                sugarSection.innerHTML = `
+                    <div class="species-guide-label">Sugar Content:</div>
+                    <div>${guide.sugarRange.min}% - ${guide.sugarRange.max}% (ideal: ${guide.sugarRange.ideal}%)</div>
+                `;
+                content.appendChild(sugarSection);
+                
+                // Preferred ingredients
+                const ingredSection = document.createElement('div');
+                ingredSection.className = 'species-guide-section';
+                ingredSection.innerHTML = `
+                    <div class="species-guide-label">Recommended Ingredients:</div>
+                    <div>
+                        ${guide.preferredSugars.map(id => {
+                            const allIng = [...ingredientDB.sugars, ...ingredientDB.nutrients, ...ingredientDB.natural];
+                            const ing = allIng.find(i => i.id === id);
+                            return ing ? `<span class="species-recommended-item">${ing.name}</span>` : '';
+                        }).join('')}
+                        ${guide.preferredNutrients.map(id => {
+                            const allIng = [...ingredientDB.sugars, ...ingredientDB.nutrients, ...ingredientDB.natural];
+                            const ing = allIng.find(i => i.id === id);
+                            return ing ? `<span class="species-recommended-item">${ing.name}</span>` : '';
+                        }).join('')}
+                        ${guide.naturalExtracts.map(id => {
+                            const allIng = [...ingredientDB.sugars, ...ingredientDB.nutrients, ...ingredientDB.natural];
+                            const ing = allIng.find(i => i.id === id);
+                            return ing ? `<span class="species-recommended-item">${ing.name}</span>` : '';
+                        }).join('')}
+                    </div>
+                `;
+                content.appendChild(ingredSection);
+                
+                // Tips
+                const tipsSection = document.createElement('div');
+                tipsSection.className = 'species-guide-section';
+                tipsSection.innerHTML = `<div class="species-guide-label">Pro Tips:</div>`;
+                guide.tips.forEach(tip => {
+                    const tipDiv = document.createElement('div');
+                    tipDiv.className = 'species-tip';
+                    tipDiv.textContent = tip;
+                    tipsSection.appendChild(tipDiv);
+                });
+                content.appendChild(tipsSection);
+                
+                // Auto-fill button
+                if (guide.recommendedFormula) {
+                    const autoFillBtn = document.createElement('button');
+                    autoFillBtn.className = 'auto-fill-btn';
+                    autoFillBtn.textContent = `🧪 Auto-Fill Optimal Formula for ${guide.name}`;
+                    autoFillBtn.addEventListener('click', () => {
+                        this.formula = { ...guide.recommendedFormula };
+                        this.render();
+                        this.showMessage(`✓ Loaded optimal formula for ${guide.name}!`, 'success');
+                    });
+                    content.appendChild(autoFillBtn);
+                }
+                
+                // Check formula compatibility
+                this.checkSpeciesCompatibility();
+            }
+
+            checkSpeciesCompatibility() {
+                if (Object.keys(this.formula).length === 0) return;
+                
+                const species = document.getElementById('targetSpecies').value;
+                const guide = speciesGuide[species];
+                const stats = this.calculateStats();
+                
+                const content = document.getElementById('speciesGuideContent');
+                
+                // Remove old compatibility badges
+                const oldBadge = content.querySelector('.optimal-badge, .needs-improvement');
+                if (oldBadge) oldBadge.remove();
+                
+                let compatible = true;
+                let issues = [];
+                
+                // Check pH
+                const ph = parseFloat(stats.ph);
+                if (ph < guide.optimalPh.min || ph > guide.optimalPh.max) {
+                    compatible = false;
+                    issues.push(`pH is ${stats.ph}, optimal range is ${guide.optimalPh.min}-${guide.optimalPh.max}`);
+                }
+                
+                // Check sugar
+                const sugar = parseFloat(stats.sugar);
+                if (sugar < guide.sugarRange.min || sugar > guide.sugarRange.max) {
+                    compatible = false;
+                    issues.push(`Sugar is ${stats.sugar}%, optimal range is ${guide.sugarRange.min}-${guide.sugarRange.max}%`);
+                }
+                
+                // Check if using recommended ingredients
+                const hasRecommended = Object.keys(this.formula).some(id => 
+                    guide.preferredSugars.includes(id) || 
+                    guide.preferredNutrients.includes(id) ||
+                    guide.naturalExtracts.includes(id)
+                );
+                
+                if (compatible && hasRecommended) {
+                    const badge = document.createElement('div');
+                    badge.className = 'optimal-badge';
+                    badge.textContent = `✓ OPTIMAL FOR ${guide.name.toUpperCase()}`;
+                    content.insertBefore(badge, content.firstChild);
+                } else if (issues.length > 0) {
+                    const warning = document.createElement('div');
+                    warning.className = 'needs-improvement';
+                    warning.innerHTML = `⚠️ Adjustments suggested:<br>${issues.join('<br>')}`;
+                    content.appendChild(warning);
+                }
+            }
+
+            checkFormula() {
+                const stats = this.calculateStats();
+                const phIndicator = document.querySelector('.stat-card:first-child .status-indicator');
+                
+                // Check pH
+                const phDiff = Math.abs(stats.ph - this.targetPh);
+                if (phDiff < 0.5) {
+                    phIndicator.className = 'status-indicator status-good';
+                } else if (phDiff < 1.0) {
+                    phIndicator.className = 'status-indicator status-warning';
+                } else {
+                    phIndicator.className = 'status-indicator status-danger';
+                }
+                
+                // Check sugar content
+                const messageArea = document.getElementById('messageArea');
+                messageArea.innerHTML = '';
+                
+                if (stats.sugar > 5) {
+                    this.showMessage('⚠️ High sugar concentration may inhibit growth', 'warning');
+                } else if (stats.sugar < 0.5 && Object.keys(this.formula).length > 0) {
+                    this.showMessage('⚠️ Low sugar content - consider adding more carbon source', 'warning');
+                }
+                
+                if (stats.osmolarity > 350) {
+                    this.showMessage('⚠️ High osmolarity may cause stress', 'warning');
+                }
+                
+                if (stats.nutrientScore > 80) {
+                    this.showMessage('✓ Excellent nutrient profile!', 'success');
+                }
+                
+                // Check species compatibility
+                this.checkSpeciesCompatibility();
+            }
+
+            checkSterilization() {
+                const method = document.getElementById('sterilizationMethod').value;
+                const hasHeatSensitive = Object.keys(this.formula).some(id => {
+                    return ingredientDB.vitamins.find(v => v.id === id);
+                });
+                
+                if (hasHeatSensitive && (method === 'autoclave' || method === 'pressure')) {
+                    this.showMessage('⚠️ Heat sterilization may degrade vitamins', 'warning');
+                }
+            }
+
+            showMessage(text, type) {
+                const messageArea = document.getElementById('messageArea');
+                const div = document.createElement('div');
+                div.className = type === 'success' ? 'success-message' : 'warning-message';
+                div.textContent = text;
+                messageArea.appendChild(div);
+                
+                setTimeout(() => {
+                    div.remove();
+                }, 5000);
+            }
+
+            render() {
+                this.renderFlask();
+                this.renderFormula();
+                this.renderIngredients();
+                
+                // Update stats
+                const stats = this.calculateStats();
+                document.getElementById('phValue').textContent = stats.ph;
+                document.getElementById('osmolarityValue').textContent = stats.osmolarity;
+                document.getElementById('sugarValue').textContent = stats.sugar;
+                document.getElementById('nutrientScore').textContent = stats.nutrientScore;
+                
+                // Enable/disable view details button
+                const viewBtn = document.getElementById('viewDetailsBtn');
+                if (Object.keys(this.formula).length > 0) {
+                    viewBtn.style.opacity = '1';
+                    viewBtn.style.cursor = 'pointer';
+                } else {
+                    viewBtn.style.opacity = '0.5';
+                    viewBtn.style.cursor = 'not-allowed';
+                }
+                
+                this.checkFormula();
+                this.updateGrowthRate();
+            }
+
+            showRecipeOverlay() {
+                if (Object.keys(this.formula).length === 0) {
+                    this.showMessage('Add ingredients to view recipe details', 'warning');
+                    return;
+                }
+                
+                const overlay = document.getElementById('recipeOverlay');
+                overlay.classList.add('active');
+                
+                // Set date
+                document.getElementById('recipeDate').textContent = new Date().toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                // Populate ingredient table
+                const tbody = document.querySelector('#ingredientTable tbody');
+                tbody.innerHTML = '';
+                
+                const allIngredients = [...ingredientDB.sugars, ...ingredientDB.nutrients, ...ingredientDB.natural, ...ingredientDB.minerals, ...ingredientDB.vitamins];
+                let totalWeight = 0;
+                
+                Object.entries(this.formula).forEach(([id, concentration]) => {
+                    const ingredient = allIngredients.find(i => i.id === id);
+                    if (ingredient) {
+                        const amount = (concentration * this.volume / 1000).toFixed(3);
+                        totalWeight += parseFloat(amount);
+                    }
+                });
+                
+                Object.entries(this.formula).forEach(([id, concentration]) => {
+                    const ingredient = allIngredients.find(i => i.id === id);
+                    if (ingredient) {
+                        const amount = (concentration * this.volume / 1000).toFixed(3);
+                        const percentage = ((parseFloat(amount) / totalWeight) * 100).toFixed(1);
+                        
+                        // Determine category
+                        let category = 'Unknown';
+                        if (ingredientDB.sugars.find(s => s.id === id)) category = 'Sugar';
+                        else if (ingredientDB.nutrients.find(n => n.id === id)) category = 'Nutrient';
+                        else if (ingredientDB.natural.find(n => n.id === id)) category = 'Natural Extract';
+                        else if (ingredientDB.minerals.find(m => m.id === id)) category = 'Mineral';
+                        else if (ingredientDB.vitamins.find(v => v.id === id)) category = 'Vitamin';
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td style="color: #00f5ff;">${ingredient.name}</td>
+                            <td style="color: #88ccff;">${category}</td>
+                            <td>${concentration} ${ingredient.unit}</td>
+                            <td>${amount}g</td>
+                            <td>${percentage}%</td>
+                        `;
+                        tbody.appendChild(row);
+                    }
+                });
+                
+                // Update statistics
+                const stats = this.calculateStats();
+                document.getElementById('recipeTotalVolume').textContent = `${this.volume}ml`;
+                document.getElementById('recipeTotalWeight').textContent = `${totalWeight.toFixed(2)}g`;
+                document.getElementById('recipePh').textContent = stats.ph;
+                document.getElementById('recipeOsmolarity').textContent = `${stats.osmolarity} mOsm`;
+                
+                // Update instructions
+                document.getElementById('instructVolume').textContent = this.volume;
+                document.getElementById('instructPh').textContent = this.targetPh;
+                document.getElementById('instructSterilize').textContent = 
+                    document.getElementById('sterilizationMethod').options[
+                        document.getElementById('sterilizationMethod').selectedIndex
+                    ].text;
+                document.getElementById('instructDays').textContent = 
+                    document.getElementById('colonizationDays').textContent;
+                
+                // Update species
+                document.getElementById('recipeSpecies').textContent = 
+                    document.getElementById('targetSpecies').options[
+                        document.getElementById('targetSpecies').selectedIndex
+                    ].text;
+            }
+            
+            hideRecipeOverlay() {
+                document.getElementById('recipeOverlay').classList.remove('active');
+            }
+            
+            showIngredientDetail(ingredient) {
+                const overlay = document.getElementById('ingredientDetailOverlay');
+                overlay.classList.add('active');
+                
+                // Set header
+                document.getElementById('detailIngredientName').textContent = ingredient.name;
+                document.getElementById('detailIngredientInfo').textContent = ingredient.info;
+                
+                // Render composition
+                const compositionDiv = document.getElementById('detailComposition');
+                compositionDiv.innerHTML = '';
+                
+                if (ingredient.composition) {
+                    Object.entries(ingredient.composition).forEach(([category, items]) => {
+                        if (items && items.length > 0) {
+                            const section = document.createElement('div');
+                            section.className = 'composition-section';
+                            
+                            const title = document.createElement('div');
+                            title.className = 'composition-title';
+                            title.textContent = category.replace(/_/g, ' ').toUpperCase();
+                            
+                            const list = document.createElement('div');
+                            list.className = 'composition-list';
+                            
+                            items.forEach(item => {
+                                const itemDiv = document.createElement('div');
+                                itemDiv.className = 'composition-item';
+                                itemDiv.textContent = item;
+                                list.appendChild(itemDiv);
+                            });
+                            
+                            section.appendChild(title);
+                            section.appendChild(list);
+                            compositionDiv.appendChild(section);
+                        }
+                    });
+                }
+                
+                // Render benefits
+                const benefitsDiv = document.getElementById('detailBenefits');
+                benefitsDiv.innerHTML = '';
+                
+                if (ingredient.benefits) {
+                    ingredient.benefits.forEach(benefit => {
+                        const benefitDiv = document.createElement('div');
+                        benefitDiv.className = 'benefit-item';
+                        benefitDiv.textContent = benefit;
+                        benefitsDiv.appendChild(benefitDiv);
+                    });
+                }
+            }
+            
+            hideIngredientDetail() {
+                document.getElementById('ingredientDetailOverlay').classList.remove('active');
+            }
+            
+            exportRecipe() {
+                const recipeData = {
+                    timestamp: new Date().toISOString(),
+                    formula: this.formula,
+                    volume: this.volume,
+                    targetPh: this.targetPh,
+                    stats: this.calculateStats(),
+                    species: document.getElementById('targetSpecies').value,
+                    sterilization: document.getElementById('sterilizationMethod').value,
+                    ingredients: []
+                };
+                
+                const allIngredients = [...ingredientDB.sugars, ...ingredientDB.nutrients, ...ingredientDB.natural, ...ingredientDB.minerals, ...ingredientDB.vitamins];
+                
+                Object.entries(this.formula).forEach(([id, concentration]) => {
+                    const ingredient = allIngredients.find(i => i.id === id);
+                    if (ingredient) {
+                        recipeData.ingredients.push({
+                            name: ingredient.name,
+                            concentration: concentration,
+                            amount: (concentration * this.volume / 1000).toFixed(3),
+                            unit: ingredient.unit
+                        });
+                    }
+                });
+                
+                // Create download
+                const dataStr = JSON.stringify(recipeData, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `LC_Recipe_${new Date().toISOString().slice(0,10)}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+                
+                this.showMessage('Recipe exported successfully!', 'success');
+            }
+
+            saveFormula() {
+                const formulaData = {
+                    timestamp: new Date().toISOString(),
+                    formula: this.formula,
+                    volume: this.volume,
+                    targetPh: this.targetPh,
+                    stats: this.calculateStats(),
+                    species: document.getElementById('targetSpecies').value,
+                    sterilization: document.getElementById('sterilizationMethod').value
+                };
+                
+                // Save to localStorage
+                const saved = JSON.parse(localStorage.getItem('lcFormulas') || '[]');
+                saved.push(formulaData);
+                localStorage.setItem('lcFormulas', JSON.stringify(saved));
+                
+                this.showMessage('✓ Formula saved successfully!', 'success');
+                console.log('Formula saved:', formulaData);
+            }
+
+            close() {
+                if (confirm('Exit the LC Formulator?')) {
+                    window.close();
+                }
+            }
+        }
+
+        // Initialize application
+        const formulator = new LiquidCultureFormulator();
+    </script>
+</body>
+</html>

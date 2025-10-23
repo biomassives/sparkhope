@@ -1,0 +1,46 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getAllBatches, getActivosBatches, getAllSpecies } from '../../utils/loadData';
+
+const batches = getAllBatches();
+const activeBatches = getActivosBatches();
+const allSpecies = getAllSpecies();
+---
+
+<Layout title="Batches - SparkHope MycoLab">
+  <div style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 2rem;">📦 Lotes de Cultivo</h1>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+      <div style="background: white; border: 2px solid #8b7355; padding: 1.5rem; text-align: center;">
+        <div style="font-size: 2rem; font-weight: 700; color: #87a878;">{batches.length}</div>
+        <div style="font-size: 0.9rem; color: #666;">Lotes Totales</div>
+      </div>
+      <div style="background: white; border: 2px solid #8b7355; padding: 1.5rem; text-align: center;">
+        <div style="font-size: 2rem; font-weight: 700; color: #87a878;">{activeBatches.length}</div>
+        <div style="font-size: 0.9rem; color: #666;">Activos</div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+      {batches.map((batch: any) => (
+        <a href={`/batches/${batch.id}`} style="text-decoration: none; color: inherit;">
+          <div style="background: white; border: 2px solid #8b7355; padding: 1.5rem; border-radius: 8px; transition: all 0.2s;">
+            <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: #5a6e4f; font-family: monospace;">{batch.id}</h3>
+            <p style="color: #666; margin-bottom: 1rem;">{batch.notes || 'Sin notas'}</p>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <span style={`padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.8rem; background: ${batch.status === 'active' ? '#d1fae5' : '#f3f4f6'}; color: ${batch.status === 'active' ? '#065f46' : '#666'};`}>
+                {batch.status || 'active'}
+              </span>
+              {batch.inoculation_date && (
+                <span style="font-size: 0.8rem; color: #999;">
+                  {new Date(batch.inoculation_date).toLocaleDateString()}
+                </span>
+              )}
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</Layout>

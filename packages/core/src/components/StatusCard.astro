@@ -1,0 +1,13 @@
+---
+// Define the props it accepts
+const { href, className, icon, label, value, latin, binary } = Astro.props;
+---
+<a href={href} class={`status-card ${className}`}>
+    <div class="card-inner">
+        <div class="card-icon">{icon}</div>
+        <div class="card-label">{label}</div>
+        <div class="card-value">{value}</div>
+        <div class="card-latin">{latin}</div>
+        <div class="card-binary">{binary}</div>
+    </div>
+</a>

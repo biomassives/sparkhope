@@ -1,0 +1,45 @@
+---
+title: Welcome to SparkHope
+description: Food Security Documentation and Resources
+template: splash
+sidebar:
+  label: "Sparkhope"
+  hidden: false
+hero:
+  tagline: Building sustainable food security solutions for communities worldwide
+  image:
+    file: ../../../../assets/hero.svg
+  actions:
+    - text: Get Started
+      link: /en/guide/
+      icon: right-arrow
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/biomassives/sparkhope
+      icon: external
+banner:
+  content: |
+    We've launched our new documentation site! 
+    <a href="/en/events/">Check out upcoming events →</a>
+---
+
+## Food Security Research
+
+<CardGrid stagger>
+  <Card title="Mycelial Cake Production" icon="translate">
+    Mushroom Mycelia can be expanded for food security and direct consumption as a reliable protein and carbontensive source
+  </Card>
+  <Card title="Field Identification of Useful Species" icon="moon">
+    We seek to help provide training materials and direct support to individuals for the full l
+  </Card>
+  <Card title="Community Integration" icon="magnifier">
+    Project sites on iNaturalist and Mushroom Observer for critical review, community insight, and collaboration
+  </Card>
+  <Card title="Flexible Production Model" icon="mobile">
+    Our work focuses on testing the efficacy of various limited resource pathways to safely producing edible mycelial cake directly from liquid culture.  This includes contamination minimization, species identification, safely scaling production agar plate production and testing of liquid mycelial culture in agar.
+  </Card>
+  <Card title="GNU / GPL Approach" icon="mobile">
+    Our research, web infra, lab techniques, and recipes are freely shared and can be republished with or without crediting us.
+  </Card>
+</CardGrid>
+

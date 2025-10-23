@@ -1,0 +1,135 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getAllBatches, getBatchById, getSpeciesById, getSamplesByBatch, getRecipeById } from '../../utils/loadData';
+
+export function getStaticPaths() {
+  const batches = getAllBatches();
+  return batches.map((batch: any) => ({
+    params: { id: batch.id }
+  }));
+}
+
+const { id } = Astro.params;
+const batch = getBatchById(id);
+
+if (!batch) {
+  return Astro.redirect('/batches');
+}
+
+const species = batch.species_id ? getSpeciesById(batch.species_id) : null;
+const samples = getSamplesByBatch(id);
+const recipe = batch.recipe_id ? getRecipeById(batch.recipe_id) : null;
+---
+
+<Layout title={`${batch.id} - SparkHope MycoLab`}>
+  <div style="max-width: 1200px; margin: 0 auto; padding: 2rem;">
+    <a href="/batches" style="display: inline-block; margin-bottom: 2rem; color: #87a878; text-decoration: none; font-weight: 600;">
+      ← Volver a Lotes
+    </a>
+    
+    <div style="background: var(--card-bg); border: 3px solid #8b7355; padding: 2rem; border-radius: 8px;">
+      <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 2rem;">
+        <div>
+          <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">{batch.id}</h1>
+          <span style="padding: 0.35rem 1rem; border-radius: 8px; font-size: 0.9rem; background: #d1fae5; color: #065f46; display: inline-block;">
+            {batch.status || 'active'}
+          </span>
+        </div>
+        
+        <div style="text-align: right;">
+          <div style="font-size: 2.5rem; font-weight: 700; color: #87a878;">{samples.length}</div>
+          <div style="font-size: 0.9rem; color: var(--text-secondary);">Especímenes</div>
+        </div>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+        <div>
+          <h2 style="font-size: 1.25rem; margin-bottom: 1rem; color: #5a6e4f; border-bottom: 2px solid #ddd; padding-bottom: 0.5rem;">Información del Lote</h2>
+          <dl style="display: grid; grid-template-columns: auto 1fr; gap: 0.75rem 1rem;">
+            {species && (
+              <>
+                <dt style="font-weight: 600; color: var(--text-secondary);">Especie:</dt>
+                <dd>
+                  <a href={`/species/${species.id}`} style="color: #87a878; text-decoration: none; font-weight: 600;">
+                    {species.common_name}
+                  </a>
+                </dd>
+              </>
+            )}
+            
+            {recipe && (
+              <>
+                <dt style="font-weight: 600; color: var(--text-secondary);">Fórmula:</dt>
+                <dd>
+                  <a href={`/recipes/${recipe.id}`} style="color: #c89b6f; text-decoration: none; font-weight: 600;">
+                    {recipe.name}
+                  </a>
+                </dd>
+              </>
+            )}
+            
+            {batch.inoculation_date && (
+              <>
+                <dt style="font-weight: 600; color: var(--text-secondary);">Inoculado:</dt>
+                <dd>{new Date(batch.inoculation_date).toLocaleDateString()}</dd>
+              </>
+            )}
+            
+            {batch.substrate_type && (
+              <>
+                <dt style="font-weight: 600; color: var(--text-secondary);">Sustrato:</dt>
+                <dd>{batch.substrate_type}</dd>
+              </>
+            )}
+
+            {batch.project_id && (
+              <>
+                <dt style="font-weight: 600; color: var(--text-secondary);">Proyecto:</dt>
+                <dd>
+                  <a href={`/projects/${batch.project_id}`} style="color: #5a6e4f; text-decoration: none; font-weight: 600;">
+                    {batch.project_id}
+                  </a>
+                </dd>
+              </>
+            )}
+          </dl>
+        </div>
+      </div>
+
+      {batch.notes && (
+        <div style="margin-bottom: 2rem; padding: 1.5rem; background: rgba(135, 168, 120, 0.1); border-radius: 8px; border-left: 4px solid #87a878;">
+          <h2 style="font-size: 1.25rem; margin-bottom: 0.75rem; color: #5a6e4f;">📝 Notes</h2>
+          <p style="line-height: 1.6; color: var(--text-primary);">{batch.notes}</p>
+        </div>
+      )}
+
+      {samples.length > 0 && (
+        <div>
+          <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem; color: #5a6e4f; border-bottom: 2px solid #ddd; padding-bottom: 0.5rem;">
+            🧫 Especímenes from this Batch ({samples.length})
+          </h2>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
+            {samples.map((sample: any) => (
+              <a href={`/samples/${sample.id}`} style="text-decoration: none; color: inherit;">
+                <div style="background: var(--bg-primary); border: 2px solid #87a878; padding: 1.25rem; border-radius: 8px; transition: all 0.2s; height: 100%;">
+                  <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">🧫</div>
+                  <h3 style="font-size: 1rem; margin-bottom: 0.5rem; color: #5a6e4f; font-family: monospace; font-weight: 700;">{sample.id}</h3>
+                  <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">{sample.sample_type || 'Sample'}</p>
+                  <span style={`display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; background: ${sample.status === 'ready' ? '#d1fae5' : '#fef3c7'}; color: ${sample.status === 'ready' ? '#065f46' : '#78350f'};`}>
+                    {sample.status}
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {samples.length === 0 && (
+        <div style="padding: 2rem; background: rgba(200, 200, 200, 0.1); border-radius: 8px; text-align: center;">
+          <p style="color: var(--text-secondary); font-style: italic;">No hay especímenes recolectados from this batch yet.</p>
+        </div>
+      )}
+    </div>
+  </div>
+</Layout>

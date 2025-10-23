@@ -1,0 +1,131 @@
+---
+/**
+ * Shared FuzzinessControl Component
+ * 
+ * This component renders a fuzziness slider that adjusts the global blur intensity.
+ * The setting is saved in localStorage and restored on load.
+ * Usage:
+ *   import FuzzinessControl from '../components/FuzzinessControl.astro';
+ *   <FuzzinessControl />
+ */
+---
+
+<div id="fuzziness-control" class="fuzziness-control">
+  <label>
+    <span class="label-text">🌀 Fuzziness</span>
+    <input id="fuzziness-slider" type="range" min="0" max="6" step="0.2" value="0" />
+  </label>
+</div>
+
+<script client:load>
+  const root = document.documentElement;
+  const slider = document.getElementById('fuzziness-slider');
+
+  // Get saved value safely
+  let saved = localStorage.getItem('fuzziness');
+  let fuzziness = 0; // Default sharp mode
+
+  if (saved !== null && !isNaN(parseFloat(saved))) {
+    fuzziness = parseFloat(saved);
+  }
+
+  // Clamp in case previous saved value was out of range
+  fuzziness = Math.min(Math.max(fuzziness, 0), 6);
+
+  // Apply and sync slider
+  root.style.setProperty('--fuzziness', `${fuzziness}px`);
+  if (slider) slider.value = fuzziness;
+
+  // Smooth transition on load
+  document.body.style.transition = 'filter 0.4s ease-out';
+
+  // Update on change
+  slider?.addEventListener('input', (e) => {
+    const val = parseFloat(e.target.value);
+    root.style.setProperty('--fuzziness', `${val}px`);
+    localStorage.setItem('fuzziness', val);
+
+    // Quick flash indicator (useful for testing)
+    const indicator = document.createElement('div');
+    indicator.textContent = `Blur: ${val.toFixed(1)}px`;
+    Object.assign(indicator.style, {
+      position: 'fixed',
+      bottom: '1rem',
+      right: '1rem',
+      background: 'rgba(0,0,0,0.6)',
+      color: '#00ffcc',
+      fontSize: '0.7rem',
+      fontFamily: 'monospace',
+      padding: '0.3rem 0.6rem',
+      borderRadius: '4px',
+      pointerEvents: 'none',
+      zIndex: '9999',
+      transition: 'opacity 0.6s ease',
+      opacity: '1',
+    });
+    document.body.appendChild(indicator);
+    setTimeout(() => (indicator.style.opacity = '0'), 200);
+    setTimeout(() => indicator.remove(), 800);
+  });
+</script>
+
+
+<style>
+  :root {
+    --fuzziness: 0px;
+  }
+
+  /* Apply the blur globally */
+  body, main, .page-container {
+    filter: blur(var(--fuzziness));
+    transition: filter 0.3s ease;
+  }
+
+  .fuzziness-control {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid #00ffcc88;
+    border-radius: 0.75rem;
+    box-shadow: 0 0 6px #00ffcc44;
+  }
+
+  .label-text {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.6rem;
+    color: #00ffcc;
+    letter-spacing: 0.05em;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, #00ffcc 0%, #0088aa 100%);
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: #00ffcc;
+    border-radius: 50%;
+    box-shadow: 0 0 4px #00ffccaa;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: #00ffcc;
+    border-radius: 50%;
+    border: none;
+    box-shadow: 0 0 4px #00ffccaa;
+  }
+</style>

@@ -1,0 +1,489 @@
+[
+  {
+    "id": "recipe-1",
+    "name": "standard mix",
+    "type": "other",
+    "description": "",
+    "total_volume": 1,
+    "preparation": "cook",
+    "ingredients": [
+      {
+        "id": "ingredient-3",
+        "name": "Distilled Water",
+        "amount": 1000,
+        "unit": "g",
+        "notes": ""
+      },
+      {
+        "id": "ingredient-24",
+        "name": "Peptide G",
+        "amount": 3,
+        "unit": "g",
+        "notes": ""
+      },
+      {
+        "id": "ingredient-25",
+        "name": "honey",
+        "amount": 100,
+        "unit": "g",
+        "notes": ""
+      }
+    ],
+    "image_path": ""
+  },
+  {
+    "id": "recipe-2",
+    "name": "Control Agar - PDA",
+    "type": "agar",
+    "description": "Baseline control for all agar comparisons. Commercial ingredients.",
+    "total_volume": 1,
+    "preparation": "Standard potato dextrose agar. Autoclave 15 PSI for 15 minutes.",
+    "ingredients": [
+      {
+        "id": "ingredient-3",
+        "name": "Distilled Water",
+        "amount": 800,
+        "unit": "ml",
+        "notes": "Rainwater base"
+      },
+      {
+        "id": "ingredient-4",
+        "name": "Filtered Tap Water",
+        "amount": 200,
+        "unit": "ml",
+        "notes": "Rice water carbs"
+      },
+      {
+        "id": "ingredient-8",
+        "name": "Lentil Soak Water",
+        "amount": 0.5,
+        "unit": "g",
+        "notes": "pH buffer"
+      },
+      {
+        "id": "ingredient-9",
+        "name": "Vegetable Scrap Broth",
+        "amount": 20,
+        "unit": "g",
+        "notes": "Commercial agar"
+      }
+    ],
+    "image_path": null
+  },
+  {
+    "id": "recipe-3",
+    "name": "Zero-Waste Agar - Rainwater Base",
+    "type": "agar",
+    "description": "Testing rainwater as distilled water substitute. Rice water provides carbs.",
+    "total_volume": 1,
+    "preparation": "Rainwater + rice water + eggshell powder + commercial agar. Autoclave 15 PSI for 15 minutes.",
+    "ingredients": [
+      {
+        "id": "ingredient-7",
+        "name": "Pasta Water",
+        "amount": 500,
+        "unit": "ml",
+        "notes": "Mineral base"
+      },
+      {
+        "id": "ingredient-5",
+        "name": "Rainwater",
+        "amount": 400,
+        "unit": "ml",
+        "notes": "Carbohydrate source"
+      },
+      {
+        "id": "ingredient-10",
+        "name": "Eggshell Powder",
+        "amount": 100,
+        "unit": "ml",
+        "notes": "Cellulose"
+      },
+      {
+        "id": "ingredient-9",
+        "name": "Vegetable Scrap Broth",
+        "amount": 20,
+        "unit": "g",
+        "notes": "Commercial agar"
+      }
+    ],
+    "image_path": null
+  },
+  {
+    "id": "recipe-4",
+    "name": "Kitchen Waste Agar",
+    "type": "agar",
+    "description": "100% waste stream ingredients except agar. Testing complete substitution.",
+    "total_volume": 1,
+    "preparation": "Vegetable scrap broth + pasta water + cardboard extract + commercial agar. Autoclave 15 PSI for 15 minutes.",
+    "ingredients": [
+      {
+        "id": "ingredient-6",
+        "name": "Rice Cooking Water",
+        "amount": 100,
+        "unit": "g",
+        "notes": ""
+      },
+      {
+        "id": "ingredient-8",
+        "name": "Lentil Soak Water",
+        "amount": 100,
+        "unit": "g",
+        "notes": ""
+      },
+      {
+        "id": "ingredient-9",
+        "name": "Vegetable Scrap Broth",
+        "amount": 100,
+        "unit": "g",
+        "notes": ""
+      },
+      {
+        "id": "ingredient-10",
+        "name": "Eggshell Powder",
+        "amount": 1,
+        "unit": "g",
+        "notes": ""
+      },
+      {
+        "id": "ingredient-16",
+        "name": "Coffee Grounds",
+        "amount": 50,
+        "unit": "g",
+        "notes": ""
+      },
+      {
+        "id": "ingredient-1",
+        "name": "Fava Bean Soak Water 1",
+        "amount": 350,
+        "unit": "g",
+        "notes": "guage strength not to overpower coudl be good for adding after 3 days in a sterile infusion"
+      }
+    ],
+    "image_path": ""
+  },
+  {
+    "id": "recipe-5",
+    "name": "Control Liquid Culture - LME",
+    "type": "liquid_culture",
+    "description": "Commercial standard. Baseline for liquid culture comparisons.",
+    "total_volume": 1,
+    "preparation": "Distilled water + light malt extract 20g/L. Autoclave 15 PSI for 15 minutes.",
+    "ingredients": [
+      {
+        "id": "ingredient-4",
+        "name": "Filtered Tap Water",
+        "amount": 900,
+        "unit": "ml",
+        "notes": "Rice water carbs"
+      },
+      {
+        "id": "ingredient-6",
+        "name": "Rice Cooking Water",
+        "amount": 100,
+        "unit": "ml",
+        "notes": "Nitrogen source"
+      },
+      {
+        "id": "ingredient-8",
+        "name": "Lentil Soak Water",
+        "amount": 1,
+        "unit": "g",
+        "notes": "Calcium"
+      }
+    ],
+    "image_path": null
+  },
+  {
+    "id": "recipe-6",
+    "name": "Rice Water Liquid Culture",
+    "type": "liquid_culture",
+    "description": "Testing kitchen waste streams as complete LME replacement.",
+    "total_volume": 1,
+    "preparation": "Rice cooking water (strained) + lentil soak water 100ml + eggshell powder 1g. Autoclave 15 PSI for 15 minutes.",
+    "ingredients": [
+      {
+        "id": "ingredient-5",
+        "name": "Rainwater",
+        "amount": 700,
+        "unit": "ml",
+        "notes": "Pasta water"
+      },
+      {
+        "id": "ingredient-7",
+        "name": "Pasta Water",
+        "amount": 300,
+        "unit": "ml",
+        "notes": "Vegetable broth"
+      },
+      {
+        "id": "ingredient-8",
+        "name": "Lentil Soak Water",
+        "amount": 1,
+        "unit": "g",
+        "notes": "pH buffer"
+      }
+    ],
+    "image_path": null
+  },
+  {
+    "id": "recipe-7",
+    "name": "Mixed Waste Stream LC",
+    "type": "liquid_culture",
+    "description": "Diverse nutrient sources from kitchen waste. High success rate.",
+    "total_volume": 1,
+    "preparation": "Pasta water 700ml + vegetable broth 300ml + eggshell powder 1g. Autoclave 15 PSI for 15 minutes.",
+    "ingredients": [
+      {
+        "id": "ingredient-11",
+        "name": "Commercial Agar",
+        "amount": 2000,
+        "unit": "g",
+        "notes": "Rye grain"
+      }
+    ],
+    "image_path": null
+  },
+  {
+    "id": "recipe-8",
+    "name": "Control Spawn - Rye Grain",
+    "type": "grain_spawn",
+    "description": "Traditional spawn substrate. Baseline for all spawn comparisons.",
+    "total_volume": 3,
+    "preparation": "Rye grain hydrated to field capacity. Autoclave 15 PSI for 90 minutes.",
+    "ingredients": [
+      {
+        "id": "ingredient-12",
+        "name": "Cardboard Extract",
+        "amount": 2000,
+        "unit": "g",
+        "notes": "Brown rice"
+      }
+    ],
+    "image_path": null
+  },
+  {
+    "id": "recipe-9",
+    "name": "Brown Rice Spawn",
+    "type": "grain_spawn",
+    "description": "Affordable alternative to rye. Slower colonization but lower cost.",
+    "total_volume": 3,
+    "preparation": "Whole brown rice hydrated. Autoclave 15 PSI for 90 minutes.",
+    "ingredients": [
+      {
+        "id": "ingredient-13",
+        "name": "Rye Grain",
+        "amount": 2000,
+        "unit": "g",
+        "notes": "Bird seed mix"
+      }
+    ],
+    "image_path": null
+  },
+  {
+    "id": "recipe-10",
+    "name": "Wild Bird Seed Spawn",
+    "type": "grain_spawn",
+    "description": "Lowest cost spawn option. Multi-grain benefits.",
+    "total_volume": 3,
+    "preparation": "Milo-based bird seed mix. Hydrate, autoclave 15 PSI for 90 minutes.",
+    "ingredients": [
+      {
+        "id": "ingredient-14",
+        "name": "Brown Rice",
+        "amount": 1800,
+        "unit": "g",
+        "notes": "Coffee grounds"
+      },
+      {
+        "id": "ingredient-12",
+        "name": "Cardboard Extract",
+        "amount": 200,
+        "unit": "g",
+        "notes": "Rice flour binder"
+      }
+    ],
+    "image_path": null
+  },
+  {
+    "id": "recipe-11",
+    "name": "Coffee Grounds Spawn",
+    "type": "grain_spawn",
+    "description": "FREE from cafes. Pre-sterilized. Excellent for oyster species.",
+    "total_volume": 2,
+    "preparation": "Fresh spent coffee grounds. Mix with 10% brown rice flour. Pressure cook 15 PSI for 60 minutes.",
+    "ingredients": [
+      {
+        "id": "ingredient-15",
+        "name": "Wild Bird Seed",
+        "amount": 8000,
+        "unit": "g",
+        "notes": "Hardwood sawdust"
+      },
+      {
+        "id": "ingredient-16",
+        "name": "Coffee Grounds",
+        "amount": 1800,
+        "unit": "g",
+        "notes": "Wheat bran supplement"
+      },
+      {
+        "id": "ingredient-18",
+        "name": "Wheat Bran",
+        "amount": 200,
+        "unit": "g",
+        "notes": "Gypsum"
+      }
+    ],
+    "image_path": null
+  },
+  {
+    "id": "recipe-12",
+    "name": "Control Fruiting - Sawdust + Bran",
+    "type": "other",
+    "description": "Standard fruiting substrate. Control for fruiting trials.",
+    "total_volume": 10,
+    "preparation": "Hardwood sawdust 80% + wheat bran 18% + gypsum 2%. Pasteurize or sterilize.",
+    "ingredients": [
+      {
+        "id": "ingredient-17",
+        "name": "Hardwood Sawdust",
+        "amount": 6000,
+        "unit": "g",
+        "notes": "Straw base"
+      },
+      {
+        "id": "ingredient-14",
+        "name": "Brown Rice",
+        "amount": 3000,
+        "unit": "g",
+        "notes": "Coffee grounds"
+      },
+      {
+        "id": "ingredient-16",
+        "name": "Coffee Grounds",
+        "amount": 800,
+        "unit": "g",
+        "notes": "Wheat bran"
+      },
+      {
+        "id": "ingredient-18",
+        "name": "Wheat Bran",
+        "amount": 200,
+        "unit": "g",
+        "notes": "Gypsum"
+      }
+    ],
+    "image_path": null
+  },
+  {
+    "id": "recipe-13",
+    "name": "Straw + Coffee Grounds",
+    "type": "other",
+    "description": "Waste stream substrate. Excellent for oyster species.",
+    "total_volume": 10,
+    "preparation": "Chopped straw 60% + spent coffee grounds 30% + wheat bran 8% + gypsum 2%. Pasteurize 160°F for 90 minutes.",
+    "ingredients": [
+      {
+        "id": "ingredient-14",
+        "name": "Brown Rice",
+        "amount": 9500,
+        "unit": "g",
+        "notes": "100% coffee"
+      },
+      {
+        "id": "ingredient-18",
+        "name": "Wheat Bran",
+        "amount": 500,
+        "unit": "g",
+        "notes": "Gypsum only"
+      }
+    ],
+    "image_path": null
+  },
+  {
+    "id": "recipe-14",
+    "name": "100% Coffee Grounds Bulk",
+    "type": "substrate",
+    "description": "Zero-cost bulk substrate. Testing maximum waste utilization.",
+    "total_volume": 10,
+    "preparation": "Spent coffee grounds 95% + gypsum 5%. Light pasteurization 150°F for 60 minutes.",
+    "ingredients": [
+      {
+        "id": "ingredient-17",
+        "name": "Hardwood Sawdust",
+        "amount": 5000,
+        "unit": "g",
+        "notes": "Straw"
+      },
+      {
+        "id": "ingredient-16",
+        "name": "Coffee Grounds",
+        "amount": 800,
+        "unit": "g",
+        "notes": "Wheat bran"
+      },
+      {
+        "id": "ingredient-18",
+        "name": "Wheat Bran",
+        "amount": 200,
+        "unit": "g",
+        "notes": "Gypsum"
+      }
+    ],
+    "image_path": null
+  },
+  {
+    "id": "recipe-15",
+    "name": "Cardboard + Straw Mix",
+    "type": "other",
+    "description": "Ultra-low-cost substrate from waste materials.",
+    "total_volume": 10,
+    "preparation": "Shredded cardboard 40% + straw 50% + wheat bran 8% + gypsum 2%. Pasteurize 160°F for 90 minutes.",
+    "ingredients": [],
+    "image_path": null
+  },
+  {
+    "id": "recipe-16",
+    "name": "Malt Extract Agar",
+    "type": "agar",
+    "description": "",
+    "total_volume": 1.8,
+    "preparation": "100 g",
+    "ingredients": [
+      {
+        "id": "ingredient-2",
+        "name": "MEA Agar",
+        "amount": 100,
+        "unit": "g",
+        "notes": ""
+      }
+    ],
+    "image_path": ""
+  },
+  {
+    "id": "recipe-17",
+    "name": "fava soak water LC",
+    "type": "liquid_culture",
+    "description": "some concern about - ( soaked first time, second time, water after boiled - each are different",
+    "total_volume": 1,
+    "preparation": "prep test 1",
+    "ingredients": [
+      {
+        "id": "ingredient-1",
+        "name": "Fava Bean Soak Water 1",
+        "amount": 100,
+        "unit": "g",
+        "notes": ""
+      },
+      {
+        "id": "ingredient-10",
+        "name": "Eggshell Powder",
+        "amount": 2,
+        "unit": "g",
+        "notes": ""
+      }
+    ],
+    "image_path": ""
+  }
+]

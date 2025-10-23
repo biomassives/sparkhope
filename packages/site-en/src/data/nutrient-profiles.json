@@ -1,0 +1,72 @@
+{
+  "sugar": {
+    "calories": 400,
+    "carbs": 100,
+    "protein": 0,
+    "fiber": 0,
+    "minerals": 0
+  },
+  "honey": {
+    "calories": 304,
+    "carbs": 82,
+    "protein": 1,
+    "fiber": 0,
+    "minerals": 5
+  },
+  "malt": {
+    "calories": 362,
+    "carbs": 80,
+    "protein": 10,
+    "fiber": 8,
+    "minerals": 15
+  },
+  "peptone": {
+    "calories": 350,
+    "carbs": 5,
+    "protein": 80,
+    "fiber": 0,
+    "minerals": 10
+  },
+  "yeast-extract": {
+    "calories": 325,
+    "carbs": 38,
+    "protein": 40,
+    "fiber": 10,
+    "minerals": 25
+  },
+  "agar": {
+    "calories": 26,
+    "carbs": 7,
+    "protein": 1,
+    "fiber": 5,
+    "minerals": 2
+  },
+  "potato-dextrose": {
+    "calories": 200,
+    "carbs": 50,
+    "protein": 5,
+    "fiber": 3,
+    "minerals": 8
+  },
+  "corn-meal": {
+    "calories": 370,
+    "carbs": 79,
+    "protein": 9,
+    "fiber": 7,
+    "minerals": 12
+  },
+  "water": {
+    "calories": 0,
+    "carbs": 0,
+    "protein": 0,
+    "fiber": 0,
+    "minerals": 0
+  },
+  "default": {
+    "calories": 100,
+    "carbs": 25,
+    "protein": 5,
+    "fiber": 2,
+    "minerals": 5
+  }
+}

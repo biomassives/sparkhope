@@ -1,0 +1,98 @@
+<div class="resource-container">
+    <style>
+        /* Embedded styles for the Neon Aesthetic (See Section 3) */
+       .resource-container {
+            font-family: 'Consolas', monospace; /* High-tech, mono-spaced font */
+            background-color: #000;
+            color: #00FF7F; /* Neon Green text */
+            padding: 20px;
+            border: 2px solid #FF0040; /* Neon Red outline matching the UI */
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+
+       .resource-section {
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(0, 255, 127, 0.3); /* Faded green separator */
+            padding-bottom: 10px;
+        }
+
+       .resource-section h2 {
+            color: #FFFF00; /* Neon Yellow section title */
+            border-left: 4px solid #00FF7F;
+            padding-left: 10px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+       .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+       .link-card {
+            border: 2px solid #00FF7F; /* Neon Green border (default) */
+            padding: 15px;
+            text-decoration: none;
+            color: #E0FFE0;
+            display: block;
+            position: relative;
+            background-color: rgba(0, 0, 0, 0.5); /* Slightly transparent background */
+            transition: all 0.2s ease-in-out;
+            min-height: 100px;
+            cursor: pointer;
+            box-shadow: 0 0 5px #00FF7F;
+        }
+
+       .link-card:hover {
+            border-color: #FFFF00; /* Neon Yellow border on hover */
+            box-shadow: 0 0 15px #FFFF00;
+            z-index: 10;
+        }
+
+       .link-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            color: #00FFFF; /* Cyan for link titles */
+        }
+        
+        /* Synopsis styles */
+       .synopsis {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.95);
+            border: 2px solid #FFFF00; /* Neon Yellow on hover/active */
+            box-sizing: border-box;
+            color: #FFFFFF;
+            overflow: auto;
+        }
+
+       .link-card:hover.synopsis {
+            display: block;
+        }
+
+       .synopsis-text {
+            font-size: 0.9em;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+
+       .synopsis-citations {
+            font-size: 0.8em;
+            color: #FF0040; /* Neon Red for citations, highlighting data source */
+        }
+    </style>
+    
+    <div id="resources-output">
+        <p>Loading MycoLab Resources...</p>
+    </div>
+    
+    <script type="module" src="/resourceRenderer.js"></script>
+</div>

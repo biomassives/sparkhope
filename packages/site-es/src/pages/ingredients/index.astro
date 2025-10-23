@@ -1,0 +1,31 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getAllIngredients } from '../../utils/loadData';
+
+const ingredients = getAllIngredients();
+---
+
+<Layout title="Materiales - SparkHope MycoLab">
+  <div style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 2rem;">🧪 Materiales de Laboratorio</h1>
+    
+    <div style="background: white; border: 2px solid #8b7355; padding: 1.5rem; margin-bottom: 2rem; text-align: center;">
+      <div style="font-size: 2rem; font-weight: 700; color: #87a878;">{ingredients.length}</div>
+      <div style="font-size: 0.9rem; color: #666;">Materiales</div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem;">
+      {ingredients.map((ingredient: any) => (
+        <div style="background: white; border: 2px solid #8b7355; padding: 1.25rem; border-radius: 8px;">
+          <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: #5a6e4f;">{ingredient.name}</h3>
+          <p style="color: #666; font-size: 0.85rem; margin-bottom: 0.5rem;">{ingredient.description || 'Sin descripción'}</p>
+          {ingredient.ingredient_type && (
+            <span style="display: inline-block; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.8rem; background: #f3f4f6; color: #666;">
+              {ingredient.ingredient_type}
+            </span>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+</Layout>

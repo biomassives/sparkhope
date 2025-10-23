@@ -1,0 +1,262 @@
+---
+// Define required props
+const { 
+    title, 
+    headerTitle = "SparkHope MycoLab", 
+    headerSubtitle = "Mycological Laboratory & Specimen Collection",
+    footerText = "SparkHope Mycological Laboratory Est. 2025" 
+} = Astro.props;
+
+// Get current date for header, handling potential server/build differences
+const dateFormatted = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+});
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+
+    <!-- Global Theme and Fonts Import -->
+    <!-- Assuming botanical-theme.css is in the correct path or imported via alias -->
+    <link rel="stylesheet" href="/styles/botanical-theme.css"> 
+    
+    <!-- Using the default pixel font for accents -->
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Main Application Container -->
+    <div class="hybrid-dashboard">
+        
+        <!-- Hybrid Header: Botanical + Pixel (Centralized) -->
+        <header class="main-header">
+            <div class="pixel-accent-top"></div>
+            
+            <div class="header-content">
+                <div class="header-pixel-icon">🍄</div>
+                <h1 class="header-title">{headerTitle}</h1>
+                <div class="header-subtitle">{headerSubtitle}</div>
+                <div class="header-meta">
+                    <span class="meta-date">{dateFormatted}</span>
+                    <span class="meta-divider">•</span>
+                    <span class="meta-binary">01001101 01011001 01000011 01001111</span>
+                </div>
+            </div>
+            
+            <div class="header-ornament">✤ ❦ ✤</div>
+        </header>
+
+        <!-- Main Content Wrapper (New Grid Structure for Modularity) -->
+        <main class="content-wrapper">
+            <!-- Primary Page Content Slot -->
+            <div class="primary-content">
+                <slot />
+            </div>
+
+            <!-- Optional Utility Sidebar Slot (Modular Growth Potential) -->
+            <!-- If a page provides a component with slot="sidebar", it appears here -->
+            <div class="utility-sidebar">
+                <slot name="sidebar" />
+            </div>
+        </main>
+
+        <!-- Footer (Centralized) -->
+        <footer class="main-footer">
+            <div class="footer-ornament">✤ ❦ ✤</div>
+            <div class="footer-text">{footerText}</div>
+            <div class="footer-latin">Scientia pro Synergia Humanitatis et Biodiversitatis</div>
+            <div class="footer-binary">01001101 01011001 01000011 01001111 01001100 01000001 01000010</div>
+        </footer>
+
+    </div>
+</body>
+</html>
+
+<style>
+    /* This CSS defines the layout structure and header/footer appearance.
+        Other general styles are expected to be in botanical-theme.css
+    */
+    :root {
+        /* Theme variables should be set in botanical-theme.css, using fallbacks here */
+        --botanical-cream: #f8f5f0;
+        --botanical-sage: #87a878;
+        --botanical-moss: #5a6e4f;
+        --botanical-sepia: #8b7355;
+        --botanical-gold: #d4a574;
+        --botanical-ink: #3d3027;
+        --pixel-green: #00ff41;
+    }
+
+    /* Base Styling */
+    html {
+        background-color: var(--botanical-cream);
+        scroll-behavior: smooth;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'EB Garamond', serif;
+        color: var(--botanical-ink);
+        line-height: 1.6;
+    }
+
+    .hybrid-dashboard {
+        background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(139, 115, 85, 0.03) 2px, rgba(139, 115, 85, 0.03) 4px);
+        min-height: 100vh;
+    }
+
+    /* --- HEADER STYLES --- */
+    .main-header {
+        background: linear-gradient(135deg, var(--botanical-sage) 0%, var(--botanical-moss) 100%);
+        color: var(--botanical-cream);
+        padding: 3rem 2rem;
+        text-align: center;
+        border-bottom: 6px double var(--botanical-gold);
+        position: relative;
+    }
+    
+    .pixel-accent-top {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 8px;
+        background: repeating-linear-gradient(90deg, var(--pixel-green) 0px, var(--pixel-green) 4px, var(--botanical-ink) 4px, var(--botanical-ink) 8px);
+    }
+    
+    .header-pixel-icon {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .header-title {
+        font-size: clamp(2.5rem, 5vw, 3.5rem);
+        font-weight: 700;
+        margin: 0.5rem 0;
+        letter-spacing: 0.1em;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .header-subtitle {
+        font-size: 1.25rem;
+        margin: 0.5rem 0;
+        letter-spacing: 0.15em;
+    }
+
+    .header-latin {
+        font-size: 1rem;
+        font-style: italic;
+        opacity: 0.85;
+        margin: 0.75rem 0;
+    }
+
+    .header-meta {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .meta-date {
+        font-size: 0.95rem;
+        font-variant: small-caps;
+    }
+
+    .meta-binary {
+        font-family: 'VT323', monospace;
+        font-size: 0.9rem;
+        color: var(--pixel-green);
+    }
+
+    .header-ornament {
+        margin-top: 1.5rem;
+        font-size: 1.5rem;
+        color: var(--botanical-gold);
+        letter-spacing: 1rem;
+    }
+
+    /* --- DUAL-PANEL CONTENT WRAPPER (MODULAR GROWTH) --- */
+    .content-wrapper {
+        display: grid;
+        grid-template-columns: 1fr; /* Default: Single column on mobile */
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 0 2rem; /* Add horizontal padding */
+        gap: 2rem;
+    }
+
+    .primary-content {
+        /* Content area will occupy full width by default */
+        min-width: 0; /* Important for flex/grid items */
+    }
+
+    .utility-sidebar {
+        /* Sidebar is hidden by default if empty on mobile */
+        display: none; 
+    }
+
+    @media (min-width: 1024px) {
+        .content-wrapper {
+            /* Desktop: Two columns, 3:1 ratio (e.g., 75% for content, 25% for sidebar) */
+            grid-template-columns: minmax(700px, 3fr) 1fr;
+            padding: 0 3rem;
+        }
+
+        .utility-sidebar:has(> *) {
+            /* Only show the sidebar if it contains content */
+            display: block; 
+        }
+    }
+
+    /* --- FOOTER STYLES --- */
+    .main-footer {
+        background: var(--botanical-sage);
+        color: var(--botanical-cream);
+        padding: 2rem;
+        text-align: center;
+        margin-top: 4rem;
+        border-top: 4px double var(--botanical-gold);
+    }
+
+    .footer-ornament {
+        font-size: 1.5rem;
+        color: var(--botanical-gold);
+        margin-bottom: 1rem;
+        letter-spacing: 1rem;
+    }
+
+    .footer-text {
+        font-size: 1.125rem;
+        margin-bottom: 0.5rem;
+        letter-spacing: 0.05em;
+    }
+
+    .footer-latin {
+        font-size: 0.95rem;
+        font-style: italic;
+        opacity: 0.9;
+        margin-bottom: 1rem;
+    }
+
+    .footer-binary {
+        font-family: 'VT323', monospace;
+        font-size: 0.9rem;
+        color: var(--pixel-green);
+    }
+</style>
+

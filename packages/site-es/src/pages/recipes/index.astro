@@ -1,0 +1,33 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getAllRecetas } from '../../utils/loadData';
+
+const recipes = getAllRecetas();
+---
+
+<Layout title="Formulae - SparkHope MycoLab">
+  <div style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 2rem;">📖 Recetas de Cultivo</h1>
+    
+    <div style="background: white; border: 2px solid #8b7355; padding: 1.5rem; margin-bottom: 2rem; text-align: center;">
+      <div style="font-size: 2rem; font-weight: 700; color: #87a878;">{recipes.length}</div>
+      <div style="font-size: 0.9rem; color: #666;">Recetas</div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+      {recipes.map((recipe: any) => (
+        <a href={`/recipes/${recipe.id}`} style="text-decoration: none; color: inherit;">
+          <div style="background: white; border: 2px solid #8b7355; padding: 1.5rem; border-radius: 8px; transition: all 0.2s;">
+            <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: #5a6e4f;">{recipe.name}</h3>
+            <p style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">{recipe.description || 'Sin descripción'}</p>
+            {recipe.recipe_type && (
+              <span style="display: inline-block; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.8rem; background: #f3f4f6; color: #666;">
+                {recipe.recipe_type}
+              </span>
+            )}
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,754 @@
+---
+const currentPath = Astro.url.pathname;
+
+const cultureItems = [
+  { href: '/species', label: 'Species', icon: 'mushroom', color: '#00ff00' },
+  { href: '/batches', label: 'Batches', icon: 'container', color: '#00ff00' },
+  { href: '/racks', label: 'Storage', icon: 'shelf', color: '#00ff00' }
+];
+
+const labOpsItems = [
+  { href: '/recipes', label: 'Formulae', icon: 'book', color: '#00ffff' },
+  { href: '/ingredients', label: 'Materials', icon: 'vials', color: '#00ffff' },
+  { href: '/projects', label: 'Projects', icon: 'microscope', color: '#00ffff' },
+  { href: '/observations', label: 'Observations', icon: 'notes', color: '#00ffff' }
+];
+
+const litReviewItems = [
+  { href: '/lit-review/art', label: 'Art', icon: 'palette', color: '#ffff00' },
+  { href: '/lit-review/patents', label: 'Patents', icon: 'patent', color: '#ffaa00' },
+  { href: '/lit-review/case-studies', label: 'Case Studies', icon: 'studies', color: '#ff8800' },
+  { href: '/lit-review/popular-culture', label: 'Pop Culture', icon: 'culture', color: '#ff6600' },
+  { href: '/lit-review/research-trends', label: 'Research Trends', icon: 'trends', color: '#ff4400' },
+  { href: '/lit-review/tech-infusion', label: 'Tech Infusion', icon: 'tech', color: '#ff2200' },
+  { href: '/lit-review/basidiomycetes-lc', label: 'Basidiomycetes LC', icon: 'basidio', color: '#ff00aa' },
+  { href: '/lit-review/other-groups-lc', label: 'Other Groups LC', icon: 'groups', color: '#cc00ff' },
+  { href: '/lit-review/koji-oncom', label: 'Koji & Oncom', icon: 'koji', color: '#9900ff' },
+  { href: '/lit-review/fruiting-gardens', label: 'Fruiting Gardens', icon: 'garden', color: '#6600ff' },
+  { href: '/lit-review/community', label: 'Community', icon: 'community', color: '#3300ff' }
+];
+
+let activeNav = 'culture';
+if (currentPath.startsWith('/lit-review')) {
+  activeNav = 'lit';
+} else if (currentPath.startsWith('/recipes') || currentPath.startsWith('/ingredients') || 
+           currentPath.startsWith('/projects') || currentPath.startsWith('/observations')) {
+  activeNav = 'labops';
+}
+
+const svgIcons = {
+  mushroom: `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="image-rendering: pixelated;">
+    <rect x="4" y="2" width="8" height="2" fill="currentColor"/>
+    <rect x="2" y="4" width="12" height="2" fill="currentColor"/>
+    <rect x="1" y="6" width="14" height="2" fill="currentColor"/>
+    <rect x="3" y="8" width="2" height="2" fill="currentColor"/>
+    <rect x="5" y="8" width="6" height="2" fill="currentColor"/>
+    <rect x="11" y="8" width="2" height="2" fill="currentColor"/>
+    <rect x="6" y="10" width="4" height="4" fill="currentColor"/>
+  </svg>`,
+  
+  container: `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="image-rendering: pixelated;">
+    <rect x="2" y="2" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="4" y="4" width="8" height="2" fill="currentColor"/>
+    <rect x="5" y="8" width="2" height="2" fill="currentColor"/>
+    <rect x="9" y="9" width="3" height="3" fill="currentColor"/>
+  </svg>`,
+  
+  shelf: `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="image-rendering: pixelated;">
+    <rect x="1" y="2" width="14" height="12" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="1" y="6" width="14" height="1" fill="currentColor"/>
+    <rect x="1" y="10" width="14" height="1" fill="currentColor"/>
+    <rect x="3" y="3" width="3" height="2" fill="currentColor"/>
+  </svg>`,
+  
+  book: `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="image-rendering: pixelated;">
+    <rect x="3" y="2" width="10" height="12" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="4" y="4" width="7" height="1" fill="currentColor"/>
+    <rect x="4" y="6" width="6" height="1" fill="currentColor"/>
+    <rect x="3" y="2" width="1" height="12" fill="currentColor"/>
+  </svg>`,
+  
+  vials: `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="image-rendering: pixelated;">
+    <rect x="2" y="3" width="3" height="10" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="6" y="2" width="3" height="11" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="10" y="4" width="3" height="9" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="2" y="9" width="3" height="4" fill="currentColor"/>
+  </svg>`,
+  
+  microscope: `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="image-rendering: pixelated;">
+    <rect x="7" y="2" width="2" height="6" fill="currentColor"/>
+    <rect x="6" y="8" width="4" height="3" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="3" y="13" width="10" height="1" fill="currentColor"/>
+  </svg>`,
+  
+  notes: `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="image-rendering: pixelated;">
+    <rect x="3" y="2" width="10" height="12" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="5" y="4" width="6" height="1" fill="currentColor"/>
+    <rect x="5" y="6" width="6" height="1" fill="currentColor"/>
+    <rect x="4" y="4" width="1" height="1" fill="currentColor"/>
+  </svg>`,
+  
+  palette: `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="image-rendering: pixelated;">
+    <rect x="3" y="4" width="10" height="8" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="5" y="6" width="2" height="2" fill="currentColor"/>
+    <rect x="9" y="6" width="2" height="2" fill="currentColor"/>
+  </svg>`,
+  
+  patent: `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="image-rendering: pixelated;">
+    <rect x="4" y="2" width="8" height="12" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="6" y="4" width="4" height="1" fill="currentColor"/>
+    <rect x="7" y="7" width="2" height="2" fill="none" stroke="currentColor" stroke-width="1"/>
+  </svg>`,
+  
+  studies: `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="image-rendering: pixelated;">
+    <rect x="3" y="3" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="5" y="5" width="6" height="1" fill="currentColor"/>
+    <rect x="8" y="11" width="2" height="1" fill="currentColor"/>
+  </svg>`,
+  
+  culture: `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="image-rendering: pixelated;">
+    <rect x="4" y="4" width="8" height="8" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="6" y="7" width="1" height="2" fill="currentColor"/>
+    <rect x="9" y="7" width="1" height="2" fill="currentColor"/>
+  </svg>`,
+  
+  trends: `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="image-rendering: pixelated;">
+    <rect x="2" y="12" width="1" height="1" fill="currentColor"/>
+    <rect x="6" y="8" width="1" height="5" fill="currentColor"/>
+    <rect x="10" y="4" width="1" height="9" fill="currentColor"/>
+  </svg>`,
+  
+  tech: `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="image-rendering: pixelated;">
+    <rect x="3" y="5" width="10" height="6" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="7" y="7" width="2" height="2" fill="currentColor"/>
+  </svg>`,
+  
+  basidio: `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="image-rendering: pixelated;">
+    <rect x="5" y="2" width="6" height="2" fill="currentColor"/>
+    <rect x="4" y="4" width="8" height="2" fill="currentColor"/>
+    <rect x="3" y="6" width="10" height="2" fill="currentColor"/>
+    <rect x="7" y="8" width="2" height="6" fill="currentColor"/>
+  </svg>`,
+  
+  groups: `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="image-rendering: pixelated;">
+    <rect x="2" y="4" width="3" height="3" fill="currentColor"/>
+    <rect x="6" y="4" width="3" height="3" fill="currentColor"/>
+    <rect x="10" y="4" width="3" height="3" fill="currentColor"/>
+    <rect x="2" y="9" width="3" height="3" fill="currentColor"/>
+    <rect x="6" y="9" width="3" height="3" fill="currentColor"/>
+    <rect x="10" y="9" width="3" height="3" fill="currentColor"/>
+  </svg>`,
+  
+  koji: `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="image-rendering: pixelated;">
+    <rect x="2" y="6" width="3" height="8" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="6" y="4" width="3" height="10" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="10" y="5" width="3" height="9" fill="none" stroke="currentColor" stroke-width="1"/>
+    <rect x="2" y="11" width="3" height="3" fill="currentColor"/>
+    <rect x="6" y="10" width="3" height="4" fill="currentColor"/>
+    <rect x="10" y="11" width="3" height="3" fill="currentColor"/>
+  </svg>`,
+  
+  garden: `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="image-rendering: pixelated;">
+    <rect x="4" y="6" width="2" height="2" fill="currentColor"/>
+    <rect x="3" y="8" width="4" height="1" fill="currentColor"/>
+    <rect x="4" y="9" width="2" height="4" fill="currentColor"/>
+    <rect x="9" y="5" width="3" height="3" fill="currentColor"/>
+    <rect x="8" y="8" width="5" height="1" fill="currentColor"/>
+    <rect x="10" y="9" width="2" height="4" fill="currentColor"/>
+    <rect x="1" y="13" width="14" height="1" fill="currentColor"/>
+  </svg>`,
+  
+  community: `<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="image-rendering: pixelated;">
+    <rect x="5" y="3" width="2" height="2" fill="currentColor"/>
+    <rect x="9" y="3" width="2" height="2" fill="currentColor"/>
+    <rect x="4" y="5" width="4" height="4" fill="currentColor"/>
+    <rect x="8" y="5" width="4" height="4" fill="currentColor"/>
+    <rect x="1" y="10" width="14" height="4" fill="currentColor"/>
+  </svg>`
+};
+
+const bannerMessages = [
+  "🍄 IMPROVE MYCOLOGY KNOWLEDGE - EXPLORE SPECIES DATABASE",
+  "💾 TRY CLAUDE CODE DESKTOP - BUILD FASTER WITH AI",
+  "🤝 SHARE YOUR RESEARCH - STRENGTHEN SCIENTIFIC COMMUNITY",
+  "🌍 MYCOLOGY FOR FOOD SECURITY - SUSTAINABLE PROTEIN SOURCE",
+  "☮️ FUNGI FOR PEACE - BIOREMEDIATION & CARBON CAPTURE",
+  "📚 DOCUMENT YOUR BATCHES - CONTRIBUTE TO OPEN SCIENCE",
+  "🔬 LIQUID CULTURE RECIPES - OPTIMIZE YOUR CULTIVATION",
+  "🌱 MYCELIUM NETWORKS - NATURE'S INTERNET FOR ECOSYSTEMS",
+  "🧬 TRACK STRAINS - BUILD YOUR GENETIC LIBRARY",
+  "🏭 INDUSTRIAL MYCOLOGY - MUSHROOMS FOR MATERIALS",
+  "📖 READ LIT REVIEW - PATENTS, ART & CULTURE",
+  "💡 MYCO-TECH FUSION - FUTURE OF SUSTAINABLE TECHNOLOGY"
+];
+---
+
+<!-- CRITICAL: Define switchNav FIRST -->
+<script is:inline>
+  window.switchNav = function(targetNav) {
+    console.log('🎮 SWITCH NAV:', targetNav);
+    document.querySelectorAll('.nav-toggle').forEach(btn => {
+      btn.getAttribute('data-nav') === targetNav ? 
+        btn.setAttribute('data-active', 'true') : 
+        btn.removeAttribute('data-active');
+    });
+    document.querySelectorAll('[data-nav-panel]').forEach(panel => {
+      panel.style.display = panel.getAttribute('data-nav-panel') === targetNav ? 'flex' : 'none';
+    });
+    if (window.playBlip) window.playBlip();
+  };
+</script>
+
+<!-- Ships Container -->
+<div class="ships-background">
+  <div class="ufo-mothership" id="ufo">
+    <svg viewBox="0 0 32 16" xmlns="http://www.w3.org/2000/svg" style="image-rendering: pixelated;">
+      <rect x="8" y="4" width="16" height="2" fill="currentColor"/>
+      <rect x="6" y="6" width="20" height="2" fill="currentColor"/>
+      <rect x="4" y="8" width="24" height="2" fill="currentColor"/>
+      <rect x="10" y="10" width="4" height="2" fill="currentColor"/>
+      <rect x="18" y="10" width="4" height="2" fill="currentColor"/>
+      <rect x="14" y="2" width="4" height="2" fill="currentColor"/>
+    </svg>
+    <div class="ufo-score">??? PTS</div>
+  </div>
+
+  <div class="small-ship ship-cyan" id="small-ship-1">
+    <svg viewBox="0 0 20 10" xmlns="http://www.w3.org/2000/svg" style="image-rendering: pixelated;">
+      <rect x="6" y="3" width="8" height="2" fill="#00ffff"/>
+      <rect x="4" y="5" width="12" height="2" fill="#00ffff"/>
+      <rect x="8" y="1" width="4" height="2" fill="#00ffff"/>
+      <rect x="6" y="7" width="2" height="1" fill="#ffff00"/>
+      <rect x="12" y="7" width="2" height="1" fill="#ffff00"/>
+    </svg>
+  </div>
+
+  <div class="small-ship ship-magenta" id="small-ship-2">
+    <svg viewBox="0 0 20 10" xmlns="http://www.w3.org/2000/svg" style="image-rendering: pixelated;">
+      <rect x="6" y="3" width="8" height="2" fill="#ff00ff"/>
+      <rect x="4" y="5" width="12" height="2" fill="#ff00ff"/>
+      <rect x="8" y="1" width="4" height="2" fill="#ff00ff"/>
+      <rect x="6" y="7" width="2" height="1" fill="#ffff00"/>
+      <rect x="12" y="7" width="2" height="1" fill="#ffff00"/>
+    </svg>
+    <div class="banner-container">
+      <div class="banner-pole"></div>
+      <div class="banner-text" id="banner-text">LOADING...</div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPACT Navigation Wrapper -->
+<div class="nav-wrapper retro-arcade-compact" data-initial-nav={activeNav}>
+  <div class="scanlines"></div>
+  
+  <!-- Compact Toggle Buttons -->
+  <div class="nav-toggle-container-compact">
+    <button class="nav-toggle pixel-btn-compact" data-nav="culture" data-active={activeNav === 'culture' ? 'true' : undefined} onclick="window.switchNav('culture')">
+      <span class="pixel-text">👾 CULTURE</span>
+    </button>
+    <button class="nav-toggle pixel-btn-compact" data-nav="labops" data-active={activeNav === 'labops' ? 'true' : undefined} onclick="window.switchNav('labops')">
+      <span class="pixel-text">🔬 LAB OPS</span>
+    </button>
+    <button class="nav-toggle pixel-btn-compact" data-nav="lit" data-active={activeNav === 'lit' ? 'true' : undefined} onclick="window.switchNav('lit')">
+      <span class="pixel-text">🔥 LIT REV</span>
+    </button>
+  </div>
+
+  <!-- Compact Second Tier -->
+  <nav class="myco-nav arcade-grid-compact" data-nav-panel="culture" style={activeNav !== 'culture' ? 'display: none;' : ''}>
+    {cultureItems.map(item => (
+      <a href={item.href} class={`nav-panel pixel-panel ${currentPath.startsWith(item.href) ? 'active' : ''}`} style={`--item-color: ${item.color}`} title={item.label} data-nav-item>
+        <div class="icon-wrapper pixel-icon" set:html={svgIcons[item.icon]} />
+        <div class="label pixel-label">{item.label}</div>
+      </a>
+    ))}
+  </nav>
+
+  <nav class="myco-nav arcade-grid-compact" data-nav-panel="labops" style={activeNav !== 'labops' ? 'display: none;' : ''}>
+    {labOpsItems.map(item => (
+      <a href={item.href} class={`nav-panel pixel-panel ${currentPath.startsWith(item.href) ? 'active' : ''}`} style={`--item-color: ${item.color}`} title={item.label} data-nav-item>
+        <div class="icon-wrapper pixel-icon" set:html={svgIcons[item.icon]} />
+        <div class="label pixel-label">{item.label}</div>
+      </a>
+    ))}
+  </nav>
+
+  <nav class="myco-nav arcade-grid-compact lit-review-grid" data-nav-panel="lit" style={activeNav !== 'lit' ? 'display: none;' : ''}>
+    {litReviewItems.map(item => (
+      <a href={item.href} class={`nav-panel pixel-panel ${currentPath.startsWith(item.href) ? 'active' : ''}`} style={`--item-color: ${item.color}`} title={item.label} data-nav-item>
+        <div class="icon-wrapper pixel-icon" set:html={svgIcons[item.icon]} />
+        <div class="label pixel-label">{item.label}</div>
+      </a>
+    ))}
+  </nav>
+</div>
+
+<script define:vars={{ bannerMessages }}>
+  const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+  
+  function playBeep() {
+    const osc = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    osc.connect(gain);
+    gain.connect(audioContext.destination);
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(880, audioContext.currentTime);
+    gain.gain.setValueAtTime(0.1, audioContext.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.08);
+    osc.start(audioContext.currentTime);
+    osc.stop(audioContext.currentTime + 0.08);
+  }
+  
+  window.playBlip = function() {
+    const osc = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    osc.connect(gain);
+    gain.connect(audioContext.destination);
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(440, audioContext.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(220, audioContext.currentTime + 0.05);
+    gain.gain.setValueAtTime(0.12, audioContext.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
+    osc.start(audioContext.currentTime);
+    osc.stop(audioContext.currentTime + 0.05);
+  };
+
+  function playSpaceInvadersSound() {
+    const notes = [220, 196, 175, 165];
+    notes.forEach((freq, i) => {
+      setTimeout(() => {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(freq, audioContext.currentTime);
+        gain.gain.setValueAtTime(0.15, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+        osc.start(audioContext.currentTime);
+        osc.stop(audioContext.currentTime + 0.3);
+      }, i * 300);
+    });
+  }
+
+  function playExplosion() {
+    const osc = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    osc.connect(gain);
+    gain.connect(audioContext.destination);
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(800, audioContext.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(50, audioContext.currentTime + 0.3);
+    gain.gain.setValueAtTime(0.2, audioContext.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+    osc.start(audioContext.currentTime);
+    osc.stop(audioContext.currentTime + 0.3);
+  }
+
+  function playWhoosh() {
+    const osc = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    osc.connect(gain);
+    gain.connect(audioContext.destination);
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(600, audioContext.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.25);
+    gain.gain.setValueAtTime(0.1, audioContext.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.25);
+    osc.start(audioContext.currentTime);
+    osc.stop(audioContext.currentTime + 0.25);
+  }
+
+  document.querySelectorAll('[data-nav-item]').forEach(item => {
+    item.addEventListener('mouseenter', () => playBeep());
+  });
+
+  const ufo = document.getElementById('ufo');
+  const smallShip1 = document.getElementById('small-ship-1');
+  const smallShip2 = document.getElementById('small-ship-2');
+  const bannerText = document.getElementById('banner-text');
+  let ufoClicked = false;
+  
+  function launchUFO() {
+    if (!ufo) return;
+    const scores = [50, 100, 150, 200, 300];
+    const score = scores[Math.floor(Math.random() * scores.length)];
+    const scoreDisplay = ufo.querySelector('.ufo-score');
+    if (scoreDisplay) scoreDisplay.textContent = `${score} PTS`;
+    ufoClicked = false;
+    ufo.classList.remove('hit', 'flying');
+    ufo.style.top = `${10 + Math.random() * 20}%`;
+    ufo.style.left = '110%';
+    ufo.style.display = 'block';
+    playSpaceInvadersSound();
+    setTimeout(() => ufo.classList.add('flying'), 50);
+    setTimeout(() => { if (!ufoClicked) ufo.style.display = 'none'; }, 8000);
+  }
+  
+  function launchSmallShip1() {
+    if (!smallShip1) return;
+    smallShip1.style.top = `${5 + Math.random() * 15}%`;
+    smallShip1.style.left = '-60px';
+    smallShip1.style.display = 'block';
+    playWhoosh();
+    setTimeout(() => smallShip1.classList.add('flying'), 50);
+    setTimeout(() => {
+      smallShip1.style.display = 'none';
+      smallShip1.classList.remove('flying');
+    }, 4000);
+  }
+
+  function launchSmallShip2() {
+    if (!smallShip2 || !bannerText) return;
+    bannerText.textContent = bannerMessages[Math.floor(Math.random() * bannerMessages.length)];
+    smallShip2.style.top = `${60 + Math.random() * 20}%`;
+    smallShip2.style.left = '110%';
+    smallShip2.style.display = 'block';
+    playWhoosh();
+    setTimeout(() => smallShip2.classList.add('flying'), 50);
+    setTimeout(() => {
+      smallShip2.style.display = 'none';
+      smallShip2.classList.remove('flying');
+    }, 15000);
+  }
+  
+  ufo?.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (ufoClicked) return;
+    ufoClicked = true;
+    ufo.classList.remove('flying');
+    ufo.classList.add('hit');
+    playExplosion();
+    const scoreDisplay = ufo.querySelector('.ufo-score');
+    if (scoreDisplay) scoreDisplay.style.display = 'block';
+    setTimeout(() => {
+      ufo.style.display = 'none';
+      if (scoreDisplay) scoreDisplay.style.display = 'none';
+    }, 2000);
+  });
+  
+  function scheduleNextUFO() { setTimeout(() => { launchUFO(); scheduleNextUFO(); }, 15000 + Math.random() * 15000); }
+  function scheduleNextSmallShip1() { setTimeout(() => { launchSmallShip1(); scheduleNextSmallShip1(); }, 10000 + Math.random() * 15000); }
+  function scheduleNextSmallShip2() { setTimeout(() => { launchSmallShip2(); scheduleNextSmallShip2(); }, 12000 + Math.random() * 20000); }
+  
+  setTimeout(() => { launchUFO(); scheduleNextUFO(); }, 3000);
+  setTimeout(() => { launchSmallShip1(); scheduleNextSmallShip1(); }, 5000);
+  setTimeout(() => { launchSmallShip2(); scheduleNextSmallShip2(); }, 8000);
+</script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+  .ships-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .ufo-mothership,
+  .small-ship {
+    position: fixed;
+    display: none;
+  }
+
+  .ufo-mothership {
+    width: 80px;
+    height: 40px;
+    pointer-events: auto;
+    cursor: pointer;
+    z-index: 2;
+  }
+
+  .small-ship {
+    width: 50px;
+    height: 25px;
+    z-index: 2;
+  }
+
+  .ufo-mothership svg {
+    width: 100%;
+    height: 100%;
+    color: #ff0000;
+    filter: drop-shadow(0 0 12px #ff0000);
+    image-rendering: pixelated;
+  }
+
+  .small-ship svg {
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+  }
+
+  .ship-cyan svg { filter: drop-shadow(0 0 8px #00ffff); }
+  .ship-magenta svg { filter: drop-shadow(0 0 8px #ff00ff); }
+
+  .ufo-mothership.flying { animation: ufo-flyby 8s linear; }
+  .small-ship.flying { animation: ship-ltr 4s linear; }
+  .ship-magenta.flying { animation: ship-rtl 15s linear; }
+
+  @keyframes ufo-flyby { from { left: 110%; } to { left: -100px; } }
+  @keyframes ship-ltr { from { left: -60px; } to { left: 110%; } }
+  @keyframes ship-rtl { from { left: 110%; } to { left: -900px; } }
+
+  .ufo-mothership.hit { animation: ufo-explode 0.5s ease-out; }
+  @keyframes ufo-explode {
+    0% { transform: scale(1) rotate(0deg); opacity: 1; }
+    50% { transform: scale(1.5) rotate(180deg); opacity: 0.5; }
+    100% { transform: scale(0.3) rotate(360deg); opacity: 0; }
+  }
+
+  .ufo-score {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.65rem;
+    color: #ffff00;
+    text-shadow: 0 0 10px #ffff00;
+    white-space: nowrap;
+    display: none;
+    animation: score-float 2s ease-out;
+    pointer-events: none;
+  }
+
+  @keyframes score-float {
+    from { opacity: 1; transform: translateX(-50%) translateY(0); }
+    to { opacity: 0; transform: translateX(-50%) translateY(-40px); }
+  }
+
+  .banner-container {
+    position: absolute;
+    left: -25px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+  }
+
+  .banner-pole {
+    width: 25px;
+    height: 3px;
+    background: linear-gradient(90deg, #ff00ff, #ffff00);
+    box-shadow: 0 0 8px #ffff00;
+  }
+
+  .banner-text {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5rem;
+    color: #ffff00;
+    background: rgba(0, 0, 0, 0.95);
+    border: 3px solid #ffff00;
+    padding: 0.6rem 1.2rem;
+    white-space: nowrap;
+    box-shadow: 0 0 15px rgba(255, 255, 0, 0.6);
+    animation: banner-wave 1.5s ease-in-out infinite;
+  }
+
+  @keyframes banner-wave {
+    0%, 100% { transform: translateY(-3px); }
+    50% { transform: translateY(3px); }
+  }
+
+  /* COMPACT NAVIGATION STYLES */
+  .retro-arcade-compact {
+    position: relative;
+    width: 100%;
+    z-index: 100;
+  }
+
+  .scanlines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.15) 0px, transparent 1px, transparent 2px, rgba(0, 0, 0, 0.15) 3px);
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.5;
+  }
+
+  .nav-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: #000000;
+    border: 2px solid #333;
+    box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.8);
+    position: relative;
+    z-index: 100;
+  }
+
+  .nav-toggle-container-compact {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.25rem;
+    background: #111;
+    border: 2px solid #00ff00;
+    box-shadow: inset 0 0 8px rgba(0, 255, 0, 0.3), 0 0 10px rgba(0, 255, 0, 0.2);
+    position: relative;
+    z-index: 200;
+  }
+
+  .pixel-btn-compact {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.6rem;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid #00ff00;
+    background: #000;
+    color: #00ff00;
+    cursor: pointer;
+    transition: all 0.1s;
+    text-transform: uppercase;
+    user-select: none;
+  }
+
+  .pixel-btn-compact:hover {
+    background: #00ff00;
+    color: #000;
+    box-shadow: 0 0 10px #00ff00;
+    transform: scale(1.05);
+  }
+
+  .pixel-btn-compact:active {
+    transform: scale(0.98);
+  }
+
+  .pixel-btn-compact[data-active="true"] {
+    background: #00ff00;
+    color: #000;
+    box-shadow: 0 0 15px #00ff00, inset 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .pixel-btn-compact[data-nav="labops"][data-active="true"] {
+    background: #00ffff;
+    border-color: #00ffff;
+    color: #000;
+  }
+
+  .pixel-btn-compact[data-nav="lit"][data-active="true"] {
+    background: linear-gradient(135deg, #ffff00 0%, #ffaa00 33%, #ff6600 66%, #ff2200 100%);
+    border-color: #ff6600;
+    color: #000;
+  }
+
+  .arcade-grid-compact {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 900px;
+    padding: 0.75rem;
+    background: #000;
+    border: 2px solid var(--item-color, #00ff00);
+    position: relative;
+    z-index: 150;
+  }
+
+  .lit-review-grid {
+    border: 2px solid transparent;
+    border-image: linear-gradient(135deg, #ffff00, #ffaa00, #ff6600, #ff2200, #ff00aa, #cc00ff, #9900ff, #6600ff, #3300ff) 1;
+    max-width: 1100px;
+  }
+
+  .pixel-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem;
+    background: #000;
+    border: 2px solid var(--item-color);
+    color: var(--item-color);
+    text-decoration: none;
+    transition: all 0.1s;
+    cursor: pointer;
+    position: relative;
+    z-index: 151;
+    image-rendering: pixelated;
+  }
+
+  .pixel-panel:hover {
+    background: var(--item-color);
+    color: #000;
+    transform: scale(1.1);
+    box-shadow: 0 0 15px var(--item-color);
+    z-index: 1000 !important;
+  }
+
+  .pixel-panel.active {
+    background: var(--item-color);
+    color: #000;
+    box-shadow: 0 0 20px var(--item-color), inset 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .pixel-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.25rem;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 0 4px currentColor);
+  }
+
+  .pixel-icon svg {
+    width: 100%;
+    height: 100%;
+    color: currentColor;
+  }
+
+  .pixel-label {
+    position: absolute;
+    bottom: -2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5rem;
+    color: var(--item-color);
+    white-space: nowrap;
+    padding: 0.4rem 0.6rem;
+    background: #000;
+    border: 2px solid var(--item-color);
+    box-shadow: 0 0 10px var(--item-color);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s;
+    z-index: 9999 !important;
+    text-transform: uppercase;
+  }
+
+  .pixel-panel:hover .pixel-label {
+    opacity: 1;
+    bottom: -3rem;
+  }
+
+  @media (max-width: 768px) {
+    .pixel-btn-compact {
+      font-size: 0.5rem;
+      padding: 0.4rem 0.6rem;
+    }
+
+    .arcade-grid-compact {
+      grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+      gap: 0.4rem;
+      padding: 0.5rem;
+    }
+
+    .pixel-icon {
+      width: 40px;
+      height: 40px;
+    }
+  }
+</style>

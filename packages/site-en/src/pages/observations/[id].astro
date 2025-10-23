@@ -1,0 +1,458 @@
+---
+// src/pages/observations/[id].astro - FIXED
+import Layout from '../../layouts/Layout.astro';
+import { getAllSamples, getSampleById, getAllProjects, getProjectById, getAllSpecies, getSpeciesById, getAllBatches, getBatchById, getAllRecipes, getRecipeById, getAllObservations, getObservationById, getAllRacks, getRackById, getAllIngredients, getIngredientById } from '../../utils/loadData';
+
+const { id } = Astro.params;
+
+const allObservations = getAllObservations();
+
+// Find by batch_id (observations are typically keyed by batch)
+const observations = allObservations.filter((o: any) => 
+  o.batch_id === id || o.id === id
+);
+
+// If no observations found for this ID, redirect
+if (observations.length === 0) {
+  return Astro.redirect('/observations');
+}
+
+// Sort by date
+const sortedObservations = observations.sort((a: any, b: any) => {
+  const dateA = new Date(a.observation_date || 0).getTime();
+  const dateB = new Date(b.observation_date || 0).getTime();
+  return dateB - dateA;
+});
+
+// Export getStaticPaths
+export async function getStaticPaths() {
+  const observations = getAllObservations();
+  
+  // Get unique batch IDs
+  const batchIds = [...new Set(observations.map((o: any) => o.batch_id).filter(Boolean))];
+  
+  return batchIds.map((batchId) => ({
+    params: { id: String(batchId) },
+  }));
+}
+
+// Get the related batch
+const batchId = sortedObservations[0].batch_id;
+const batch = batchId ? getBatchById(batchId) : null;
+---
+
+<Layout title={`Observations ${batch ? `- ${batch.title}` : ''} - SparkHope`}>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>Observations</h1>
+        {batch && (
+          <p class="batch-link">
+            For batch: <a href={`/batches/${batch.batch_id || batch.id}`}>{batch.title || batch.name}</a>
+          </p>
+        )}
+      </div>
+      <span class="obs-count">{observations.length} observation{observations.length !== 1 ? 's' : ''}</span>
+    </div>
+
+    <div class="timeline">
+      {sortedObservations.map((obs: any) => (
+        <div class={`timeline-item ${obs.contamination ? 'contaminated' : ''}`}>
+          <div class="timeline-marker"></div>
+          <div class="timeline-content">
+            <div class="obs-header">
+              <div>
+                <h2>{obs.visual_assessment || 'Observation'}</h2>
+                {obs.observation_date && (
+                  <span class="obs-date">{obs.observation_date}</span>
+                )}
+              </div>
+              <div class="obs-badges">
+                {obs.growth_stage && (
+                  <span class={`badge badge-${obs.growth_stage}`}>
+                    {obs.growth_stage}
+                  </span>
+                )}
+                {obs.contamination && (
+                  <span class="badge badge-danger">
+                    ⚠️ Contamination
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {obs.description && (
+              <p class="obs-description">{obs.description}</p>
+            )}
+
+            {obs.observer && (
+              <div class="obs-meta">
+                <strong>Observer:</strong> {obs.observer}
+              </div>
+            )}
+
+            {(obs.temperature || obs.humidity) && (
+              <div class="conditions-section">
+                <h3>Environmental Conditions</h3>
+                <div class="conditions-grid">
+                  {obs.temperature && (
+                    <div class="condition">
+                      <span class="condition-icon">🌡️</span>
+                      <div>
+                        <div class="condition-label">Temperature</div>
+                        <div class="condition-value">{obs.temperature}°C</div>
+                      </div>
+                    </div>
+                  )}
+                  {obs.humidity && (
+                    <div class="condition">
+                      <span class="condition-icon">💧</span>
+                      <div>
+                        <div class="condition-label">Humidity</div>
+                        <div class="condition-value">{obs.humidity}%</div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {obs.contamination && (
+              <div class="contamination-alert">
+                <strong>⚠️ Contamination Detected</strong>
+              </div>
+            )}
+
+            {obs.notes && (
+              <div class="obs-notes">
+                <strong>Additional Notes:</strong>
+                <p>{obs.notes}</p>
+              </div>
+            )}
+
+            {obs.images && obs.images.length > 0 && (
+              <div class="images-section">
+                <strong>Images:</strong>
+                <div class="images-list">
+                  {obs.images.map((image: string) => (
+                    <div class="image-placeholder">📷 {image}</div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="actions">
+      <a href="/observations" class="btn-secondary">← Back to Observations</a>
+      {batch && (
+        <a href={`/batches/${batch.batch_id || batch.id}`} class="btn-primary">
+          View Batch →
+        </a>
+      )}
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--color-border);
+  }
+
+  .header h1 {
+    font-size: 2.5rem;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .batch-link {
+    color: var(--color-text-dim);
+    margin: 0;
+  }
+
+  .batch-link a {
+    color: var(--sl-color-accent-high);
+    text-decoration: none;
+  }
+
+  .batch-link a:hover {
+    text-decoration: underline;
+  }
+
+  .obs-count {
+    background: var(--sl-color-accent);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-weight: 600;
+  }
+
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-border);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 2rem;
+  }
+
+  .timeline-marker {
+    position: absolute;
+    left: -1.5rem;
+    top: 0.5rem;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    background: var(--sl-color-accent);
+    border: 3px solid var(--color-bg);
+    z-index: 1;
+  }
+
+  .timeline-item.contaminated .timeline-marker {
+    background: var(--color-danger);
+  }
+
+  .timeline-content {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+  }
+
+  .timeline-item.contaminated .timeline-content {
+    border-left: 4px solid var(--color-danger);
+  }
+
+  .obs-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .obs-header h2 {
+    font-size: 1.5rem;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .obs-date {
+    color: var(--color-text-dim);
+    font-size: 0.875rem;
+  }
+
+  .obs-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .badge-inoculation,
+  .badge-colonization,
+  .badge-pinning,
+  .badge-fruiting,
+  .badge-harvest {
+    background: #1e3a8a;
+    color: #dbeafe;
+  }
+
+  .badge-danger {
+    background: #7f1d1d;
+    color: #fee2e2;
+  }
+
+  .obs-description {
+    color: var(--color-text);
+    line-height: 1.6;
+    margin: 1rem 0;
+  }
+
+  .obs-meta {
+    color: var(--color-text-dim);
+    font-size: 0.875rem;
+    margin: 0.5rem 0;
+  }
+
+  .conditions-section {
+    margin: 1.5rem 0;
+  }
+
+  .conditions-section h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-dim);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .conditions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .condition {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: var(--color-bg-card-hover);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+  }
+
+  .condition-icon {
+    font-size: 1.5rem;
+  }
+
+  .condition-label {
+    font-size: 0.75rem;
+    color: var(--color-text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .condition-value {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .contamination-alert {
+    background: rgba(127, 29, 29, 0.2);
+    border: 1px solid #7f1d1d;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 1rem 0;
+    color: #fee2e2;
+  }
+
+  .contamination-alert p {
+    margin: 0.5rem 0 0 0;
+  }
+
+  .obs-notes {
+    background: var(--color-bg-card-hover);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 1rem 0;
+  }
+
+  .obs-notes p {
+    margin: 0.5rem 0 0 0;
+    color: var(--color-text-dim);
+    font-style: italic;
+  }
+
+  .images-section {
+    margin: 1rem 0;
+  }
+
+  .images-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+
+  .image-placeholder {
+    aspect-ratio: 1;
+    background: var(--color-bg-card-hover);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-dim);
+    font-size: 0.875rem;
+  }
+
+  .actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    justify-content: space-between;
+  }
+
+  .btn-secondary,
+  .btn-primary {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary {
+    background: var(--color-bg-card);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+  }
+
+  .btn-secondary:hover {
+    background: var(--color-bg-card-hover);
+    border-color: var(--sl-color-accent);
+  }
+
+  .btn-primary {
+    background: var(--sl-color-accent);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: var(--sl-color-accent-high);
+  }
+
+  @media (max-width: 768px) {
+    .header {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .obs-header {
+      flex-direction: column;
+    }
+
+    .conditions-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .actions {
+      flex-direction: column;
+    }
+  }
+</style>

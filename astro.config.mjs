@@ -11,9 +11,16 @@ export default defineConfig({
  
   integrations: [
     starlight({
-      title: 'Sparkhope Myco',
+      title: 'Food Security: Myco',
       description: 'Wild sourcing, liquid culture, agar, and spawn feedstock preparation technique for resource dprived contexts',
-      
+      logo: {
+        src: './public/favicon.svg',
+      },
+      customCss: [
+        // Add our botanical theme CSS
+        './src/styles/botanical-theme.css',
+      ],
+
       // Language configuration - 7
       defaultLocale: 'en',
       locales: {

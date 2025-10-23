@@ -1,0 +1,78 @@
+---
+interface Props {
+  currentLang: 'en' | 'es';
+  currentPath: string;
+}
+
+const { currentLang, currentPath } = Astro.props;
+
+const languages = {
+  en: { label: 'English', domain: 'https://sparkhope.org' },
+  es: { label: 'Español', domain: 'https://es.sparkhope.org' },
+};
+---
+
+<div class="language-switcher">
+  <button class="current-lang" type="button">
+    🌍 {languages[currentLang].label}
+    <span class="arrow">▼</span>
+  </button>
+  <div class="lang-dropdown">
+    {Object.entries(languages).map(([code, { label, domain }]) => (
+      code !== currentLang && (
+        <a href={`${domain}${currentPath}`} class="lang-option">
+          {label}
+        </a>
+      )
+    ))}
+  </div>
+</div>
+
+<style>
+  .language-switcher {
+    position: relative;
+  }
+
+  .current-lang {
+    background: var(--botanical-sage, #87a878);
+    color: white;
+    border: 2px solid var(--botanical-moss, #5a6e4f);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .lang-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.5rem;
+    background: white;
+    border: 2px solid #8b7355;
+    border-radius: 4px;
+    box-shadow: 4px 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    min-width: 150px;
+  }
+
+  .language-switcher:hover .lang-dropdown {
+    display: block;
+  }
+
+  .lang-option {
+    display: block;
+    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+    color: #3d3027;
+  }
+
+  .lang-option:hover {
+    background: #87a878;
+    color: white;
+  }
+</style>

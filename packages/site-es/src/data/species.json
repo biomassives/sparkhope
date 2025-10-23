@@ -1,0 +1,134 @@
+[
+  {
+    "id": "species-7",
+    "common_name": "Blue Oyster",
+    "scientific_name": "Pleurotis Ostreotis",
+    "description": "",
+    "optimal_temp": "Unknown",
+    "optimal_humidity": "65%",
+    "substrate_preference": "straw",
+    "difficulty": "beginner",
+    "image_path": null
+  },
+  {
+    "id": "species-8",
+    "common_name": "Lions Mane",
+    "scientific_name": "Herecium Erinecea",
+    "description": "two varieties - pom pom and toothed..",
+    "optimal_temp": "Unknown",
+    "optimal_humidity": "Unknown",
+    "substrate_preference": "Various",
+    "difficulty": "beginner",
+    "image_path": null
+  },
+  {
+    "id": "species-9",
+    "common_name": "Chaga",
+    "scientific_name": "Inonotus obliquus",
+    "description": "Medicinal. Restorative  - parasitic on birch and other trees. The sterile conk is irregularly formed and resembles burnt charcoal. It is not the fruiting body of the fungus, a mostly black mass of mycelium with substantial amount of melanin.",
+    "optimal_temp": "55",
+    "optimal_humidity": "65%",
+    "substrate_preference": "birch and some essence of spruce",
+    "difficulty": "beginner",
+    "image_path": ""
+  },
+  {
+    "id": "species-10",
+    "common_name": "Oyster Mushroom",
+    "scientific_name": "Pleurotus ostreatus",
+    "description": "Fast colonizer, excellent for demonstrating ingredient variations. Tolerant of diverse substrates.",
+    "optimal_temp": "18-24°C",
+    "optimal_humidity": "85-95%%",
+    "substrate_preference": "Hardwood, straw, coffee grounds",
+    "difficulty": "beginner",
+    "image_path": null
+  },
+  {
+    "id": "species-11",
+    "common_name": "Shiitake",
+    "scientific_name": "Lentinula edodes",
+    "description": "Requires supplementation. Good for testing nitrogen sources.",
+    "optimal_temp": "21-27°C",
+    "optimal_humidity": "80-85%%",
+    "substrate_preference": "Hardwood sawdust, supplemented",
+    "difficulty": "beginner",
+    "image_path": null
+  },
+  {
+    "id": "species-12",
+    "common_name": "Lion's Mane",
+    "scientific_name": "Hericium erinaceus",
+    "description": "Medicinal species. Sensitive to contamination, good test of sterility methods.",
+    "optimal_temp": "18-24°C",
+    "optimal_humidity": "85-90%%",
+    "substrate_preference": "Hardwood sawdust",
+    "difficulty": "beginner",
+    "image_path": null
+  },
+  {
+    "id": "species-13",
+    "common_name": "King Oyster",
+    "scientific_name": "Pleurotus eryngii",
+    "description": "Premium species. Requires nutrient-rich substrates.",
+    "optimal_temp": "15-21°C",
+    "optimal_humidity": "85-90%%",
+    "substrate_preference": "Hardwood with high supplementation",
+    "difficulty": "beginner",
+    "image_path": null
+  },
+  {
+    "id": "species-14",
+    "common_name": "Turkey Tail",
+    "scientific_name": "Trametes versicolor",
+    "description": "Medicinal. Excellent for outdoor and remediation applications.",
+    "optimal_temp": "21-27°C",
+    "optimal_humidity": "70-80%%",
+    "substrate_preference": "Hardwood logs, chips",
+    "difficulty": "beginner",
+    "image_path": null
+  },
+  {
+    "id": "species-15",
+    "common_name": "unknown",
+    "scientific_name": "unknown",
+    "description": "unknown but suspected to be pleurotis o. acquired from buried wood from hugelkulchr - colorado front range 8000+ feet",
+    "optimal_temp": "Unknown",
+    "optimal_humidity": "Unknown",
+    "substrate_preference": "Various",
+    "difficulty": "beginner",
+    "image_path": ""
+  },
+  {
+    "id": "species-16",
+    "common_name": "Phoenix Oyster",
+    "scientific_name": "Pleurotis Pulminarius",
+    "description": "",
+    "optimal_temp": "70",
+    "optimal_humidity": "85%",
+    "substrate_preference": "straw, MEI, PDA, aboreal saloycytes",
+    "difficulty": "beginner",
+    "image_path": ""
+  },
+  {
+    "id": "species-17",
+    "common_name": "unknown1",
+    "scientific_name": "unknown1",
+    "description": "suspected p. ostreotis from front yard wild garden space hugelkultur dendritic growth on ( 3 year buried) aspen wood, and cottonwood surface and below bark",
+    "optimal_temp": "Unknown",
+    "optimal_humidity": "Unknown",
+    "substrate_preference": "Various",
+    "difficulty": "beginner",
+    "image_path": ""
+  },
+  {
+    "id": "species-18",
+    "common_name": "Black Pearl King Oyster",
+    "scientific_name": "Pleaurotis Ostreotis",
+    "description": "",
+    "optimal_temp": "Unknown",
+    "optimal_humidity": "Unknown",
+    "substrate_preference": "Various",
+    "difficulty": "beginner",
+    "image_path": ""
+  }
+]

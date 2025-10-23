@@ -1,0 +1,85 @@
+[
+  // --- OVERVIEW AND EVENTS ---
+  {
+    "id": "I-001",
+    "title": "Project Overview and Objectives",
+    "author": "SparkHope Team",
+    "type": "Overview",
+    "publication_date": "2025-01-01",
+    "summary": "Foundational document detailing the mission, open-source philosophy, and long-term goals of the MycoLab.",
+    "content": "<p>The MycoLab was established with the goal of fostering decentralized, transparent, and accessible mycological research. Our focus is on the application of mycology for environmental remediation and sustainable food production. This document outlines our structure and interoperability manifesto.</p>",
+    "keywords": ["project", "objectives", "philosophy", "foundation", "mission"],
+    "link": "/docs/I-001"
+  },
+  {
+    "id": "E-001",
+    "title": "Lab Events and Collaborations (Q1/2025)",
+    "author": "Outreach Committee",
+    "type": "Events",
+    "publication_date": "2025-03-30",
+    "summary": "Log of key events, community workshops, and academic collaborations for the first quarter.",
+    "content": "<p>Summary of workshops held on DIY agar production and two collaborations initiated with the University of Oslo for genomic analysis.</p>",
+    "keywords": ["collaboration", "community", "logistics", "workshops", "Q1"],
+    "link": "/docs/E-001"
+  },
+
+  // --- TECHNICAL GUIDES AND PROTOCOLS ---
+  {
+    "id": "G-002",
+    "title": "Automated Nutrient and pH Controller",
+    "author": "Dr. C. Electron, J. Spore",
+    "type": "Protocol",
+    "publication_date": "2025-02-10",
+    "summary": "Comprehensive guide to building and calibrating a low-cost system for automated pH control and nutrient dosing in liquid cultures.",
+    "content": "<h2>Introduction to Control</h2><p>pH stability is critical for mycelial health. This protocol uses a microcontroller (ESP32) to monitor pH and administer buffer solutions automatically. Sensor accuracy must be verified weekly.</p>",
+    "keywords": ["pH", "nutrients", "automation", "Arduino", "control"],
+    "link": "/docs/G-002"
+  },
+  {
+    "id": "G-004",
+    "title": "Basic Microbial Testing for Cultures",
+    "author": "A. Mycell",
+    "type": "Protocol",
+    "publication_date": "2024-12-05",
+    "summary": "A set of rapid, low-cost procedures to identify common bacterial and fungal contaminations on agar plates and grains.",
+    "content": "<p>Early identification of contaminants is vital. This protocol details the use of simple Gram staining and basic microscopic examination for the detection of <em>Bacillus</em> and <em>Trichoderma</em>.</p>",
+    "keywords": ["microbiology", "contamination", "safety", "culturing"],
+    "link": "/docs/G-004"
+  },
+
+  // --- SPECIES AND IP ---
+  {
+    "id": "S-001",
+    "title": "Species Fact Sheet: Pleurotus ostreatus (Oyster Mushroom)",
+    "author": "Dr. E. Mycota",
+    "type": "Species Fact Sheet",
+    "publication_date": "2025-03-01",
+    "summary": "A detailed look at the taxonomy, morphology, life cycle, and optimal cultivation parameters for the specific Mediterranean Oyster strain in the MycoLab.",
+    "content": "<h2>Cultivation Requirements</h2><p><strong>Temperature:</strong> $15-22^{\circ}C$ (Fruiting). <strong>Substrate:</strong> Preference for pasteurized straw or supplemented sawdust. This strain is highly efficient at lignocellulose conversion.</p>",
+    "keywords": ["species", "Pleurotus", "oyster", "taxonomy", "genome"],
+    "link": "/docs/S-001"
+  },
+  {
+    "id": "P-2023-441",
+    "title": "Patent: High-Efficiency Air Filtration Device (US-2023-441B)",
+    "author": "Dr. H. Filter",
+    "type": "Patent",
+    "publication_date": "2023-11-20",
+    "summary": "Summary of the patent for a modular laminar flow system, designed to be built with low-cost components for community labs.",
+    "content": "<p>The patent protects an innovative HEPA filter design with an optimized pressure pre-chamber. The design allows for an air change rate of up to 300 ACH in 2 cubic meter chambers, minimizing the risk of cross-contamination.</p>",
+    "keywords": ["patent", "filtration", "HEPA", "intellectual property", "lab"],
+    "link": "/docs/P-2023-441"
+  },
+  {
+    "id": "R-2022-A",
+    "title": "Review: Heavy Metal Bioaccumulation in Saprotrophic Fungi",
+    "author": "K. Spore",
+    "type": "Literature Review",
+    "publication_date": "2022-07-15",
+    "summary": "Exhaustive analysis of five seminal papers on the capacity of saprotrophic fungi to extract and accumulate cadmium and lead from contaminated soils (Mycoremediation).",
+    "content": "<p>Comparative analysis of studies by Jenson (2020) and Silva (2021) shows a significant correlation between the production of ligninolytic enzymes and efficiency in lead ($Pb$) absorption. Strains of <em>Trametes versicolor</em> are concluded to be the most promising for future applications.</p>",
+    "keywords": ["literature review", "mycoremediation", "heavy metals", "saprotrophic", "cadmium"],
+    "link": "/docs/R-2022-A"
+  }
+]
+

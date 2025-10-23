@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coprophilous Culture Lab</title>
+  <link rel="stylesheet" href="styles.css">
+    <style>
+        /* CSS from original file is kept for style consistency */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0a0a0a;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            min-height: 100vh;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 255, 0, 0.03) 2px,
+                    rgba(0, 255, 0, 0.03) 4px
+                );
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #000;
+            border: 4px solid #8b4513;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 0 40px rgba(139, 69, 19, 0.4);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #8b4513;
+        }
+        .title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ffaa00;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .title::before {
+            content: "🍄";
+            font-size: 32px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: 2px solid;
+            background: transparent;
+            color: inherit;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .btn-clear {
+            border-color: #00ff00;
+            color: #00ff00;
+        }
+        .btn-clear:hover {
+            background: #00ff00;
+            color: #000;
+        }
+        .btn-save {
+            border-color: #ffaa00;
+            background: #ffaa00;
+            color: #000;
+        }
+        .btn-save:hover {
+            background: #ff8800;
+        }
+        .btn-close {
+            border-color: #ff0000;
+            color: #ff0000;
+            padding: 8px;
+        }
+        .btn-close:hover {
+            background: #ff0000;
+            color: #fff;
+        }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        .section {
+            border: 2px solid;
+            border-radius: 4px;
+            padding: 16px;
+        }
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid;
+        }
+        .spawn-section {
+            border-color: #00ff88;
+        }
+        .spawn-section .section-title {
+            color: #00ff88;
+            border-color: #00ff88;
+        }
+        .fruit-section {
+            border-color: #ff8800;
+        }
+        .fruit-section .section-title {
+            color: #ff8800;
+            border-color: #ff8800;
+        }
+        .mix-display {
+            border-color: #00ffff;
+        }
+        .mix-display .section-title {
+            color: #00ffff;
+            border-color: #00ffff;
+        }
+        .ingredient-list {
+            max-height: 320px;
+            overflow-y: auto;
+            padding: 12px;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            border-radius: 4px;
+        }
+        .ingredient-item {
+            margin-bottom: 12px;
+        }
+        .ingredient-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        .ingredient-name {
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .ingredient-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .ingredient-amount {
+            font-size: 12px;
+        }
+        .btn-adjust {
+            width: 20px;
+            height: 20px;
+            border: 1px solid;
+            background: transparent;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        .btn-minus {
+            border-color: #ff4444;
+            color: #ff4444;
+        }
+        .btn-minus:hover {
+            background: #ff4444;
+            color: #000;
+        }
+        .btn-plus {
+            border-color: #00ff00;
+            color: #00ff00;
+        }
+        .btn-plus:hover {
+            background: #00ff00;
+            color: #000;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #111;
+            border: 1px solid;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        .jar-container {
+            position: relative;
+            width: 100%;
+            height: 320px;
+            border: 3px solid #8b4513;
+            border-radius: 0 0 20px 20px;
+            overflow: hidden;
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.5));
+        }
+        .jar-lid {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 110%;
+            height: 30px;
+            background: #8b4513;
+            border-radius: 50% 50% 0 0;
+            border: 2px solid #654321;
+        }
+        .layer {
+            position: absolute;
+            left: 0;
+            right: 0;
+            transition: all 0.5s ease;
+        }
+        .substrate-label {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            opacity: 0.8;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+        .colonization-particles {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            animation: float 3s infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0.5; }
+            50% { transform: translateY(-20px) translateX(10px); opacity: 1; }
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        .stat-card {
+            padding: 12px;
+            border: 1px solid rgba(255, 170, 0, 0.3);
+            border-radius: 4px;
+            background: rgba(255, 170, 0, 0.05);
+        }
+        .stat-label {
+            font-size: 11px;
+            color: #ffaa00;
+            margin-bottom: 4px;
+        }
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .stat-unit {
+            font-size: 12px;
+            color: #888;
+            margin-left: 4px;
+        }
+        .shelf {
+            border-top: 4px solid #8b4513;
+            padding-top: 16px;
+        }
+        .shelf-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .shelf-title {
+            font-size: 14px;
+            color: #ffaa00;
+        }
+        .shelf-hint {
+            font-size: 11px;
+            color: #666;
+        }
+        .bottles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 12px;
+            padding: 16px;
+            border: 2px solid #8b4513;
+            border-radius: 8px;
+            background: linear-gradient(to bottom, transparent, rgba(139,69,19,0.1));
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .bottle {
+            cursor: pointer;
+            transition: transform 0.2s;
+            text-align: center;
+        }
+        .bottle:hover {
+            transform: scale(1.1);
+        }
+        .bottle.clicked {
+            transform: scale(0.95);
+        }
+        .bottle-icon {
+            width: 60px;
+            height: 80px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .bottle-label {
+            font-size: 10px;
+            margin-top: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .bottle-amount {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ffaa00;
+            color: #000;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        .warning {
+            padding: 12px;
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid #ff0000;
+            border-radius: 4px;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #ff6666;
+        }
+        .success {
+            padding: 12px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #00ff00;
+            border-radius: 4px;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #00ff00;
+        }
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #8b4513;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a0522d;
+        }
+    </style>
+
+  <style>
+    /* === ADDITIONS for nutrient tooltips and total bar === */
+    .nutrient-tooltip {
+      position: absolute;
+      background: rgba(0,0,0,0.9);
+      color: #ffa;
+      border: 1px solid #550;
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-size: 0.75rem;
+      pointer-events: none;
+      display: none;
+      z-index: 9999;
+    }
+    .nutrient-total {
+      margin-top: 10px;
+      border-top: 1px dashed #333;
+      padding-top: 8px;
+      color: #9f9;
+      font-family: monospace;
+    }
+    .nutrient-bars {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+      gap: 4px;
+      margin-top: 6px;
+    }
+    .nutrient-bar {
+      height: 4px;
+      border-radius: 2px;
+      background: linear-gradient(90deg,#333,#666);
+      position: relative;
+    }
+    .nutrient-bar::after {
+      content: '';
+      position: absolute;
+      top:0;left:0;bottom:0;
+      background: limegreen;
+      width: var(--val,0%);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🍄 COPROPHILOUS CULTURE LAB</h1>
+    <button id="clearBtn">CLEAR</button>
+    <button id="saveBtn">SAVE MIX</button>
+  </header>
+
+  <main>
+    <section id="spawn-substrate" class="mix-section">
+      <h2>SPAWN SUBSTRATE</h2>
+      <div class="mix-list"></div>
+      <div class="total">Total: <span class="total-weight">0g</span></div>
+    </section>
+
+    <section id="substrate-layers" class="mix-section">
+      <h2>SUBSTRATE LAYERS</h2>
+      <div class="layer-stack"></div>
+      <div id="mixTotals" class="nutrient-total"></div>
+    </section>
+
+    <section id="fruiting-substrate" class="mix-section">
+      <h2>FRUITING SUBSTRATE</h2>
+      <div class="mix-list"></div>
+      <div class="total">Total: <span class="total-weight">0g</span></div>
+    </section>
+  </main>
+
+  <footer>
+    <h3>SUBSTRATE LIBRARY</h3>
+    <div id="library" class="ingredient-library"></div>
+  </footer>
+
+  <!-- Tooltip for nutrient info -->
+  <div id="nutrientTooltip" class="nutrient-tooltip"></div>
+
+  <script>
+    /***********************
+     * INGREDIENT DATA
+     ***********************/
+    const ingredients = [
+      { id:"rye", name:"Rye Grain", category:"grain", unit:"g", nutrients:{N:1.5,P:0.5,K:0.4,Ca:0.1,OM:45}},
+      { id:"millet", name:"Millet", category:"grain", unit:"g", nutrients:{N:1.6,P:0.6,K:0.5,Ca:0.1,OM:44}},
+      { id:"wbs", name:"Wild Bird Seed", category:"grain", unit:"g", nutrients:{N:1.4,P:0.5,K:0.3,Ca:0.1,OM:46}},
+      { id:"rice", name:"Brown Rice", category:"grain", unit:"g", nutrients:{N:1.2,P:0.4,K:0.2,Ca:0.1,OM:43}},
+      { id:"soy", name:"Soy Hulls", category:"protein", unit:"g", nutrients:{N:2.8,P:0.8,K:0.6,Ca:0.3,OM:55}},
+      { id:"bran", name:"Wheat Bran", category:"fiber", unit:"g", nutrients:{N:2.0,P:0.6,K:0.5,Ca:0.2,OM:52}},
+      { id:"sawdust", name:"Hardwood Sawdust", category:"wood", unit:"g", nutrients:{N:0.3,P:0.1,K:0.2,Ca:0.1,OM:80}},
+      { id:"coir", name:"Coconut Coir", category:"fiber", unit:"g", nutrients:{N:0.6,P:0.2,K:0.6,Ca:0.1,OM:78}},
+      { id:"gypsum", name:"Gypsum", category:"mineral", unit:"g", nutrients:{N:0,P:0,Ca:18,K:0,OM:0}},
+      { id:"lime", name:"Hydrated Lime", category:"mineral", unit:"g", nutrients:{N:0,P:0,Ca:25,K:0,OM:0}},
+      { id:"compost1", name:"Mushroom Compost", category:"compost", unit:"g", nutrients:{N:1.0,P:0.4,K:0.8,Ca:0.5,OM:55}},
+      { id:"compost2", name:"Aged Horse Manure", category:"compost", unit:"g", nutrients:{N:1.2,P:0.5,K:0.9,Ca:0.4,OM:58}},
+      { id:"compost3", name:"Cow Manure Compost", category:"compost", unit:"g", nutrients:{N:0.9,P:0.4,K:0.7,Ca:0.3,OM:57}},
+      { id:"enriched1", name:"Enriched Wood Blend", category:"blend", unit:"g", nutrients:{N:1.5,P:0.5,K:0.5,Ca:0.2,OM:65}},
+      { id:"enriched2", name:"Gypsum-Enriched Compost", category:"blend", unit:"g", nutrients:{N:1.1,P:0.4,K:0.7,Ca:6,OM:52}},
+      { id:"vermiculite", name:"Vermiculite", category:"mineral", unit:"g", nutrients:{N:0,P:0,K:0,Ca:0,OM:0}},
+      { id:"corn", name:"Cracked Corn", category:"grain", unit:"g", nutrients:{N:1.4,P:0.5,K:0.4,Ca:0.1,OM:45}},
+      { id:"barley", name:"Barley", category:"grain", unit:"g", nutrients:{N:1.3,P:0.4,K:0.3,Ca:0.1,OM:44}},
+      { id:"alfalfa", name:"Alfalfa Meal", category:"organic", unit:"g", nutrients:{N:3.0,P:0.6,K:2.0,Ca:2.5,OM:55}},
+      { id:"cottonseed", name:"Cottonseed Meal", category:"organic", unit:"g", nutrients:{N:6.0,P:2.5,K:1.5,Ca:1.0,OM:50}},
+      { id:"bloodmeal", name:"Blood Meal", category:"organic", unit:"g", nutrients:{N:12.0,P:1.0,K:0.5,Ca:0.5,OM:40}},
+      { id:"feathermeal", name:"Feather Meal", category:"organic", unit:"g", nutrients:{N:15.0,P:0.3,K:0.3,Ca:0.2,OM:40}},
+      { id:"coffee", name:"Spent Coffee Grounds", category:"organic", unit:"g", nutrients:{N:2.1,P:0.3,K:0.6,Ca:0.2,OM:55}},
+      { id:"gypsum2", name:"Agricultural Gypsum (fine)", category:"mineral", unit:"g", nutrients:{N:0,P:0,Ca:19,K:0,OM:0}},
+      { id:"peat", name:"Peat Moss", category:"organic", unit:"g", nutrients:{N:1.0,P:0.2,K:0.2,Ca:0.1,OM:70}},
+    ];
+
+    /***********************
+     * RENDER LIBRARY
+     ***********************/
+    const libEl = document.getElementById('library');
+    ingredients.forEach(ing => {
+      const card = document.createElement('div');
+      card.className = 'ingredient-card';
+      card.draggable = true;
+      card.dataset.id = ing.id;
+      card.innerHTML = `<span>${ing.name}</span>`;
+      libEl.appendChild(card);
+
+      // Hover nutrient tooltip
+      card.addEventListener('mouseenter', e=>{
+        const tip = document.getElementById('nutrientTooltip');
+        const n = ing.nutrients;
+        tip.innerHTML = `<strong>${ing.name}</strong><br>
+          N:${n.N}% P:${n.P}% K:${n.K}% Ca:${n.Ca}% OM:${n.OM}%`;
+        tip.style.display = 'block';
+      });
+      card.addEventListener('mousemove', e=>{
+        const tip = document.getElementById('nutrientTooltip');
+        tip.style.left = e.pageX + 15 + 'px';
+        tip.style.top = e.pageY + 15 + 'px';
+      });
+      card.addEventListener('mouseleave', e=>{
+        document.getElementById('nutrientTooltip').style.display = 'none';
+      });
+
+      // Drag & drop
+      card.addEventListener('dragstart', e=>{
+        e.dataTransfer.setData('text/plain', ing.id);
+      });
+    });
+
+    /***********************
+     * MIX HANDLING
+     ***********************/
+    const sections = document.querySelectorAll('.mix-section');
+    const mixData = { spawn: [], layers: [], fruit: [] };
+
+    sections.forEach(section=>{
+      section.addEventListener('dragover', e=> e.preventDefault());
+      section.addEventListener('drop', e=>{
+        e.preventDefault();
+        const id = e.dataTransfer.getData('text/plain');
+        const ing = ingredients.find(i=>i.id===id);
+        if (!ing) return;
+        const key = section.id.includes('spawn') ? 'spawn'
+                   : section.id.includes('fruit') ? 'fruit' : 'layers';
+        mixData[key].push({...ing, weight:100});
+        renderMix(key);
+        updateTotals();
+      });
+    });
+
+    function renderMix(key){
+      const container = document.querySelector(
+        key==='layers'? '#substrate-layers .layer-stack'
+        : `#${key}-substrate .mix-list`);
+      container.innerHTML = '';
+      mixData[key].forEach(item=>{
+        const div = document.createElement('div');
+        div.textContent = `${item.name} ${item.weight}${item.unit}`;
+        container.appendChild(div);
+      });
+      const total = mixData[key].reduce((a,b)=>a+b.weight,0);
+      document.querySelector(`#${key}-substrate .total-weight`)?.textContent = total + 'g';
+    }
+
+    function updateTotals(){
+      // flatten all mixes into one combined total
+      const all = [...mixData.spawn, ...mixData.layers, ...mixData.fruit];
+      if (all.length===0){ document.getElementById('mixTotals').innerHTML=''; return; }
+
+      let sums = {N:0,P:0,K:0,Ca:0,OM:0, mass:0};
+      all.forEach(i=>{
+        const w = i.weight;
+        sums.mass += w;
+        for (let k in i.nutrients) sums[k] += i.nutrients[k]*w;
+      });
+      for (let k of ['N','P','K','Ca','OM'])
+        sums[k] = (sums[k]/sums.mass).toFixed(2);
+
+      document.getElementById('mixTotals').innerHTML = `
+        <strong>TOTAL MIX</strong><br>
+        N:${sums.N}% P:${sums.P}% K:${sums.K}% Ca:${sums.Ca}% OM:${sums.OM}% 
+        <div class="nutrient-bars">
+          ${['N','P','K','Ca','OM'].map(k=>`
+            <div class="nutrient-bar" style="--val:${Math.min(sums[k]*3,100)}%"></div>
+          `).join('')}
+        </div>`;
+    }
+  </script>
+</body>
+</html>
+

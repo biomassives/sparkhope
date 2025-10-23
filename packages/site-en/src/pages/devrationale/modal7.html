@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formulation Lab MVP</title>
+<style>
+  body { font-family: sans-serif; padding: 20px; background: #f0f0f0; }
+  h2 { margin-top: 40px; }
+  #ingredient-shelf { display: flex; gap: 10px; padding: 10px; background: #ddd; border-radius: 5px; overflow-x: auto; }
+  .bottle { padding: 10px; background: #fff; border: 1px solid #aaa; border-radius: 5px; cursor: grab; width: 120px; text-align: center; }
+  .section { margin-top: 20px; padding: 10px; background: #eee; border: 1px solid #bbb; border-radius: 5px; min-height: 150px; }
+  .ingredient-list { margin-top: 10px; }
+  .ingredient-row { padding: 2px 5px; border-bottom: 1px solid #ccc; }
+  .nutrient-display { margin-top: 10px; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<h1>Formulation Lab Bench MVP</h1>
+
+<h2>Ingredient Shelf</h2>
+<div id="ingredient-shelf"></div>
+
+<h2>Sections</h2>
+<div class="section" id="section-1">
+  <div>Section 1</div>
+  <div class="ingredient-list"></div>
+  <div class="nutrient-display">C: 0 | N: 0 | P: 0 | K: 0</div>
+</div>
+
+<div class="section" id="section-2">
+  <div>Section 2</div>
+  <div class="ingredient-list"></div>
+  <div class="nutrient-display">C: 0 | N: 0 | P: 0 | K: 0</div>
+</div>
+
+<script>
+// MVP Ingredient Data
+const ingredients = [
+  {id: "ingredient-1", name: "Wild Bird Seed", category: "grain", nutrients: {carbon: 50, nitrogen: 2.5, phosphorus: 0.5, potassium: 1}},
+  {id: "ingredient-2", name: "Gypsum Powder", category: "amendment", nutrients: {carbon: 0, nitrogen: 0, phosphorus: 0.2, potassium: 0}},
+  {id: "ingredient-3", name: "Compost Mix", category: "organic", nutrients: {carbon: 30, nitrogen: 1.2, phosphorus: 0.3, potassium: 0.5}},
+  {id: "ingredient-4", name: "Enriched Mushroom Blend", category: "spawn", nutrients: {carbon: 40, nitrogen: 3, phosphorus: 0.6, potassium: 0.8}},
+  {id: "ingredient-5", name: "Soy Hulls", category: "grain", nutrients: {carbon: 55, nitrogen: 2, phosphorus: 0.4, potassium: 1.1}}
+  // add more as needed
+];
+
+function renderShelf() {
+  const shelf = document.getElementById('ingredient-shelf');
+  shelf.innerHTML = '';
+  ingredients.forEach(ing => {
+    const bottle = document.createElement('div');
+    bottle.className = 'bottle';
+    bottle.draggable = true;
+    bottle.dataset.id = ing.id;
+    bottle.innerHTML = `<div>${ing.name}</div><div>${ing.category}</div>`;
+    bottle.addEventListener('dragstart', e => e.dataTransfer.setData('ingredient-id', ing.id));
+    shelf.appendChild(bottle);
+  });
+}
+
+function setupDropzones() {
+  document.querySelectorAll('.section').forEach(section => {
+    section.addEventListener('dragover', e => e.preventDefault());
+    section.addEventListener('drop', e => {
+      e.preventDefault();
+      const id = e.dataTransfer.getData('ingredient-id');
+      const ingredient = ingredients.find(i => i.id === id);
+      if (ingredient) addIngredientToSection(section, ingredient);
+    });
+  });
+}
+
+function addIngredientToSection(section, ingredient) {
+  const list = section.querySelector('.ingredient-list');
+  const row = document.createElement('div');
+  row.className = 'ingredient-row';
+  row.textContent = ingredient.name;
+  list.appendChild(row);
+  updateSectionNutrients(section);
+}
+
+function updateSectionNutrients(section) {
+  const rows = section.querySelectorAll('.ingredient-row');
+  const totals = {carbon:0, nitrogen:0, phosphorus:0, potassium:0};
+  rows.forEach(row => {
+    const ing = ingredients.find(i => i.name === row.textContent);
+    if (ing && ing.nutrients) {
+      for (let key in ing.nutrients) {
+        totals[key] += ing.nutrients[key];
+      }
+    }
+  });
+  const display = section.querySelector('.nutrient-display');
+  display.textContent = `C: ${totals.carbon.toFixed(1)} | N: ${totals.nitrogen.toFixed(2)} | P: ${totals.phosphorus.toFixed(2)} | K: ${totals.potassium.toFixed(2)}`;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderShelf();
+  setupDropzones();
+});
+</script>
+
+</body>
+</html>
+

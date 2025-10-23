@@ -1,0 +1,31 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getAllRacks } from '../../utils/loadData';
+
+const racks = getAllRacks();
+---
+
+<Layout title="Storage - SparkHope MycoLab">
+  <div style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 2rem;">🗄️ Storage & Locations</h1>
+    
+    <div style="background: white; border: 2px solid #8b7355; padding: 1.5rem; margin-bottom: 2rem; text-align: center;">
+      <div style="font-size: 2rem; font-weight: 700; color: #87a878;">{racks.length}</div>
+      <div style="font-size: 0.9rem; color: #666;">Storage Locations</div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+      {racks.map((rack: any) => (
+        <a href={`/racks/${rack.id}`} style="text-decoration: none; color: inherit;">
+          <div style="background: white; border: 2px solid #8b7355; padding: 1.5rem; border-radius: 8px; transition: all 0.2s;">
+            <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: #5a6e4f;">{rack.name}</h3>
+            <p style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">{rack.location || 'Lab'}</p>
+            {rack.capacity && (
+              <p style="font-size: 0.85rem; color: #999;">Capacity: {rack.capacity}</p>
+            )}
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,31 @@
+<svg width="200" height="400" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Primary contour using pronounced lines from the stone -->
+  <path d="M100,90
+           L85,130
+           L70,200
+           L90,280
+           L130,340
+           L145,250
+           L120,140
+           L100,90"
+        fill="none" stroke="black" stroke-width="4" />
+
+  <!-- Secondary contours using additional pronounced lines -->
+  <path d="M95,100
+           L80,150
+           L75,210
+           L80,260
+           L115,320
+           L130,220
+           L95,100"
+        fill="none" stroke="gray" stroke-width="2" />
+
+  <path d="M90,110
+           L75,160
+           L70,230
+           L80,270
+           L95,310
+           L110,230
+           L90,110"
+        fill="none" stroke="lightgray" stroke-width="1" />
+</svg>

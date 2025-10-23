@@ -1,0 +1,151 @@
+---
+// Define props based on the batch data structure
+const { 
+    id, 
+    name, 
+    species, 
+    start_date, 
+    stage, 
+    status, 
+    vessel_type, 
+    success_rating 
+} = Astro.props;
+
+// Calculate days since start (placeholder for a real-time calculation)
+const today = new Date();
+const startDate = new Date(start_date);
+const diffTime = Math.abs(today.getTime() - startDate.getTime());
+const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+// Status styling mapping
+const statusClassMap: { [key: string]: string } = {
+    'Preparing': 'status-gold',
+    'Active': 'status-moss',
+    'Complete': 'status-sage',
+    'Aborted': 'status-terracotta'
+};
+
+const statusClass = statusClassMap[status] || 'status-sepia';
+
+// Success Rating to Emojis
+const ratingEmoji = '★'.repeat(Math.round(success_rating / 2));
+---
+
+<a 
+    href={`/batches/${id}`} 
+    class="batch-card"
+    data-id={id}
+    data-species={species}
+    data-stage={stage}
+    data-status={status}
+    data-days={diffDays}
+    data-rating={success_rating}
+>
+    <div class="card-header">
+        <span class="batch-stage">{stage}</span>
+        <span class={`batch-status ${statusClass}`}>{status}</span>
+    </div>
+    
+    <h3 class="batch-name">{name}</h3>
+    
+    <div class="batch-details">
+        <p><strong>Species:</strong> {species}</p>
+        <p><strong>Vessel:</strong> {vessel_type}</p>
+        <p><strong>Started:</strong> {new Date(start_date).toLocaleDateString('en-US')}</p>
+    </div>
+
+    <div class="card-footer">
+        <span class="days-active">⏳ {diffDays} Days Active</span>
+        <span class="success-rating" title={`Success Rating: ${success_rating}/10`}>
+            {ratingEmoji}
+        </span>
+    </div>
+</a>
+
+<style>
+    .batch-card {
+        display: flex;
+        flex-direction: column;
+        background: var(--botanical-paper, #faf8f3);
+        border: 2px solid var(--botanical-sepia, #8b7355);
+        border-radius: 6px;
+        padding: 1.5rem;
+        text-decoration: none;
+        color: var(--botanical-ink, #3d3027);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+    }
+
+    .batch-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        border-color: var(--botanical-gold, #d4a574);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--botanical-dusty-rose);
+    }
+
+    .batch-stage {
+        font-size: 0.9rem;
+        font-variant: small-caps;
+        font-weight: 600;
+        color: var(--botanical-sepia);
+    }
+    
+    .batch-status {
+        font-size: 0.85rem;
+        font-weight: 700;
+        padding: 0.25rem 0.6rem;
+        border-radius: 3px;
+    }
+
+    /* Status Color Classes */
+    .status-gold { background: var(--botanical-gold); color: white; }
+    .status-moss { background: var(--botanical-moss); color: white; }
+    .status-sage { background: var(--botanical-sage); color: white; }
+    .status-terracotta { background: var(--botanical-terracotta); color: white; }
+
+    .batch-name {
+        font-family: var(--font-heading);
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--botanical-moss);
+        margin-bottom: 1rem;
+    }
+    
+    .batch-details {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+        flex-grow: 1;
+    }
+    
+    .batch-details strong {
+        color: var(--botanical-ink);
+        font-weight: 600;
+    }
+
+    .card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 1rem;
+        border-top: 1px dashed var(--botanical-sepia);
+    }
+    
+    .days-active {
+        font-size: 0.9rem;
+        color: var(--botanical-sepia);
+    }
+
+    .success-rating {
+        font-size: 1.2rem;
+        color: var(--botanical-gold);
+    }
+</style>
+

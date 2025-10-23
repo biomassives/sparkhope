@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MycoMixer App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" />
+</head>
+<body>
+    <div id="root"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
+    <script>
+        const { useState, useEffect } = React;
+
+        const MycoMixer = () => {
+            const [ingredients, setIngredients] = useState({});
+            const [ingredientDatabase, setIngredientDatabase] = useState([]);
+            const [clickedBottle, setClickedBottle] = useState(null);
+
+            useEffect(() => {
+                const loadIngredients = async () => {
+                    const demoBottles = [
+                        { id: 'agar', name: 'MEA Agar', color: '#00ff00', increment: 5, unit: 'g' },
+                        { id: 'water', name: 'Distilled Water', color: '#00ffff', increment: 50, unit: 'ml' },
+                    ];
+                    setIngredientDatabase(demoBottles);
+                    const initialState = {};
+                    demoBottles.forEach(b => {
+                        initialState[b.id] = 0;
+                    });
+                    setIngredients(initialState);
+                };
+                
+                loadIngredients();
+            }, []);
+
+            const addIngredient = (bottleId, increment) => {
+                setIngredients(prev => ({
+                    ...prev,
+                    [bottleId]: (prev[bottleId] || 0) + increment
+                }));
+                setClickedBottle(bottleId);
+                setTimeout(() => setClickedBottle(null), 300);
+            };
+
+            return (
+                <div className="relative p-4">
+                    <h1 className="text-2xl font-bold">MycoMixer</h1>
+                    <div className="grid grid-cols-4 gap-4 mt-4">
+                        {ingredientDatabase.map(bottle => (
+                            <button 
+                                key={bottle.id} 
+                                onClick={() => addIngredient(bottle.id, bottle.increment)} 
+                                className="relative border p-2 rounded"
+                                style={{ backgroundColor: clickedBottle === bottle.id ? '#f0f0f0' : 'white' }}
+                            >
+                                <div style={{ backgroundColor: bottle.color }}>
+                                    {bottle.name}
+                                </div>
+                                <div>{ingredients[bottle.id]} {bottle.unit}</div>
+                                <div style={{ display: 'inline-block', width: '24px', height: '24px', verticalAlign: 'middle' }}>
+                                    <svg width="24" height="24" fill={bottle.color}>
+                                        <circle cx="12" cy="12" r="12" />
+                                    </svg>
+                                </div>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => <MycoMixer />;
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
+

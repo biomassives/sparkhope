@@ -1,0 +1,35 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const sections = [
+  { id: 'art', title: 'Mycological Art', icon: '🎨', color: '#d4a574' },
+  { id: 'patents', title: 'Patents & IP', icon: '📜', color: '#8b7355' },
+  { id: 'case-studies', title: 'Case Studies', icon: '📊', color: '#6b8e7f' },
+  { id: 'popular-culture', title: 'Popular Culture', icon: '🎬', color: '#c89b6f' },
+  { id: 'research-trends', title: 'Research Trends', icon: '📈', color: '#87a878' },
+  { id: 'tech-infusion', title: 'Technology Infusion', icon: '💡', color: '#7a9b8e' }
+];
+---
+
+<Layout title="Literature Review - SparkHope MycoLab">
+  <div style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 1rem; text-align: center;">📚 Literature Review</h1>
+    <p style="text-align: center; font-size: 1.25rem; color: var(--text-secondary); margin-bottom: 3rem;">
+      Exploring mycology through diverse lenses
+    </p>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+      {sections.map(section => (
+        <a href={`/lit-review/${section.id}`} style="text-decoration: none; color: inherit;">
+          <div style={`background: var(--card-bg); border: 3px solid ${section.color}; padding: 2rem; border-radius: 16px; transition: all 0.3s; height: 100%;`}>
+            <div style="font-size: 3rem; margin-bottom: 1rem;">{section.icon}</div>
+            <h2 style={`font-size: 1.5rem; margin-bottom: 1rem; color: ${section.color};`}>{section.title}</h2>
+            <p style="color: var(--text-secondary); line-height: 1.6;">
+              Explore {section.title.toLowerCase()} in mycology
+            </p>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</Layout>

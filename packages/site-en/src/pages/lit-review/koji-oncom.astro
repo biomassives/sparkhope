@@ -1,0 +1,376 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Koji & Oncom - MycoLab">
+
+  <div class="reader-header">
+    <h1>🌾 Koji & Oncom Library</h1>
+    <p class="subtitle">Solid-State Fermentation Research Notes and Comparative Studies</p>
+
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="overview">Overview</button>
+      <button class="tab-btn" data-tab="koji">Koji</button>
+      <button class="tab-btn" data-tab="oncom">Oncom</button>
+      <button class="tab-btn" data-tab="tempeh">Tempeh</button>
+      <button class="tab-btn" data-tab="quality">Quality Control</button>
+      <button class="tab-btn" data-tab="modern">Modern Applications</button>
+      <button class="tab-btn" data-tab="protocol">Production Protocol</button>
+      <button class="tab-btn" data-tab="safety">Safety</button>
+      <button class="tab-btn" data-tab="research">R&D</button>
+    </nav>
+  </div>
+
+  <div class="tab-content-container">
+
+    <!-- Overview -->
+    <section id="overview" class="tab-content active">
+      <div class="content-card">
+        <h2>What is Solid-State Fermentation (SSF)?</h2>
+        <p>Solid-State Fermentation utilizes microfungi (Ascomycetes and Zygomycetes) to transform low-value agricultural waste into nutrient-dense food products. This ancient technology addresses multiple challenges simultaneously:</p>
+        <ul>
+          <li>Converts waste streams into high-protein foods</li>
+          <li>Increases protein content significantly</li>
+          <li>Enhances nutrient bioavailability</li>
+          <li>Provides rapid production cycles (24–96 hours)</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Koji -->
+    <section id="koji" class="tab-content">
+      <div class="content-card">
+        <h2>Koji (Aspergillus oryzae)</h2>
+        <p>Koji is the cornerstone of Japanese fermentation culture, used to produce sake, miso, soy sauce, and amazake.</p>
+        <h3>Substrates</h3>
+        <ul>
+          <li><strong>Rice:</strong> Most common, produces delicate flavors</li>
+          <li><strong>Barley:</strong> Traditional for miso production</li>
+          <li><strong>Soybeans:</strong> Used for specific soy sauce types</li>
+        </ul>
+        <h3>Enzyme Production</h3>
+        <ul>
+          <li><strong>Amylase:</strong> Breaks down starches into sugars</li>
+          <li><strong>Protease:</strong> Breaks down proteins into amino acids</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Oncom -->
+    <section id="oncom" class="tab-content">
+      <div class="content-card">
+        <h2>Oncom (Neurospora spp.)</h2>
+        <p>Oncom is a vibrant orange fermented cake produced with Neurospora intermedia, traditionally grown on peanut press cake and okara.</p>
+        <ul>
+          <li><strong>Substrates:</strong> Peanut press cake, okara, cassava</li>
+          <li><strong>Color:</strong> Bright orange from Neurospora pigments</li>
+          <li><strong>Flavor:</strong> Nutty, umami-rich</li>
+          <li><strong>Cycle:</strong> 3–4 days</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Tempeh -->
+    <section id="tempeh" class="tab-content">
+      <div class="content-card">
+        <h2>Tempeh (Rhizopus oligosporus)</h2>
+        <p>Tempeh deserves mention as the most famous SSF food product, sharing production principles with oncom.</p>
+        <ul>
+          <li><strong>Cycle:</strong> 24–48 hours at 30–32°C</li>
+          <li><strong>Protein:</strong> &gt;40% (dry weight)</li>
+          <li><strong>Adoption:</strong> Globally recognized protein</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Quality -->
+    <section id="quality" class="tab-content">
+      <div class="content-card">
+        <h2>Quality Control Challenge</h2>
+        <p>Home-scale production without standard inoculum results in variable quality. Standardized liquid culture ensures consistency and safety.</p>
+      </div>
+    </section>
+
+    <!-- Modern -->
+    <section id="modern" class="tab-content">
+      <div class="content-card">
+        <h2>Modern Applications</h2>
+        <ul>
+          <li>Rapid protein generation for food security</li>
+          <li>Upcycling okara and peanut press cake</li>
+          <li>Functional food and circular economy</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Protocol -->
+    <section id="protocol" class="tab-content">
+      <div class="content-card">
+        <h2>Basic Production Protocol</h2>
+        <p>SSF can be performed using local materials and minimal equipment:</p>
+        <ol>
+          <li>Prepare and pasteurize substrate</li>
+          <li>Inoculate with starter culture</li>
+          <li>Ferment 24–96 hours</li>
+          <li>Harvest and process</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Safety -->
+    <section id="safety" class="tab-content">
+      <div class="content-card warning-box">
+        <h2>⚠️ Safety Considerations</h2>
+        <ul>
+          <li>Use pure cultures only</li>
+          <li>Pasteurize substrate properly</li>
+          <li>Maintain cleanliness</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- R&D -->
+    <section id="research" class="tab-content">
+      <div class="content-card">
+        <h2>Research & Development</h2>
+        <ul>
+          <li>Optimization studies</li>
+          <li>Food waste fermentation</li>
+          <li>Integrated farming applications</li>
+        </ul>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+      });
+    });
+  </script>
+
+  <style>
+    .reader-header {
+      text-align: center;
+      padding: 2rem 1rem 1rem;
+      border-bottom: 3px solid #9900ff;
+      background: radial-gradient(circle at center, #0d0d0d 0%, #000 100%);
+    }
+
+    .reader-header h1 {
+      font-family: 'Press Start 2P', monospace;
+      color: #9900ff;
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 10px rgba(153,0,255,0.6);
+    }
+
+    .subtitle {
+      font-family: 'VT323', monospace;
+      color: #ccc;
+      font-size: 1.3rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .tab-nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .tab-btn {
+      background: #111;
+      border: 2px solid #9900ff;
+      color: #ccc;
+      font-family: 'VT323', monospace;
+      font-size: 1.1rem;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn.active, .tab-btn:hover {
+      background: #9900ff;
+      color: #000;
+      box-shadow: 0 0 10px #9900ff;
+    }
+
+    .tab-content-container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .content-card {
+      background: #0a0a0a;
+      border: 2px solid #9900ff;
+      border-radius: 10px;
+      padding: 2rem;
+      box-shadow: 0 0 15px rgba(153, 0, 255, 0.25);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .tab-btn { font-size: 1rem; padding: 0.4rem 0.8rem; }
+      .reader-header h1 { font-size: 1.2rem; }
+    }
+  </style>
+
+</Layout>
+
+
+<style>
+  .page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .page-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 2rem;
+    color: #9900ff;
+    text-align: center;
+    margin-bottom: 2rem;
+    text-shadow: 0 0 20px rgba(153, 0, 255, 0.5);
+  }
+
+  .content-card {
+    background: #0a0a0a;
+    border: 3px solid #9900ff;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 0 20px rgba(153, 0, 255, 0.2);
+  }
+
+  .content-card h2 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 1.2rem;
+    color: #9900ff;
+    margin-bottom: 1.5rem;
+  }
+
+  .content-card h3 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.9rem;
+    color: #cc66ff;
+    margin: 1.5rem 0 1rem;
+  }
+
+  .content-card h4 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.7rem;
+    color: #ffaa00;
+    margin: 1rem 0 0.5rem;
+  }
+
+  .content-card p {
+    font-family: 'VT323', monospace;
+    font-size: 1.3rem;
+    color: #ffffff;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+
+  .content-card ul, .content-card ol {
+    font-family: 'VT323', monospace;
+    font-size: 1.2rem;
+    color: #ffffff;
+    line-height: 1.8;
+    margin-left: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .content-card li {
+    margin-bottom: 0.5rem;
+  }
+
+  .content-card strong {
+    color: #cc66ff;
+  }
+
+  .warning-box {
+    background: rgba(255, 170, 0, 0.1);
+    border: 2px solid #ffaa00;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 4px;
+  }
+
+  .highlight-box {
+    background: rgba(153, 0, 255, 0.1);
+    border: 2px solid #9900ff;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 4px;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-family: 'VT323', monospace;
+    font-size: 1.2rem;
+  }
+
+  .data-table th {
+    background: #9900ff;
+    color: #000;
+    padding: 0.75rem;
+    text-align: left;
+    font-weight: bold;
+  }
+
+  .data-table td {
+    border: 1px solid #9900ff;
+    padding: 0.75rem;
+    color: #ffffff;
+  }
+
+  .data-table tr:nth-child(even) {
+    background: rgba(153, 0, 255, 0.05);
+  }
+
+  @media (max-width: 768px) {
+    .page-container {
+      padding: 1rem;
+    }
+
+    .page-title {
+      font-size: 1.2rem;
+    }
+
+    .content-card {
+      padding: 1.5rem;
+    }
+
+    .data-table {
+      font-size: 1rem;
+    }
+  }
+</style>

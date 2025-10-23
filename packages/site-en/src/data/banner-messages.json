@@ -1,0 +1,50 @@
+[
+  {
+    "message": "🍄 IMPROVE MYCOLOGY KNOWLEDGE - EXPLORE SPECIES DATABASE",
+    "category": "education"
+  },
+  {
+    "message": "💾 TRY CLAUDE CODE DESKTOP - BUILD FASTER WITH AI",
+    "category": "tools"
+  },
+  {
+    "message": "🤝 SHARE YOUR RESEARCH - STRENGTHEN SCIENTIFIC COMMUNITY",
+    "category": "community"
+  },
+  {
+    "message": "🌍 MYCOLOGY FOR FOOD SECURITY - SUSTAINABLE PROTEIN SOURCE",
+    "category": "food-security"
+  },
+  {
+    "message": "☮️ FUNGI FOR PEACE - BIOREMEDIATION & CARBON CAPTURE",
+    "category": "peace"
+  },
+  {
+    "message": "📚 DOCUMENT YOUR BATCHES - CONTRIBUTE TO OPEN SCIENCE",
+    "category": "documentation"
+  },
+  {
+    "message": "🔬 LIQUID CULTURE RECIPES - OPTIMIZE YOUR CULTIVATION",
+    "category": "techniques"
+  },
+  {
+    "message": "🌱 MYCELIUM NETWORKS - NATURE'S INTERNET FOR ECOSYSTEMS",
+    "category": "ecology"
+  },
+  {
+    "message": "🧬 TRACK STRAINS - BUILD YOUR GENETIC LIBRARY",
+    "category": "genetics"
+  },
+  {
+    "message": "🏭 INDUSTRIAL MYCOLOGY - MUSHROOMS FOR MATERIALS",
+    "category": "innovation"
+  },
+  {
+    "message": "📖 READ LIT REVIEW - PATENTS, ART & CULTURE",
+    "category": "literature"
+  },
+  {
+    "message": "💡 MYCO-TECH FUSION - FUTURE OF SUSTAINABLE TECHNOLOGY",
+    "category": "technology"
+  }
+]

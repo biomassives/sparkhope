@@ -1,432 +1,965 @@
 ---
-// src/pages/index.astro - Dark theme with visible content
-import Layout from '../layouts/Layout.astro';
-import type { Batch, Recipe } from '../types';
-import { resolveRelations, type ResolvedRelations } from '../utils/resolveRelations';
-import RelationCardList from '../components/relations/RelationCardList.astro';
+// src/pages/index.astro - VINTAGE BOTANICAL DASHBOARD
+import Layout from './layouts/Layout.astro';
+import { initializeDataStore } from '../lib/initData.js';
+import type { Sample, Rack } from '../types/database'; 
 
-// Load JSON data
-import batchesData from '../data/batches.json';
-import recipesData from '../data/recipes.json';
+const store = await initializeDataStore();
 
-// Type guard helpers
-const isBatchArray = (data: unknown): data is Batch[] =>
-  Array.isArray(data) && data.every(item => typeof item === 'object' && 'id' in item);
+// Load all data
+const projects = await store.projects?.getAll() || [];
+const samples: Sample[] = await store.samples.getAll();
+const racks: Rack[] = await store.racks.getAll();
+const species = await store.species.getAll();
+const observations = await store.observations?.getAll() || [];
+const recipes = await store.recipes.getAll();
 
-const isRecipeArray = (data: unknown): data is Recipe[] =>
-  Array.isArray(data) && data.every(item => typeof item === 'object' && 'id' in item);
+// Active Projects
+const activeProjects = projects.filter((p: any) => p.status === 'Active');
+const highPriorityProjects = projects.filter((p: any) => p.priority === 'High');
 
-// Ensure correct typing from JSON
-const batchesJson: Batch[] = isBatchArray(batchesData) ? batchesData : [];
-const recipesJson: Recipe[] = isRecipeArray(recipesData) ? recipesData : [];
+// Samples Stats - with  TYPE ANNOTATIONS
+const readySamples = samples.filter((s: Sample) => s.status === 'ready');
+const contaminatedSamples = samples.filter((s: Sample) => s.contamination);
+const colonizingSamples = samples.filter((s: Sample) => s.status === 'colonizing');
 
-// Resolve relations for all batches
-const batchesWithRelations: (Batch & ResolvedRelations)[] = batchesJson.map((batch) => ({
-  ...batch,
-  ...resolveRelations(batch),
-}));
+// Rack Stats - with  TYPE ANNOTATIONS
+const totalCapacity = racks.reduce((sum: number, r: Rack) => sum + r.capacity, 0);
+const totalOccupied = racks.reduce((sum: number, r: Rack) => sum + r.current_count, 0);
+const occupancyRate = totalCapacity > 0 ? Math.round((totalOccupied / totalCapacity) * 100) : 0;
 
-// Resolve relations for all recipes
-const recipesWithRelations: (Recipe & ResolvedRelations)[] = recipesJson.map((recipe) => ({
-  ...recipe,
-  ...resolveRelations(recipe),
-}));
+// Recent Observations
+const recentObservations = observations
+  .sort((a: any, b: any) => new Date(b.observation_date).getTime() - new Date(a.observation_date).getTime())
+  .slice(0, 5);
 
-export const prerender = false;
+// System Status Cards
+const statusCards = [
+  { 
+    title: 'Specimens Ready',
+    value: readySamples.length,
+    latin: 'Cultura Praeparata',
+    status: 'healthy',
+    icon: '✓',
+    link: '/samples'
+  },
+  { 
+    title: 'Contamination',
+    value: contaminatedSamples.length,
+    latin: 'Corruptio Detecta',
+    status: 'warning',
+    icon: '⚠',
+    link: '/samples'
+  },
+  { 
+    title: 'Active Cultivation',
+    value: colonizingSamples.length,
+    latin: 'Crescentia Activa',
+    status: 'growing',
+    icon: '⟳',
+    link: '/samples'
+  },
+  { 
+    title: 'Priority Research',
+    value: highPriorityProjects.length,
+    latin: 'Investigatio Prima',
+    status: 'priority',
+    icon: '★',
+    link: '/projects'
+  }
+];
+
+// Get current time
+const now = new Date();
+const dateFormatted = now.toLocaleDateString('en-US', { 
+  year: 'numeric', 
+  month: 'long', 
+  day: 'numeric' 
+});
 ---
 
-<Layout title="SparkHope - MycoLab">
-  <div class="hero">
-    <div class="hero-content">
-      <h1>🍄 SparkHope MycoLab</h1>
-      <p class="hero-subtitle">Mushroom Cultivation Laboratory</p>
-      <p class="hero-description">
-        Track your batches, recipes, species, and observations
-      </p>
-    </div>
-  </div>
+<Layout title="SparkHope Mycology Laboratory - Specimen Catalogue">
+  <!-- Botanical Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 
-  <div class="container">
-    <!-- Quick Stats -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-number">{batchesWithRelations.length}</div>
-        <div class="stat-label">Batches</div>
+  <div class="botanical-dashboard">
+    
+    <!-- Botanical Header -->
+    <div class="botanical-header">
+      <div class="header-ornament top">✤ ❦ ✤</div>
+      <div class="header-content">
+        <h1 class="header-title">SparkHope</h1>
+        <div class="header-subtitle">Mycological Laboratory & Specimen Collection</div>
+        <div class="header-latin">Fungorum Cultura et Investigatio</div>
+        <div class="header-date">{dateFormatted}</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-number">{recipesWithRelations.length}</div>
-        <div class="stat-label">Recipes</div>
-      </div>
+      <div class="header-ornament bottom">✤ ❦ ✤</div>
     </div>
 
-    <!-- Batches Section -->
-    <section class="section">
-      <div class="section-header">
-        <h2>🧫 Batches</h2>
-        <a href="/batches" class="view-all-link">View All →</a>
+    <!-- Status Specimens -->
+    <div class="specimens-container">
+      <div class="section-title">
+        <span class="title-ornament">❦</span>
+        <span class="title-text">Laboratory Status</span>
+        <span class="title-ornament">❦</span>
       </div>
-      
-      {batchesWithRelations.length === 0 ? (
-        <div class="empty-state">
-          <p>No batches found. Add your first batch to get started!</p>
-        </div>
-      ) : (
-        <div class="content-grid">
-          {batchesWithRelations.map((batch) => (
-            <div data-key={batch.id} class="content-card">
-              <div class="card-header">
-                <h3 class="card-title">{batch.title}</h3>
-                {batch.status && (
-                  <span class={`badge badge-${batch.status}`}>
-                    {batch.status}
+
+      <div class="specimen-cards">
+        {statusCards.map((card) => (
+          <a href={card.link} class={`specimen-card status-${card.status}`}>
+            <div class="specimen-border">
+              <div class="specimen-icon">{card.icon}</div>
+              <div class="specimen-title">{card.title}</div>
+              <div class="specimen-value">{card.value}</div>
+              <div class="specimen-latin">{card.latin}</div>
+              <div class="specimen-corner tl">✤</div>
+              <div class="specimen-corner tr">✤</div>
+              <div class="specimen-corner bl">✤</div>
+              <div class="specimen-corner br">✤</div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <!-- Collection Index -->
+    <div class="collection-container">
+      <div class="section-title">
+        <span class="title-ornament">❦</span>
+        <span class="title-text">Collection Index</span>
+        <span class="title-ornament">❦</span>
+      </div>
+
+      <div class="index-grid">
+        <a href="/samples" class="index-card">
+          <div class="index-border">
+            <div class="index-icon">🧫</div>
+            <div class="index-name">Specimens</div>
+            <div class="index-latin">Specimina</div>
+            <div class="index-count">{samples.length}</div>
+            <div class="index-decoration">~ ❦ ~</div>
+          </div>
+        </a>
+
+        <a href="/species" class="index-card">
+          <div class="index-border">
+            <div class="index-icon">🍄</div>
+            <div class="index-name">Species</div>
+            <div class="index-latin">Genera et Species</div>
+            <div class="index-count">{species.length}</div>
+            <div class="index-decoration">~ ❦ ~</div>
+          </div>
+        </a>
+
+        <a href="/racks" class="index-card">
+          <div class="index-border">
+            <div class="index-icon">🗄️</div>
+            <div class="index-name">Collections</div>
+            <div class="index-latin">Collectiones</div>
+            <div class="index-count">{racks.length}</div>
+            <div class="index-decoration">~ ❦ ~</div>
+          </div>
+        </a>
+
+        <a href="/projects" class="index-card">
+          <div class="index-border">
+            <div class="index-icon">🔬</div>
+            <div class="index-name">Research</div>
+            <div class="index-latin">Investigationes</div>
+            <div class="index-count">{projects.length}</div>
+            <div class="index-decoration">~ ❦ ~</div>
+          </div>
+        </a>
+
+        <a href="/recipes" class="index-card">
+          <div class="index-border">
+            <div class="index-icon">📖</div>
+            <div class="index-name">Formulae</div>
+            <div class="index-latin">Formulae et Methodi</div>
+            <div class="index-count">{recipes.length}</div>
+            <div class="index-decoration">~ ❦ ~</div>
+          </div>
+        </a>
+
+        <a href="/observations" class="index-card">
+          <div class="index-border">
+            <div class="index-icon">📝</div>
+            <div class="index-name">Field Notes</div>
+            <div class="index-latin">Observationes</div>
+            <div class="index-count">{observations.length}</div>
+            <div class="index-decoration">~ ❦ ~</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Recent Field Notes -->
+    <div class="field-notes-container">
+      <div class="section-title">
+        <span class="title-ornament">❦</span>
+        <span class="title-text">Recent Field Notes</span>
+        <span class="title-ornament">❦</span>
+      </div>
+
+      <div class="field-notes">
+        {recentObservations.length === 0 ? (
+          <div class="field-note empty">
+            <div class="note-border">
+              <p class="empty-message">No observations recorded</p>
+              <p class="empty-latin">Observationes Nullae</p>
+            </div>
+          </div>
+        ) : (
+          recentObservations.map((obs: any) => (
+            <div class="field-note">
+              <div class="note-border">
+                <div class="note-header">
+                  <span class="note-date">
+                    {new Date(obs.observation_date).toLocaleDateString('en-US', { 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    })}
                   </span>
-                )}
-              </div>
-              
-              {batch.description && (
-                <p class="card-description">{batch.description}</p>
-              )}
+                  {obs.contamination && (
+                    <span class="note-warning">⚠ Contamination</span>
+                  )}
+                </div>
+                
+                <div class="note-subject">
+                  <span class="note-label">Subject:</span>
+                  <span class="note-text">{obs.growth_stage || 'General Observation'}</span>
+                </div>
 
-              <div class="card-relations">
-                <RelationCardList 
-                  title="Ingredients" 
-                  items={batch.linkedIngredients ?? []} 
-                  type="ingredient" 
-                />
-                <RelationCardList 
-                  title="Species" 
-                  items={batch.linkedSpecies ?? []} 
-                  type="species" 
-                />
-                <RelationCardList 
-                  title="Observations" 
-                  items={batch.linkedObservations ?? []} 
-                  type="observation" 
-                />
-              </div>
+                <div class="note-body">
+                  {obs.visual_assessment || obs.notes || 'No detailed notes recorded for this observation.'}
+                </div>
 
-              <div class="card-footer">
-                <a href={`/batches/${batch.id}`} class="card-link">
-                  View Details →
-                </a>
+                <div class="note-footer">
+                  <span class="note-id">Specimen ID: {obs.batch_id || obs.id}</span>
+                  {obs.observer && (
+                    <span class="note-observer">Observer: {obs.observer}</span>
+                  )}
+                </div>
+
+                <div class="note-decoration">~ ✤ ~</div>
               </div>
             </div>
-          ))}
-        </div>
-      )}
-    </section>
-
-    <!-- Recipes Section -->
-    <section class="section">
-      <div class="section-header">
-        <h2>📋 Recipes</h2>
-        <a href="/recipes" class="view-all-link">View All →</a>
+          ))
+        )}
       </div>
-      
-      {recipesWithRelations.length === 0 ? (
-        <div class="empty-state">
-          <p>No recipes found. Create your first recipe!</p>
+    </div>
+
+    <!-- Active Research Projects -->
+    {activeProjects.length > 0 && (
+      <div class="research-container">
+        <div class="section-title">
+          <span class="title-ornament">❦</span>
+          <span class="title-text">Active Research</span>
+          <span class="title-ornament">❦</span>
         </div>
-      ) : (
-        <div class="content-grid">
-          {recipesWithRelations.map((recipe) => (
-            <div data-key={recipe.id} class="content-card">
-              <div class="card-header">
-                <h3 class="card-title">{recipe.title}</h3>
-                {recipe.difficulty && (
-                  <span class={`badge badge-${recipe.difficulty}`}>
-                    {recipe.difficulty}
-                  </span>
-                )}
-              </div>
-              
-              {recipe.description && (
-                <p class="card-description">{recipe.description}</p>
-              )}
 
-              <div class="card-relations">
-                <RelationCardList 
-                  title="Ingredients" 
-                  items={recipe.linkedIngredients ?? []} 
-                  type="ingredient" 
-                />
-                <RelationCardList 
-                  title="Species" 
-                  items={recipe.linkedSpecies ?? []} 
-                  type="species" 
-                />
-                <RelationCardList 
-                  title="Observations" 
-                  items={recipe.linkedObservations ?? []} 
-                  type="observation" 
-                />
-              </div>
+        <div class="research-projects">
+          {activeProjects.slice(0, 3).map((project: any) => (
+            <a href={`/projects/${project.id}`} class="research-card">
+              <div class="research-border">
+                <div class="research-header">
+                  <div class="research-id">Project {project.id.slice(-4).toUpperCase()}</div>
+                  {project.priority === 'High' && (
+                    <div class="research-priority">★ Priority</div>
+                  )}
+                </div>
 
-              <div class="card-footer">
-                <a href={`/recipes/${recipe.id}`} class="card-link">
-                  View Details →
-                </a>
+                <h3 class="research-title">{project.name}</h3>
+                
+                <div class="research-meta">
+                  <span class="meta-label">Manager:</span>
+                  <span class="meta-value">{project.manager || 'Unassigned'}</span>
+                </div>
+
+                <div class="progress-section">
+                  <div class="progress-label">Progress: {project.progress_percentage}%</div>
+                  <div class="progress-bar-botanical">
+                    <div class="progress-fill-botanical" style={`width: ${project.progress_percentage}%`}></div>
+                  </div>
+                </div>
+
+                <div class="research-decoration">
+                  <span>✤</span>
+                  <span>❦</span>
+                  <span>✤</span>
+                </div>
               </div>
-            </div>
+            </a>
           ))}
         </div>
-      )}
-    </section>
+      </div>
+    )}
+
+    <!-- Storage Status -->
+    <div class="storage-container">
+      <div class="section-title">
+        <span class="title-ornament">❦</span>
+        <span class="title-text">Storage Capacity</span>
+        <span class="title-ornament">❦</span>
+      </div>
+
+      <div class="storage-display">
+        <div class="storage-border">
+          <div class="storage-header">Collection Storage Status</div>
+          <div class="storage-stat">
+            <span class="storage-value">{totalOccupied}</span>
+            <span class="storage-separator">of</span>
+            <span class="storage-value">{totalCapacity}</span>
+            <span class="storage-label">specimens stored</span>
+          </div>
+          <div class="storage-bar">
+            <div class="storage-fill" style={`width: ${occupancyRate}%`}></div>
+          </div>
+          <div class="storage-percentage">{occupancyRate}% Capacity</div>
+          <div class="storage-latin">Capacitas Repositorium</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="botanical-footer">
+      <div class="footer-ornament">✤ ❦ ✤</div>
+      <div class="footer-text">
+        SparkHope Mycological Laboratory Est. 2025
+      </div>
+      <div class="footer-latin">
+        Scientia pro Synergia Humanitatis et Biodiversitatis, et Pacis
+      </div>
+    </div>
+
   </div>
 </Layout>
 
 <style>
-  .hero {
-    background: linear-gradient(135deg, var(--sl-color-accent) 0%, var(--sl-color-accent-low) 100%);
-    color: white;
+  /* Botanical Theme - Color Palette */
+  :root {
+    --botanical-cream: #f8f5f0;
+    --botanical-paper: #faf8f3;
+    --botanical-sepia: #8b7355;
+    --botanical-sage: #87a878;
+    --botanical-dusty-rose: #c4a69d;
+    --botanical-moss: #5a6e4f;
+    --botanical-terracotta: #b87560;
+    --botanical-ink: #3d3027;
+    --botanical-gold: #d4a574;
+  }
+
+  .botanical-dashboard {
+    font-family: 'EB Garamond', 'Crimson Text', serif;
+    background: var(--botanical-cream);
+    background-image: 
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(139, 115, 85, 0.03) 2px,
+        rgba(139, 115, 85, 0.03) 4px
+      );
+    color: var(--botanical-ink);
+    min-height: 100vh;
+    padding-bottom: 4rem;
+  }
+
+  /* Botanical Header */
+  .botanical-header {
+    background: linear-gradient(135deg, var(--botanical-sage) 0%, var(--botanical-moss) 100%);
+    color: var(--botanical-cream);
     padding: 3rem 2rem;
     text-align: center;
-    margin-bottom: 2rem;
+    border-bottom: 6px double var(--botanical-gold);
+    position: relative;
   }
 
-  .hero-content h1 {
-    font-size: 3rem;
-    margin-bottom: 0.5rem;
-    font-weight: 800;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  .botanical-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 10 Q30 30 50 50 Q70 30 50 10z' fill='rgba(248, 245, 240, 0.05)' /%3E%3C/svg%3E");
+    opacity: 0.3;
+    background-size: 80px;
   }
 
-  .hero-subtitle {
+  .header-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .header-ornament {
+    font-size: 1.5rem;
+    color: var(--botanical-gold);
+    margin: 0.5rem 0;
+    letter-spacing: 1rem;
+  }
+
+  .header-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin: 1rem 0 0.5rem 0;
+    letter-spacing: 0.1em;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  }
+
+  .header-subtitle {
     font-size: 1.25rem;
-    margin-bottom: 0.5rem;
+    font-weight: 400;
+    margin: 0.5rem 0;
+    letter-spacing: 0.15em;
     opacity: 0.95;
   }
 
-  .hero-description {
+  .header-latin {
     font-size: 1rem;
+    font-style: italic;
+    opacity: 0.85;
+    margin: 0.5rem 0;
+    letter-spacing: 0.05em;
+  }
+
+  .header-date {
+    font-size: 0.95rem;
+    margin-top: 1rem;
     opacity: 0.9;
+    font-variant: small-caps;
   }
 
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem 4rem;
-  }
-
-  /* Stats Grid */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 3rem;
-  }
-
-  .stat-card {
-    background: var(--color-bg-card);
-    border: 1px solid var(--color-border);
-    border-radius: 0.75rem;
-    padding: 1.5rem;
+  /* Section Titles */
+  .section-title {
     text-align: center;
-    transition: all 0.2s ease;
+    margin: 3rem 0 2rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
   }
 
-  .stat-card:hover {
-    background: var(--color-bg-card-hover);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  .title-ornament {
+    font-size: 1.5rem;
+    color: var(--botanical-sepia);
   }
 
-  .stat-number {
+  .title-text {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--botanical-ink);
+    letter-spacing: 0.1em;
+    font-variant: small-caps;
+  }
+
+  /* Specimen Status Cards */
+  .specimens-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .specimen-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+  }
+
+  .specimen-card {
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.3s ease;
+  }
+
+  .specimen-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .specimen-border {
+    background: var(--botanical-paper);
+    border: 3px solid var(--botanical-sepia);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    position: relative;
+    box-shadow: 
+      4px 4px 8px rgba(0,0,0,0.1),
+      inset 0 0 40px rgba(139, 115, 85, 0.05);
+  }
+
+  .status-healthy .specimen-border {
+    border-color: var(--botanical-sage);
+  }
+
+  .status-warning .specimen-border {
+    border-color: var(--botanical-terracotta);
+  }
+
+  .status-growing .specimen-border {
+    border-color: var(--botanical-moss);
+  }
+
+  .status-priority .specimen-border {
+    border-color: var(--botanical-dusty-rose);
+  }
+
+  .specimen-corner {
+    position: absolute;
+    font-size: 0.875rem;
+    color: var(--botanical-sepia);
+  }
+
+  .specimen-corner.tl { top: -2px; left: -2px; }
+  .specimen-corner.tr { top: -2px; right: -2px; }
+  .specimen-corner.bl { bottom: -2px; left: -2px; }
+  .specimen-corner.br { bottom: -2px; right: -2px; }
+
+  .specimen-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .specimen-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--botanical-ink);
+  }
+
+  .specimen-value {
     font-size: 3rem;
     font-weight: 700;
-    color: var(--sl-color-accent-high);
+    color: var(--botanical-sepia);
     line-height: 1;
+    margin: 0.5rem 0;
   }
 
-  .stat-label {
-    font-size: 1rem;
-    color: var(--color-text-dim);
+  .specimen-latin {
+    font-size: 0.875rem;
+    font-style: italic;
+    color: var(--botanical-sepia);
+    opacity: 0.8;
     margin-top: 0.5rem;
   }
 
-  /* Section */
-  .section {
-    margin-bottom: 3rem;
+  /* Collection Index */
+  .collection-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
   }
 
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 2px solid var(--color-border);
-  }
-
-  .section-header h2 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--color-text);
-    margin: 0;
-  }
-
-  .view-all-link {
-    color: var(--sl-color-accent-high);
-    font-weight: 500;
-    transition: color 0.2s ease;
-  }
-
-  .view-all-link:hover {
-    color: var(--sl-color-accent);
-  }
-
-  /* Content Grid */
-  .content-grid {
+  .index-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 1.5rem;
   }
 
-  /* Content Card */
-  .content-card {
-    background: var(--color-bg-card);
-    border: 1px solid var(--color-border);
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-    transition: all 0.2s ease;
+  .index-card {
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+  }
+
+  .index-card:hover {
+    transform: scale(1.05);
+  }
+
+  .index-border {
+    background: var(--botanical-paper);
+    border: 2px solid var(--botanical-sepia);
+    border-radius: 8px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+  }
+
+  .index-card:hover .index-border {
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    border-color: var(--botanical-sage);
+  }
+
+  .index-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .index-name {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--botanical-ink);
+  }
+
+  .index-latin {
+    font-size: 0.875rem;
+    font-style: italic;
+    color: var(--botanical-sepia);
+    margin-bottom: 0.75rem;
+  }
+
+  .index-count {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--botanical-sage);
+  }
+
+  .index-decoration {
+    margin-top: 0.75rem;
+    color: var(--botanical-gold);
+    font-size: 0.875rem;
+  }
+
+  /* Field Notes */
+  .field-notes-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .field-notes {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.5rem;
   }
 
-  .content-card:hover {
-    background: var(--color-bg-card-hover);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    transform: translateY(-2px);
-    border-color: var(--sl-color-accent);
+  .field-note {
+    background: var(--botanical-paper);
   }
 
-  .card-header {
+  .note-border {
+    border: 2px solid var(--botanical-sepia);
+    border-left: 6px solid var(--botanical-sage);
+    padding: 1.5rem;
+    box-shadow: 4px 4px 12px rgba(0,0,0,0.08);
+  }
+
+  .note-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid var(--botanical-sepia);
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .note-date {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--botanical-ink);
+    font-variant: small-caps;
+  }
+
+  .note-warning {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--botanical-terracotta);
+    background: rgba(184, 117, 96, 0.1);
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+  }
+
+  .note-subject {
+    margin-bottom: 1rem;
+  }
+
+  .note-label {
+    font-weight: 600;
+    color: var(--botanical-sepia);
+    margin-right: 0.5rem;
+  }
+
+  .note-text {
+    font-style: italic;
+    color: var(--botanical-ink);
+  }
+
+  .note-body {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--botanical-ink);
+    margin-bottom: 1rem;
+    text-align: justify;
+  }
+
+  .note-footer {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--botanical-sepia);
+    font-size: 0.875rem;
+    color: var(--botanical-sepia);
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .note-decoration {
+    text-align: center;
+    margin-top: 1rem;
+    color: var(--botanical-gold);
+    font-size: 0.875rem;
+  }
+
+  /* Research Projects */
+  .research-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .research-projects {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+  }
+
+  .research-card {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .research-border {
+    background: linear-gradient(135deg, var(--botanical-paper) 0%, rgba(135, 168, 120, 0.05) 100%);
+    border: 3px double var(--botanical-sage);
+    padding: 1.5rem;
+    box-shadow: 6px 6px 16px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+  }
+
+  .research-card:hover .research-border {
+    transform: translateY(-4px);
+    box-shadow: 8px 8px 20px rgba(0,0,0,0.15);
+  }
+
+  .research-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--botanical-sepia);
+  }
+
+  .research-id {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--botanical-sepia);
+    font-variant: small-caps;
+    letter-spacing: 0.1em;
+  }
+
+  .research-priority {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--botanical-terracotta);
+  }
+
+  .research-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--botanical-ink);
+    line-height: 1.4;
+  }
+
+  .research-meta {
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    color: var(--botanical-sepia);
+  }
+
+  .meta-label {
+    font-weight: 600;
+  }
+
+  .progress-section {
+    margin-top: 1.5rem;
+  }
+
+  .progress-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--botanical-sepia);
+    margin-bottom: 0.5rem;
+    font-variant: small-caps;
+  }
+
+  .progress-bar-botanical {
+    width: 100%;
+    height: 8px;
+    background: rgba(139, 115, 85, 0.2);
+    border: 1px solid var(--botanical-sepia);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-fill-botanical {
+    height: 100%;
+    background: linear-gradient(90deg, var(--botanical-sage), var(--botanical-moss));
+    transition: width 0.5s ease;
+  }
+
+  .research-decoration {
+    margin-top: 1.5rem;
+    text-align: center;
+    color: var(--botanical-gold);
+    font-size: 1rem;
+    display: flex;
+    justify-content: center;
     gap: 1rem;
   }
 
-  .card-title {
+  /* Storage Display */
+  .storage-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .storage-display {
+    margin-bottom: 2rem;
+  }
+
+  .storage-border {
+    background: var(--botanical-paper);
+    border: 3px solid var(--botanical-sepia);
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 4px 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .storage-header {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: var(--botanical-ink);
+    font-variant: small-caps;
+  }
+
+  .storage-stat {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .storage-value {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--botanical-sage);
+  }
+
+  .storage-separator {
+    font-size: 1.25rem;
+    color: var(--botanical-sepia);
+  }
+
+  .storage-label {
+    font-size: 1rem;
+    color: var(--botanical-sepia);
+    font-style: italic;
+  }
+
+  .storage-bar {
+    width: 100%;
+    height: 24px;
+    background: rgba(139, 115, 85, 0.15);
+    border: 2px solid var(--botanical-sepia);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 1rem 0;
+  }
+
+  .storage-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--botanical-sage) 0%, var(--botanical-moss) 100%);
+    transition: width 0.5s ease;
+  }
+
+  .storage-percentage {
     font-size: 1.25rem;
     font-weight: 600;
-    color: var(--color-text);
-    margin: 0;
-    flex: 1;
+    color: var(--botanical-ink);
+    margin: 0.75rem 0;
   }
 
-  .card-description {
+  .storage-latin {
     font-size: 0.875rem;
-    color: var(--color-text-dim);
-    line-height: 1.6;
-    margin: 0;
+    font-style: italic;
+    color: var(--botanical-sepia);
+    opacity: 0.8;
   }
 
-  .card-relations {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    padding: 1rem 0;
-    border-top: 1px solid var(--color-border);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .card-footer {
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .card-link {
-    color: var(--sl-color-accent-high);
-    font-weight: 500;
-    font-size: 0.875rem;
-    transition: color 0.2s ease;
-  }
-
-  .card-link:hover {
-    color: var(--sl-color-accent);
-  }
-
-  /* Badges */
-  .badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 0.25rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.025em;
-    white-space: nowrap;
-  }
-
-  .badge-active {
-    background: #065f46;
-    color: #d1fae5;
-  }
-
-  .badge-contaminated {
-    background: #7f1d1d;
-    color: #fee2e2;
-  }
-
-  .badge-completed {
-    background: #1e3a8a;
-    color: #dbeafe;
-  }
-
-  .badge-harvested {
-    background: #78350f;
-    color: #fef3c7;
-  }
-
-  .badge-beginner {
-    background: #065f46;
-    color: #d1fae5;
-  }
-
-  .badge-intermediate {
-    background: #78350f;
-    color: #fef3c7;
-  }
-
-  .badge-advanced {
-    background: #7f1d1d;
-    color: #fee2e2;
-  }
-
-  /* Empty State */
-  .empty-state {
-    background: var(--color-bg-card);
-    border: 2px dashed var(--color-border);
-    border-radius: 0.75rem;
-    padding: 3rem;
+  /* Footer */
+  .botanical-footer {
+    background: var(--botanical-sage);
+    color: var(--botanical-cream);
+    padding: 2rem;
     text-align: center;
+    margin-top: 4rem;
+    border-top: 4px double var(--botanical-gold);
   }
 
-  .empty-state p {
-    color: var(--color-text-dim);
+  .footer-ornament {
+    font-size: 1.5rem;
+    color: var(--botanical-gold);
+    margin-bottom: 1rem;
+    letter-spacing: 1rem;
+  }
+
+  .footer-text {
     font-size: 1.125rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
+  }
+
+  .footer-latin {
+    font-size: 0.95rem;
+    font-style: italic;
+    opacity: 0.9;
+  }
+
+  /* Empty States */
+  .empty-message {
+    font-size: 1.125rem;
+    color: var(--botanical-sepia);
+    margin-bottom: 0.5rem;
+  }
+
+  .empty-latin {
+    font-size: 0.95rem;
+    font-style: italic;
+    color: var(--botanical-sepia);
+    opacity: 0.7;
   }
 
   /* Responsive */
   @media (max-width: 768px) {
-    .hero-content h1 {
-      font-size: 2rem;
+    .header-title {
+      font-size: 2.5rem;
     }
 
-    .content-grid {
+    .specimen-cards,
+    .research-projects {
       grid-template-columns: 1fr;
     }
 
-    .section-header {
+    .index-grid {
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+
+    .storage-stat {
       flex-direction: column;
-      align-items: flex-start;
       gap: 0.5rem;
-    }
-
-    .stats-grid {
-      grid-template-columns: 1fr;
     }
   }
 </style>

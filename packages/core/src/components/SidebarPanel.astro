@@ -1,0 +1,53 @@
+---
+// Define props for the panel content
+const { title = "Utility Panel", binary = "01010010 01000001 01000011 01001011" } = Astro.props;
+---
+
+<div class="sidebar-panel">
+    <h3 class="panel-title">{title}</h3>
+    <div class="panel-content">
+        <slot />
+    </div>
+    <div class="panel-binary">{binary}</div>
+</div>
+
+<style>
+    .sidebar-panel {
+        background: var(--botanical-paper, #faf8f3);
+        border: 2px solid var(--botanical-sepia, #8b7355);
+        border-left: 8px solid var(--botanical-gold, #d4a574);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 4px 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    .panel-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        font-variant: small-caps;
+        color: var(--botanical-moss, #5a6e4f);
+        margin-top: 0;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px dashed var(--botanical-sepia, #8b7355);
+    }
+    
+    .panel-content {
+        font-size: 0.95rem;
+    }
+
+    .panel-content > p {
+        margin-bottom: 1rem;
+    }
+
+    .panel-binary {
+        font-family: 'VT323', monospace;
+        font-size: 0.85rem;
+        color: var(--pixel-green, #00ff41);
+        text-align: center;
+        padding-top: 1rem;
+        border-top: 1px solid var(--botanical-sepia, #8b7355);
+        margin-top: 1rem;
+    }
+</style>
+

@@ -1,0 +1,21 @@
+<svg width="200" height="400" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Primary contour using pronounced lines and curves from the stone -->
+  <path d="M100,90
+           C85,100, 70,150, 80,210
+           C90,280, 130,340, 150,250
+           C140,170, 120,110, 100,90"
+        fill="none" stroke="black" stroke-width="4" />
+  
+  <!-- Secondary contours adding more curves -->
+  <path d="M95,100
+           C80,110, 60,170, 70,220
+           C80,260, 115,300, 130,220
+           C120,150, 95,100, 95,100"
+        fill="none" stroke="gray" stroke-width="2" />
+
+  <path d="M90,110
+           C75,120, 65,180, 70,240
+           C80,280, 90,310, 105,240
+           C100,150, 90,110, 90,110"
+        fill="none" stroke="lightgray" stroke-width="1" />
+</svg>

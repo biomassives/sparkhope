@@ -1,0 +1,629 @@
+---
+// src/pages/racks/index.astro - TRANSFORMED TO RACKS INDEX
+import Layout from '../../layouts/Layout.astro';
+import { initializeDataStore } from '../../lib/initData.js';
+
+const store = await initializeDataStore();
+const racks = await store.racks.getAll();
+
+// Get all samples for reference
+const allSamples = await store.samples.getAll();
+
+// Group racks by type
+const racksByType = racks.reduce((acc: any, rack: any) => {
+  const type = rack.rack_type || 'other';
+  if (!acc[type]) acc[type] = [];
+  acc[type].push(rack);
+  return acc;
+}, {});
+
+// Group racks by location
+const racksByLocation = racks.reduce((acc: any, rack: any) => {
+  const location = rack.location || 'Unknown';
+  if (!acc[location]) acc[location] = [];
+  acc[location].push(rack);
+  return acc;
+}, {});
+
+// Calculate total capacity and occupancy
+const totalCapacity = racks.reduce((sum: number, rack: any) => sum + (rack.capacity || 0), 0);
+const totalOccupied = racks.reduce((sum: number, rack: any) => sum + (rack.current_count || 0), 0);
+const overallOccupancy = totalCapacity > 0 ? Math.round((totalOccupied / totalCapacity) * 100) : 0;
+
+// Count climate controlled racks
+const climateControlledCount = racks.filter((r: any) => r.has_climate_control).length;
+---
+
+<Layout title="Racks - SparkHope">
+  <div class="hero-small">
+    <div class="container">
+      <h1>🗄️ Storage Racks</h1>
+      <p class="subtitle">Organize and track sample storage locations</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="stats">
+      <div class="stat-card stat-highlight">
+        <span class="stat-number">{racks.length}</span>
+        <span class="stat-label">Total Racks</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{totalOccupied} / {totalCapacity}</span>
+        <span class="stat-label">Total Capacity</span>
+        <div class="mini-progress">
+          <div class="mini-progress-fill" style={`width: ${overallOccupancy}%`}></div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{climateControlledCount}</span>
+        <span class="stat-label">Climate Controlled</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{Object.keys(racksByLocation).length}</span>
+        <span class="stat-label">Locations</span>
+      </div>
+    </div>
+
+    {/* Group by Type Section */}
+    {Object.entries(racksByType).length > 1 && (
+      <div class="filter-section">
+        <h2>By Type</h2>
+        <div class="filter-chips">
+          {Object.entries(racksByType).map(([type, items]: [string, any]) => (
+            <div class="filter-chip">
+              <span class="chip-label">{type.replace(/_/g, ' ')}</span>
+              <span class="chip-count">{items.length}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {racks.length === 0 ? (
+      <div class="empty-state">
+        <p>No storage racks configured yet. Add your first rack to start organizing samples!</p>
+        <a href="/racks/new" class="btn-primary">Create First Rack</a>
+      </div>
+    ) : (
+      <div class="rack-grid">
+        {racks.map((rack: any) => {
+          // Get samples in this rack
+          const rackSamples = allSamples.filter((s: any) => s.location_id === rack.id);
+          const occupancyRate = rack.capacity > 0 
+            ? Math.round((rack.current_count / rack.capacity) * 100) 
+            : 0;
+          
+          const contaminatedCount = rackSamples.filter((s: any) => s.contamination === true).length;
+          const readyCount = rackSamples.filter((s: any) => s.status === 'ready').length;
+          
+          return (
+            <div class="rack-card">
+              <div class="card-header">
+                <div class="header-left">
+                  <h2>{rack.name || 'Untitled Rack'}</h2>
+                  {rack.location && (
+                    <p class="rack-location">📍 {rack.location}</p>
+                  )}
+                </div>
+                <div class="card-badges">
+                  {rack.rack_type && (
+                    <span class="badge badge-type">{rack.rack_type.replace(/_/g, ' ')}</span>
+                  )}
+                  {rack.has_climate_control && (
+                    <span class="badge badge-climate">Climate</span>
+                  )}
+                  {rack.status && (
+                    <span class={`badge badge-status badge-${rack.status}`}>
+                      {rack.status}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Occupancy Display */}
+              <div class="rack-occupancy">
+                <div class="occupancy-header">
+                  <span class="occupancy-label">Occupancy</span>
+                  <span class="occupancy-value">{rack.current_count} / {rack.capacity}</span>
+                </div>
+                <div class="progress-bar">
+                  <div 
+                    class={`progress-fill ${occupancyRate >= 90 ? 'progress-full' : occupancyRate >= 70 ? 'progress-high' : ''}`}
+                    style={`width: ${occupancyRate}%`}
+                  ></div>
+                </div>
+                <span class="occupancy-percent">{occupancyRate}% Full</span>
+              </div>
+
+              {/* Quick Stats */}
+              <div class="quick-stats">
+                {(rack.temperature || rack.humidity) && (
+                  <div class="stat-row">
+                    {rack.temperature && (
+                      <div class="stat-item">
+                        <span class="stat-icon">🌡️</span>
+                        <span class="stat-text">{rack.temperature}°C</span>
+                      </div>
+                    )}
+                    {rack.humidity && (
+                      <div class="stat-item">
+                        <span class="stat-icon">💧</span>
+                        <span class="stat-text">{rack.humidity}%</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {rackSamples.length > 0 && (
+                  <div class="stat-row">
+                    {readyCount > 0 && (
+                      <div class="stat-item stat-ready">
+                        <span class="stat-icon">✓</span>
+                        <span class="stat-text">{readyCount} Ready</span>
+                      </div>
+                    )}
+                    {contaminatedCount > 0 && (
+                      <div class="stat-item stat-warning">
+                        <span class="stat-icon">⚠</span>
+                        <span class="stat-text">{contaminatedCount} Contaminated</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Grid Info */}
+              {rack.grid_layout && (
+                <div class="grid-info">
+                  <span class="grid-icon">▦</span>
+                  <span class="grid-text">
+                    {rack.grid_layout.rows} × {rack.grid_layout.columns} grid
+                  </span>
+                  {rack.dimensions && (
+                    <span class="grid-dimensions">({rack.dimensions})</span>
+                  )}
+                </div>
+              )}
+
+              {rack.notes && (
+                <p class="rack-notes">{rack.notes}</p>
+              )}
+
+              <a href={`/racks/${rack.id}`} class="btn-primary">
+                View Rack →
+              </a>
+            </div>
+          );
+        })}
+      </div>
+    )}
+
+    {/* Add New Rack Button */}
+    {racks.length > 0 && (
+      <div class="add-section">
+        <a href="/racks/new" class="btn-secondary">+ Add New Rack</a>
+      </div>
+    )}
+  </div>
+</Layout>
+
+<style>
+  .hero-small {
+    background: linear-gradient(135deg, var(--sl-color-accent) 0%, var(--sl-color-accent-low) 100%);
+    color: white;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .hero-small h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: white;
+  }
+
+  .subtitle {
+    font-size: 1.125rem;
+    opacity: 0.9;
+    margin: 0;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    text-align: center;
+    transition: all 0.2s;
+  }
+
+  .stat-card:hover {
+    background: var(--color-bg-card-hover);
+    transform: translateY(-2px);
+  }
+
+  .stat-highlight {
+    border-color: var(--sl-color-accent);
+  }
+
+  .stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--sl-color-accent-high);
+  }
+
+  .stat-label {
+    display: block;
+    color: var(--color-text-dim);
+    margin-top: 0.5rem;
+    text-transform: capitalize;
+  }
+
+  .mini-progress {
+    width: 100%;
+    height: 4px;
+    background: var(--color-bg-card-hover);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 0.75rem;
+  }
+
+  .mini-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #059669);
+    transition: width 0.3s ease;
+  }
+
+  .filter-section {
+    margin-bottom: 2rem;
+  }
+
+  .filter-section h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: var(--color-text);
+  }
+
+  .filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .filter-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+  }
+
+  .filter-chip:hover {
+    background: var(--color-bg-card-hover);
+    border-color: var(--sl-color-accent);
+  }
+
+  .chip-label {
+    color: var(--color-text);
+    text-transform: capitalize;
+  }
+
+  .chip-count {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    padding: 0 0.5rem;
+    background: var(--sl-color-accent);
+    color: white;
+    border-radius: 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .rack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .rack-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .rack-card:hover {
+    background: var(--color-bg-card-hover);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    transform: translateY(-2px);
+    border-color: var(--sl-color-accent);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .header-left {
+    flex: 1;
+  }
+
+  .card-header h2 {
+    font-size: 1.5rem;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .rack-location {
+    font-size: 0.875rem;
+    color: var(--color-text-dim);
+    margin: 0;
+  }
+
+  .card-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    white-space: nowrap;
+    text-align: center;
+  }
+
+  .badge-type {
+    background: var(--color-bg-card-hover);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+  }
+
+  .badge-climate {
+    background: #1e3a8a;
+    color: #dbeafe;
+  }
+
+  .badge-status.badge-active {
+    background: #065f46;
+    color: #d1fae5;
+  }
+
+  .badge-status.badge-inactive {
+    background: #78350f;
+    color: #fef3c7;
+  }
+
+  .rack-occupancy {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+  }
+
+  .occupancy-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .occupancy-label {
+    font-size: 0.875rem;
+    color: var(--color-text-dim);
+    font-weight: 600;
+  }
+
+  .occupancy-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--color-bg-card-hover);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #059669);
+    transition: width 0.3s ease;
+  }
+
+  .progress-fill.progress-high {
+    background: linear-gradient(90deg, #fbbf24, #f59e0b);
+  }
+
+  .progress-fill.progress-full {
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+  }
+
+  .occupancy-percent {
+    font-size: 0.75rem;
+    color: var(--color-text-dim);
+  }
+
+  .quick-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .stat-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+  }
+
+  .stat-ready {
+    border-color: #10b981;
+  }
+
+  .stat-warning {
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+  }
+
+  .stat-icon {
+    font-size: 1rem;
+  }
+
+  .stat-text {
+    color: var(--color-text);
+    font-weight: 500;
+  }
+
+  .grid-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    color: var(--color-text-dim);
+  }
+
+  .grid-icon {
+    font-size: 1rem;
+  }
+
+  .grid-text {
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
+  .grid-dimensions {
+    color: var(--color-text-dim);
+    font-size: 0.75rem;
+  }
+
+  .rack-notes {
+    color: var(--color-text-dim);
+    line-height: 1.6;
+    margin: 0;
+    font-size: 0.875rem;
+    font-style: italic;
+    padding: 0.75rem;
+    background: var(--color-bg);
+    border-left: 3px solid var(--color-border);
+  }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: var(--sl-color-accent);
+    color: white;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    text-align: center;
+    transition: all 0.2s;
+    margin-top: auto;
+  }
+
+  .btn-primary:hover {
+    background: var(--sl-color-accent-high);
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: var(--color-bg-card);
+    color: var(--color-text);
+    text-decoration: none;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    font-weight: 500;
+    text-align: center;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover {
+    background: var(--color-bg-card-hover);
+    border-color: var(--sl-color-accent);
+  }
+
+  .empty-state {
+    background: var(--color-bg-card);
+    border: 2px dashed var(--color-border);
+    border-radius: 0.75rem;
+    padding: 3rem;
+    text-align: center;
+  }
+
+  .empty-state p {
+    color: var(--color-text-dim);
+    font-size: 1.125rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .add-section {
+    margin-top: 2rem;
+    text-align: center;
+  }
+
+  @media (max-width: 768px) {
+    .rack-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .card-header {
+      flex-direction: column;
+    }
+
+    .card-badges {
+      flex-direction: row;
+    }
+
+    .stats {
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+  }
+</style>

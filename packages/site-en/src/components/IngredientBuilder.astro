@@ -1,0 +1,905 @@
+---
+import { getAllIngredients } from '../utils/loadData';
+
+const ingredients = getAllIngredients();
+---
+
+<!-- Floating Tab Trigger -->
+<div class="culture-game-tab" id="culture-tab">
+  <div class="tab-content">
+    <span class="tab-icon">🛸</span>
+    <span class="tab-text">LOAD CULTURE</span>
+  </div>
+</div>
+
+<!-- Full Screen Overlay Game -->
+<div class="culture-overlay" id="culture-overlay">
+  <div class="overlay-close" id="close-overlay">✕</div>
+  
+  <!-- Mothership that descends -->
+  <div class="mothership" id="mothership">
+    <svg viewBox="0 0 64 32" xmlns="http://www.w3.org/2000/svg" style="image-rendering: pixelated;">
+      <!-- UFO Body -->
+      <ellipse cx="32" cy="16" rx="28" ry="8" fill="#ff0000" opacity="0.8"/>
+      <ellipse cx="32" cy="14" rx="24" ry="6" fill="#ff4444"/>
+      <!-- Dome -->
+      <ellipse cx="32" cy="10" rx="16" ry="8" fill="#ff8888" opacity="0.6"/>
+      <!-- Windows -->
+      <circle cx="20" cy="10" r="3" fill="#ffff00" opacity="0.9"/>
+      <circle cx="32" cy="10" r="3" fill="#ffff00" opacity="0.9"/>
+      <circle cx="44" cy="10" r="3" fill="#ffff00" opacity="0.9"/>
+      <!-- Lights -->
+      <rect x="12" y="20" width="4" height="6" fill="#00ffff" opacity="0.8"/>
+      <rect x="28" y="20" width="4" height="6" fill="#00ffff" opacity="0.8"/>
+      <rect x="44" y="20" width="4" height="6" fill="#00ffff" opacity="0.8"/>
+      <rect x="20" y="20" width="4" height="6" fill="#00ff00" opacity="0.8"/>
+      <rect x="36" y="20" width="4" height="6" fill="#00ff00" opacity="0.8"/>
+    </svg>
+    <div class="tractor-beam" id="tractor-beam"></div>
+  </div>
+
+  <!-- Recipe Display Area -->
+  <div class="recipe-display" id="recipe-display">
+    <div class="recipe-header">
+      <h2 class="pixel-title">MOTHER CULTURE LAB</h2>
+      <div class="recipe-controls">
+        <button class="pixel-btn-small" id="clear-recipe">CLEAR</button>
+        <button class="pixel-btn-small save-btn" id="save-recipe">SAVE</button>
+      </div>
+    </div>
+
+    <div class="recipe-grid" id="recipe-slots">
+      <!-- Slots will be populated by JS -->
+    </div>
+
+    <!-- Nutrient Stats -->
+    <div class="nutrient-stats">
+      <div class="stat-row">
+        <span class="stat-label">CALORIES</span>
+        <div class="stat-bar">
+          <div class="stat-fill" id="stat-calories" style="width: 0%"></div>
+        </div>
+        <span class="stat-value" id="val-calories">0</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">CARBS</span>
+        <div class="stat-bar">
+          <div class="stat-fill" id="stat-carbs" style="width: 0%"></div>
+        </div>
+        <span class="stat-value" id="val-carbs">0g</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">PROTEIN</span>
+        <div class="stat-bar">
+          <div class="stat-fill" id="stat-protein" style="width: 0%"></div>
+        </div>
+        <span class="stat-value" id="val-protein">0g</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">FIBER</span>
+        <div class="stat-bar">
+          <div class="stat-fill" id="stat-fiber" style="width: 0%"></div>
+        </div>
+        <span class="stat-value" id="val-fiber">0g</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">MINERALS</span>
+        <div class="stat-bar">
+          <div class="stat-fill" id="stat-minerals" style="width: 0%"></div>
+        </div>
+        <span class="stat-value" id="val-minerals">0mg</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ingredient Shelf -->
+  <div class="ingredient-shelf-overlay">
+    {ingredients.map((ingredient: any) => {
+      let shape = 'orb';
+      let color = '#00ff00';
+      
+      if (ingredient.ingredient_type === 'sugar' || ingredient.ingredient_type === 'nutrient') {
+        shape = 'orb';
+        color = '#ffff00';
+      } else if (ingredient.ingredient_type === 'substrate' || ingredient.ingredient_type === 'grain') {
+        shape = 'box';
+        color = '#ff8800';
+      } else if (ingredient.ingredient_type === 'liquid' || ingredient.ingredient_type === 'water') {
+        shape = 'bottle';
+        color = '#00ffff';
+      } else if (ingredient.ingredient_type === 'additive') {
+        shape = 'orb';
+        color = '#ff00ff';
+      }
+
+      return (
+        <div 
+          class={`ingredient-item-v2 ${shape}`}
+          data-ingredient-id={ingredient.id}
+          data-ingredient-name={ingredient.name}
+          data-ingredient-type={ingredient.ingredient_type}
+          data-shape={shape}
+          data-color={color}
+          style={`--item-color: ${color}`}
+        >
+          <div class="ingredient-visual-v2"></div>
+          <div class="ingredient-label">{ingredient.name}</div>
+        </div>
+      );
+    })}
+  </div>
+</div>
+
+<script>
+  // Load nutrient profiles
+  const nutrientProfiles: Record<string, any> = {
+    "sugar": { calories: 400, carbs: 100, protein: 0, fiber: 0, minerals: 0 },
+    "honey": { calories: 304, carbs: 82, protein: 1, fiber: 0, minerals: 5 },
+    "malt": { calories: 362, carbs: 80, protein: 10, fiber: 8, minerals: 15 },
+    "peptone": { calories: 350, carbs: 5, protein: 80, fiber: 0, minerals: 10 },
+    "yeast-extract": { calories: 325, carbs: 38, protein: 40, fiber: 10, minerals: 25 },
+    "agar": { calories: 26, carbs: 7, protein: 1, fiber: 5, minerals: 2 },
+    "potato-dextrose": { calories: 200, carbs: 50, protein: 5, fiber: 3, minerals: 8 },
+    "corn-meal": { calories: 370, carbs: 79, protein: 9, fiber: 7, minerals: 12 },
+    "water": { calories: 0, carbs: 0, protein: 0, fiber: 0, minerals: 0 },
+    "default": { calories: 100, carbs: 25, protein: 5, fiber: 2, minerals: 5 }
+  };
+
+  const MAX_INGREDIENTS = 8;
+  let currentRecipe: any[] = [];
+  
+  const cultureTab = document.getElementById('culture-tab');
+  const overlay = document.getElementById('culture-overlay');
+  const closeBtn = document.getElementById('close-overlay');
+  const mothership = document.getElementById('mothership');
+  const tractorBeam = document.getElementById('tractor-beam');
+  const recipeSlots = document.getElementById('recipe-slots');
+  const clearBtn = document.getElementById('clear-recipe');
+  const saveBtn = document.getElementById('save-recipe');
+
+  // Audio context
+  const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+
+  function playPickup() {
+    const osc = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    osc.connect(gain);
+    gain.connect(audioContext.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(400, audioContext.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(800, audioContext.currentTime + 0.2);
+    gain.gain.setValueAtTime(0.15, audioContext.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+    osc.start(audioContext.currentTime);
+    osc.stop(audioContext.currentTime + 0.2);
+  }
+
+  function playSuccess() {
+    const osc = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    osc.connect(gain);
+    gain.connect(audioContext.destination);
+    osc.type = 'square';
+    [523, 659, 784].forEach((freq, i) => {
+      osc.frequency.setValueAtTime(freq, audioContext.currentTime + i * 0.1);
+    });
+    gain.gain.setValueAtTime(0.15, audioContext.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+    osc.start(audioContext.currentTime);
+    osc.stop(audioContext.currentTime + 0.3);
+  }
+
+  function playError() {
+    const osc = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    osc.connect(gain);
+    gain.connect(audioContext.destination);
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(200, audioContext.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.2);
+    gain.gain.setValueAtTime(0.2, audioContext.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+    osc.start(audioContext.currentTime);
+    osc.stop(audioContext.currentTime + 0.2);
+  }
+
+  // Calculate nutrient totals
+  function calculateNutrients() {
+    const totals = {
+      calories: 0,
+      carbs: 0,
+      protein: 0,
+      fiber: 0,
+      minerals: 0
+    };
+
+    currentRecipe.forEach(item => {
+      const profile = nutrientProfiles[item.id] || nutrientProfiles['default'];
+      totals.calories += profile.calories;
+      totals.carbs += profile.carbs;
+      totals.protein += profile.protein;
+      totals.fiber += profile.fiber;
+      totals.minerals += profile.minerals;
+    });
+
+    return totals;
+  }
+
+  // Update nutrient display
+  function updateNutrientDisplay() {
+    const totals = calculateNutrients();
+    
+    // Update values
+    document.getElementById('val-calories')!.textContent = totals.calories.toString();
+    document.getElementById('val-carbs')!.textContent = totals.carbs + 'g';
+    document.getElementById('val-protein')!.textContent = totals.protein + 'g';
+    document.getElementById('val-fiber')!.textContent = totals.fiber + 'g';
+    document.getElementById('val-minerals')!.textContent = totals.minerals + 'mg';
+
+    // Update bars (max values for scaling)
+    const maxValues = { calories: 3000, carbs: 800, protein: 640, fiber: 80, minerals: 200 };
+    
+    Object.keys(totals).forEach(key => {
+      const percentage = Math.min((totals[key as keyof typeof totals] / maxValues[key as keyof typeof maxValues]) * 100, 100);
+      const bar = document.getElementById(`stat-${key}`);
+      if (bar) {
+        bar.style.width = percentage + '%';
+      }
+    });
+  }
+
+  // Render recipe
+  function renderRecipe() {
+    if (!recipeSlots) return;
+    
+    recipeSlots.innerHTML = '';
+    
+    currentRecipe.forEach((item, index) => {
+      const slot = document.createElement('div');
+      slot.className = `recipe-slot ${item.shape}`;
+      slot.style.setProperty('--item-color', item.color);
+      slot.innerHTML = `
+        <div class="ingredient-visual-v2"></div>
+        <button class="remove-btn" data-index="${index}">✕</button>
+        <div class="ingredient-name">${item.name}</div>
+      `;
+      recipeSlots.appendChild(slot);
+    });
+
+    // Add empty slots
+    const remaining = MAX_INGREDIENTS - currentRecipe.length;
+    for (let i = 0; i < remaining; i++) {
+      const slot = document.createElement('div');
+      slot.className = 'recipe-slot empty';
+      slot.innerHTML = '<div class="empty-text">+</div>';
+      recipeSlots.appendChild(slot);
+    }
+
+    // Add remove handlers
+    document.querySelectorAll('.remove-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const index = parseInt((e.target as HTMLElement).dataset.index || '0');
+        removeIngredient(index);
+      });
+    });
+
+    updateNutrientDisplay();
+  }
+
+  // Add ingredient with mothership animation
+  function addIngredient(data: any, element: HTMLElement) {
+    if (currentRecipe.length >= MAX_INGREDIENTS) {
+      playError();
+      return;
+    }
+
+    // Animate mothership descent
+    if (mothership && tractorBeam) {
+      const rect = element.getBoundingClientRect();
+      const motherRect = mothership.getBoundingClientRect();
+      
+      mothership.style.left = rect.left - motherRect.width / 2 + rect.width / 2 + 'px';
+      mothership.classList.add('descending');
+      tractorBeam.classList.add('active');
+
+      setTimeout(() => {
+        element.classList.add('being-lifted');
+        playPickup();
+        
+        setTimeout(() => {
+          mothership.classList.remove('descending');
+          tractorBeam.classList.remove('active');
+          element.classList.remove('being-lifted');
+          
+          currentRecipe.push(data);
+          renderRecipe();
+        }, 800);
+      }, 600);
+    }
+  }
+
+  // Remove ingredient
+  function removeIngredient(index: number) {
+    currentRecipe.splice(index, 1);
+    renderRecipe();
+  }
+
+  // Save/Load
+  function saveRecipe() {
+    localStorage.setItem('motherCulture', JSON.stringify(currentRecipe));
+    if (saveBtn) {
+      saveBtn.textContent = 'SAVED!';
+      setTimeout(() => saveBtn.textContent = 'SAVE', 1000);
+    }
+    playSuccess();
+  }
+
+  function loadRecipe() {
+    const saved = localStorage.getItem('motherCulture');
+    if (saved) {
+      try {
+        currentRecipe = JSON.parse(saved);
+        renderRecipe();
+      } catch (e) {
+        console.error('Failed to load', e);
+      }
+    }
+  }
+
+  // Open/Close overlay
+  cultureTab?.addEventListener('click', () => {
+    overlay?.classList.add('active');
+    loadRecipe();
+  });
+
+  closeBtn?.addEventListener('click', () => {
+    overlay?.classList.remove('active');
+  });
+
+  // Ingredient click handlers
+  document.querySelectorAll('.ingredient-item-v2').forEach(item => {
+    item.addEventListener('click', () => {
+      const data = {
+        id: item.getAttribute('data-ingredient-id'),
+        name: item.getAttribute('data-ingredient-name'),
+        type: item.getAttribute('data-ingredient-type'),
+        shape: item.getAttribute('data-shape'),
+        color: item.getAttribute('data-color')
+      };
+      addIngredient(data, item as HTMLElement);
+    });
+  });
+
+  // Button handlers
+  clearBtn?.addEventListener('click', () => {
+    currentRecipe = [];
+    renderRecipe();
+    localStorage.removeItem('motherCulture');
+  });
+
+  saveBtn?.addEventListener('click', saveRecipe);
+
+  // Initialize
+  loadRecipe();
+</script>
+
+<style>
+  /* Floating Tab */
+  .culture-game-tab {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    background: linear-gradient(135deg, #ff0000, #cc0000);
+    border: 3px solid #ffff00;
+    border-right: none;
+    padding: 1rem 0.75rem;
+    cursor: pointer;
+    z-index: 9998;
+    border-radius: 12px 0 0 12px;
+    box-shadow: 
+      -5px 0 20px rgba(255, 0, 0, 0.6),
+      inset 0 0 20px rgba(255, 255, 0, 0.2);
+    transition: all 0.3s;
+    animation: tab-pulse 2s ease-in-out infinite;
+  }
+
+  .culture-game-tab:hover {
+    padding-right: 1.5rem;
+    box-shadow: 
+      -10px 0 30px rgba(255, 0, 0, 0.8),
+      inset 0 0 30px rgba(255, 255, 0, 0.3);
+  }
+
+  @keyframes tab-pulse {
+    0%, 100% {
+      box-shadow: 
+        -5px 0 20px rgba(255, 0, 0, 0.6),
+        inset 0 0 20px rgba(255, 255, 0, 0.2);
+    }
+    50% {
+      box-shadow: 
+        -10px 0 30px rgba(255, 0, 0, 0.9),
+        inset 0 0 30px rgba(255, 255, 0, 0.4);
+    }
+  }
+
+  .tab-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .tab-icon {
+    font-size: 2rem;
+    animation: ufo-float 2s ease-in-out infinite;
+  }
+
+  @keyframes ufo-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+
+  .tab-text {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5rem;
+    color: #ffff00;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    letter-spacing: 0.1em;
+    text-shadow: 0 0 10px currentColor;
+  }
+
+  /* Overlay */
+  .culture-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 9999;
+    display: none;
+    flex-direction: column;
+  }
+
+  .culture-overlay.active {
+    display: flex;
+  }
+
+  .overlay-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 1.5rem;
+    color: #ff0000;
+    background: #000;
+    border: 3px solid #ff0000;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10001;
+    transition: all 0.2s;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+  }
+
+  .overlay-close:hover {
+    background: #ff0000;
+    color: #000;
+    transform: rotate(90deg);
+  }
+
+  /* Mothership */
+  .mothership {
+    position: absolute;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 128px;
+    height: 64px;
+    z-index: 10000;
+    filter: drop-shadow(0 0 20px #ff0000);
+    transition: all 0.6s ease-out;
+  }
+
+  .mothership.descending {
+    top: 20%;
+    animation: mothership-wobble 0.6s ease-in-out;
+  }
+
+  @keyframes mothership-wobble {
+    0%, 100% { transform: translateX(-50%) rotate(0deg); }
+    25% { transform: translateX(-50%) rotate(-3deg); }
+    75% { transform: translateX(-50%) rotate(3deg); }
+  }
+
+  .tractor-beam {
+    position: absolute;
+    top: 64px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    background: linear-gradient(180deg, 
+      rgba(0, 255, 255, 0.6) 0%,
+      rgba(0, 255, 255, 0.3) 50%,
+      rgba(0, 255, 255, 0) 100%
+    );
+    opacity: 0;
+    transition: all 0.3s;
+  }
+
+  .tractor-beam.active {
+    width: 100px;
+    height: 400px;
+    opacity: 1;
+    animation: beam-shimmer 0.5s ease-in-out infinite;
+  }
+
+  @keyframes beam-shimmer {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 0.9; }
+  }
+
+  /* Recipe Display */
+  .recipe-display {
+    background: #000;
+    border: 4px solid #ff0000;
+    margin: 8rem 2rem 2rem;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 
+      0 0 30px rgba(255, 0, 0, 0.5),
+      inset 0 0 20px rgba(255, 0, 0, 0.1);
+  }
+
+  .recipe-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 3px solid #ff0000;
+  }
+
+  .pixel-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 1rem;
+    color: #ff0000;
+    text-shadow: 0 0 15px currentColor;
+  }
+
+  .recipe-controls {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .pixel-btn-small {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 2px solid #00ff00;
+    background: #000;
+    color: #00ff00;
+    cursor: pointer;
+    transition: all 0.1s;
+  }
+
+  .pixel-btn-small:hover {
+    background: #00ff00;
+    color: #000;
+    box-shadow: 0 0 15px #00ff00;
+  }
+
+  .pixel-btn-small.save-btn {
+    border-color: #ffff00;
+    color: #ffff00;
+  }
+
+  .pixel-btn-small.save-btn:hover {
+    background: #ffff00;
+    color: #000;
+    box-shadow: 0 0 15px #ffff00;
+  }
+
+  .recipe-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .recipe-slot {
+    aspect-ratio: 1;
+    border: 3px solid #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: #0a0a0a;
+    border-radius: 8px;
+  }
+
+  .recipe-slot.empty {
+    border-style: dashed;
+  }
+
+  .empty-text {
+    font-size: 3rem;
+    color: #333;
+  }
+
+  .recipe-slot:not(.empty) {
+    border-color: var(--item-color);
+    box-shadow: 0 0 15px var(--item-color);
+  }
+
+  .ingredient-name {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    right: 5px;
+    font-family: 'VT323', monospace;
+    font-size: 0.7rem;
+    color: var(--item-color);
+    text-align: center;
+    text-shadow: 0 0 5px currentColor;
+  }
+
+  .remove-btn {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 24px;
+    height: 24px;
+    border: 2px solid #ff0000;
+    background: #000;
+    color: #ff0000;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: all 0.1s;
+  }
+
+  .remove-btn:hover {
+    background: #ff0000;
+    color: #000;
+    transform: rotate(90deg);
+  }
+
+  /* Nutrient Stats */
+  .nutrient-stats {
+    background: #0a0a0a;
+    border: 3px solid #00ff00;
+    padding: 1.5rem;
+    border-radius: 8px;
+  }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: 100px 1fr 80px;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .stat-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .stat-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5rem;
+    color: #00ff00;
+    text-shadow: 0 0 8px currentColor;
+  }
+
+  .stat-bar {
+    height: 20px;
+    background: #1a1a1a;
+    border: 2px solid #00ff00;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00ff00, #00cc00);
+    box-shadow: 0 0 10px #00ff00;
+    transition: width 0.5s ease-out;
+  }
+
+  .stat-value {
+    font-family: 'VT323', monospace;
+    font-size: 1rem;
+    color: #00ff00;
+    text-align: right;
+  }
+
+  /* Ingredient Shelf */
+  .ingredient-shelf-overlay {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    padding: 2rem;
+    justify-content: center;
+    align-items: center;
+    border-top: 4px solid #333;
+  }
+
+  .ingredient-item-v2 {
+    width: 80px;
+    height: 80px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s;
+  }
+
+  .ingredient-item-v2:hover {
+    transform: scale(1.3);
+    z-index: 1000;
+  }
+
+  .ingredient-item-v2.being-lifted {
+    animation: lift-up 0.8s ease-out;
+  }
+
+  @keyframes lift-up {
+    0% {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-400px) scale(0.3);
+      opacity: 0;
+    }
+  }
+
+  /* Enhanced Orb */
+  .ingredient-item-v2.orb .ingredient-visual-v2,
+  .recipe-slot.orb .ingredient-visual-v2 {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, 
+      rgba(255, 255, 255, 0.8),
+      var(--item-color) 40%,
+      rgba(0, 0, 0, 0.4)
+    );
+    box-shadow: 
+      0 0 30px var(--item-color),
+      inset -15px -15px 30px rgba(0, 0, 0, 0.6),
+      inset 15px 15px 30px rgba(255, 255, 255, 0.3);
+    animation: orb-glow 2s ease-in-out infinite;
+  }
+
+  @keyframes orb-glow {
+    0%, 100% {
+      box-shadow: 
+        0 0 30px var(--item-color),
+        inset -15px -15px 30px rgba(0, 0, 0, 0.6);
+    }
+    50% {
+      box-shadow: 
+        0 0 50px var(--item-color),
+        0 0 70px var(--item-color),
+        inset -15px -15px 30px rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  /* Enhanced Box */
+  .ingredient-item-v2.box .ingredient-visual-v2,
+  .recipe-slot.box .ingredient-visual-v2 {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, 
+      var(--item-color) 0%,
+      rgba(0, 0, 0, 0.4) 50%,
+      var(--item-color) 100%
+    );
+    box-shadow: 
+      0 0 30px var(--item-color),
+      inset -10px -10px 20px rgba(0, 0, 0, 0.5),
+      inset 10px 10px 20px rgba(255, 255, 255, 0.2);
+    clip-path: polygon(15% 0%, 85% 0%, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0% 85%, 0% 15%);
+    animation: box-rotate 6s linear infinite;
+  }
+
+  @keyframes box-rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Enhanced Bottle */
+  .ingredient-item-v2.bottle .ingredient-visual-v2,
+  .recipe-slot.bottle .ingredient-visual-v2 {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, 
+      rgba(255, 255, 255, 0.3) 0%, 
+      rgba(255, 255, 255, 0.2) 20%, 
+      var(--item-color) 20%, 
+      var(--item-color) 85%,
+      rgba(0, 0, 0, 0.3) 100%
+    );
+    box-shadow: 
+      0 0 30px var(--item-color),
+      inset 0 -30px 40px rgba(0, 0, 0, 0.4);
+    clip-path: polygon(
+      38% 0%, 62% 0%, 
+      62% 18%, 72% 18%, 
+      72% 100%, 28% 100%, 
+      28% 18%, 38% 18%
+    );
+    animation: bottle-fill 3s ease-in-out infinite;
+  }
+
+  @keyframes bottle-fill {
+    0%, 100% {
+      background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.3) 0%, 
+        rgba(255, 255, 255, 0.2) 20%, 
+        var(--item-color) 20%, 
+        var(--item-color) 85%,
+        rgba(0, 0, 0, 0.3) 100%
+      );
+    }
+    50% {
+      background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.3) 0%, 
+        rgba(255, 255, 255, 0.2) 15%, 
+        var(--item-color) 15%, 
+        var(--item-color) 90%,
+        rgba(0, 0, 0, 0.3) 100%
+      );
+    }
+  }
+
+  .ingredient-label {
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'VT323', monospace;
+    font-size: 0.8rem;
+    color: var(--item-color);
+    white-space: nowrap;
+    text-shadow: 0 0 8px currentColor;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+
+  .ingredient-item-v2:hover .ingredient-label {
+    opacity: 1;
+  }
+
+  @media (max-width: 768px) {
+    .recipe-display {
+      margin: 6rem 1rem 1rem;
+      padding: 1rem;
+    }
+
+    .recipe-grid {
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    }
+
+    .ingredient-item-v2 {
+      width: 60px;
+      height: 60px;
+    }
+
+    .pixel-title {
+      font-size: 0.7rem;
+    }
+  }
+</style>

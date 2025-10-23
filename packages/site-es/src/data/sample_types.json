@@ -1,0 +1,34 @@
+[
+  {
+    "id": "type-1",
+    "type": "agar_plate",
+    "display_name": "Agar Plate",
+    "description": "Petri dish with agar medium",
+    "typical_duration_days": 14,
+    "icon": "🧫"
+  },
+  {
+    "id": "type-2",
+    "type": "liquid_culture",
+    "display_name": "Liquid Culture",
+    "description": "Jar or bottle with liquid medium",
+    "typical_duration_days": 21,
+    "icon": "🫙"
+  },
+  {
+    "id": "type-3",
+    "type": "grain_spawn",
+    "display_name": "Grain Spawn",
+    "description": "Sterilized grain colonized with mycelium",
+    "typical_duration_days": 21,
+    "icon": "🌾"
+  },
+  {
+    "id": "type-4",
+    "type": "slant",
+    "display_name": "Agar Slant",
+    "description": "Test tube with slanted agar for long-term storage",
+    "typical_duration_days": 365,
+    "icon": "🧪"
+  }
+]

@@ -1,0 +1,103 @@
+/* src/styles/botanical-theme.css - Unified Botanical Theme for Starlight */
+
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap'); /* Pixel font for binary */
+
+:root {
+  /* Botanical Color Palette */
+  --botanical-cream: #f8f5f0;
+  --botanical-paper: #faf8f3;
+  --botanical-sepia: #8b7355;
+  --botanical-sage: #87a878;
+  --botanical-dusty-rose: #c4a69d;
+  --botanical-moss: #5a6e4f;
+  --botanical-terracotta: #b87560;
+  --botanical-ink: #3d3027;
+  --botanical-gold: #d4a574;
+  --pixel-green: #00ff41; /* For the binary VT323 text */
+
+  /* Global Fonts */
+  --font-body: 'Crimson Text', serif;
+  --font-heading: 'EB Garamond', serif;
+  --font-mono: 'VT323', monospace;
+
+  /* Global Container */
+  --content-max-width: 1200px;
+}
+
+/* Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--botanical-cream);
+  color: var(--botanical-ink);
+  font-family: var(--font-body);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--botanical-moss);
+}
+
+a {
+  color: var(--botanical-sage);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--botanical-moss);
+}
+
+/* Custom Component Styles */
+
+/* Buttons */
+.sl-button {
+  background: var(--botanical-sage);
+  color: white;
+  border: 2px solid var(--botanical-sage);
+  border-radius: 4px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.2s;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.sl-button:hover {
+  background: var(--botanical-moss);
+  border-color: var(--botanical-moss);
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Decorative Elements */
+.title-ornament {
+    color: var(--botanical-gold);
+    font-size: 1.5rem;
+    margin: 0 1rem;
+    line-height: 1;
+}
+
+.section-title {
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    color: var(--botanical-moss, #5a6e4f);
+    font-variant: small-caps;
+    letter-spacing: 0.1em;
+}
+
+/* Mobile Navigation */
+@media (max-width: 768px) {
+    /* Add mobile-specific styles here if needed */
+}
+

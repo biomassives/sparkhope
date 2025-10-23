@@ -1,0 +1,33 @@
+The transformation of your species data is designed to directly support the educational mechanics of your game by integrating empirical data on nutrient management, sterile technique requirements, and food production goals.
+
+Here are the first seven entries (`species-7` through `species-13`) with the new, integrated mycological metrics:
+
+```json
+
+```
+
+### Rationale for Data Population
+
+1.  **Sugar Tolerance (`lc_sugar_tolerance_max`):**
+
+      * *Pleurotus* species (7, 10, 13) are assigned a **6%** maximum tolerance, as research indicates they can thrive in higher nutrient concentrations compared to standard $4\%$ solutions.[1]
+      * *Hericium* and *Shiitake* (8, 9, 11, 12) are assigned a **$4\%$** maximum, as $4\%$ is the generally recommended optimal concentration to prevent caramelization during sterilization.[2]
+
+2.  **Aseptic Requirement (`aseptic_requirement`):**
+
+      * Robust secondary decomposers like Oyster mushrooms (7, 10) are set to **Moderate (SAB Viable)**, reflecting their competitive nature and suitability for low-cost setups.[3, 1]
+      * Species requiring highly supplemented or sterilized media (*Shiitake*, *King Oyster*) or those specifically grown for delicate culture work (*Lion's Mane*, *Chaga*) are designated **High**, necessitating Laminar Flow Hood (LFH) or rigorous pressure sterilization for consistent success.[3, 4]
+
+3.  **Low-Resource Disinfection (`low_resource_disinfection`):**
+
+      * Oyster species (7, 10) are ideal candidates for **Cold Lime Bath** or **Solarization**, which are effective low-energy pasteurization methods for straw.[5, 6]
+      * The species requiring supplemented sawdust (8, 11, 12, 13) must use **Autoclave/Pressure Cooker** as pasteurization is insufficient for nutrient-rich substrates.[7]
+
+4.  **Tissue Cloning Size (`tissue_cloning_size`):**
+
+      * *P. ostreatus* (Oyster) and *P. eryngii* (King Oyster) are set to **Large Plug**, as larger tissue sizes have been shown to produce faster mycelial growth and higher density.[8]
+      * *Lentinula edodes* (Shiitake) is set to **Small Plug**, as small plugs were observed to favor mycelial growth for this species.[8]
+
+5.  **Food Security Focus (`food_security_focus`):**
+
+      * *King Oyster* (13) and *Lion's Mane* (8, 12) are prioritized for **Biomass (SmF)** because research highlights their exceptional nutritional density and high protein yield when produced via submerged liquid culture.[9, 10]

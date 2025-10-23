@@ -1,0 +1,272 @@
+.
+├── arc
+│   └── Storytelling--astro.txt
+├── ar.txt
+├── assets
+│   ├── automated-nutrient-ph-controller.pdf
+│   ├── hero.svg
+│   └── houston.webp
+├── astro.config.mjs
+├── browser-extension
+│   ├── icons
+│   │   ├── icon48.png
+│   │   └── icon96.png
+│   ├── make_icons.py
+│   ├── manifest.json
+│   ├── mycolab-extension.zip
+│   └── popup.html
+├── convert_astro_pages.pl
+├── convert_pages_smart.pl
+├── mycolab_export_20251006_090207.json
+├── netlify.toml
+├── package.json
+├── package-lock.json
+├── packages
+│   ├── core
+│   │   ├── package.json
+│   │   └── src
+│   │       ├── components
+│   │       │   ├── BatchCard.astro
+│   │       │   ├── CollectionCard.astro
+│   │       │   ├── DocCard.astro
+│   │       │   ├── LanguageSwitcher.astro
+│   │       │   ├── ObservationCard.astro
+│   │       │   ├── ResearchGrid.astro
+│   │       │   ├── SidebarPanel.astro
+│   │       │   ├── StatusCard.astro
+│   │       │   └── StorageStatus.astro
+│   │       ├── layouts
+│   │       │   └── Layout.astro
+│   │       ├── lib
+│   │       │   ├── DataManager.js
+│   │       │   ├── initData.js
+│   │       │   └── managers
+│   │       │       └── index.js
+│   │       ├── styles
+│   │       │   └── botanical-theme.css
+│   │       └── types
+│   │           ├── database.ts
+│   │           └── index.ts
+├── pnpm-lock.yaml
+├── pnpm-workspace.yaml
+├── public
+│   ├── aph2.svg
+│   ├── aph.svg
+│   ├── assets
+│   │   └── automated-nutrient-ph-controller.pdf
+│   ├── desert-mushroom-oasis.html
+│   ├── favicon.svg
+│   ├── lab_schema.db
+│   ├── LC Mushroom Production Operations Flow.html
+│   ├── lc-wizard0.html
+│   ├── lc-wizard.html
+│   ├── LiquidCultureRecipes.html
+│   ├── LiquidCultureReference01.html
+│   ├── LiquidCultureReference02.html
+│   ├── LiquidCultureReference03.html
+│   ├── LiquidCultureReference04.html
+│   ├── LiquidCultureReference.html
+│   ├── LiquidCultureReferences.html
+│   ├── live-vs-sterile-lc-substrate-side‑by‑side-comparison.html
+│   ├── mycolabref01.html
+│   ├── mycolabref.html
+│   ├── mycoref2.html
+│   ├── MycoRef.html
+│   ├── nav
+│   │   ├── a1.png
+│   │   ├── a.png
+│   │   ├── b1.png
+│   │   └── b.png
+│   ├── pleurotis.svg
+│   └── styles
+│       └── botanical-theme.css
+├── QUICKSTART.md
+├── README.md
+├── scripts
+│   ├── fixFrontmatter.js
+│   └── transform-export.cjs
+├── src
+│   ├── assets
+│   │   ├── automated-nutrient-ph-controller.pdf
+│   │   ├── blog-placeholder-1.jpg
+│   │   ├── hero.svg
+│   │   ├── materials-reference.html
+│   │   └── Untitled 1.pdf
+│   ├── components
+│   │   ├── AnchorHeading.astro
+│   │   ├── BaseHead.astro
+│   │   ├── DatabaseStats.astro
+│   │   ├── MermaidInit.client.tsx
+│   │   ├── ObservationList.astro
+│   │   ├── relations
+│   │   │   ├── BatchRelations.astro
+│   │   │   ├── IngredientRelations.astro
+│   │   │   ├── ObservationRelations.astro
+│   │   │   └── RelationCardList.astro
+│   │   └── TopographyArt.astro
+│   ├── consts.ts
+│   ├── content
+│   │   ├── batches
+│   │   │   └── index.md
+│   │   ├── docs
+│   │   │   ├── ar
+│   │   │   │   ├── events
+│   │   │   │   │   └── index.md
+│   │   │   │   ├── guide
+│   │   │   │   │   └── index.md
+│   │   │   │   ├── index.md
+│   │   │   │   ├── index.mdx
+│   │   │   │   └── resources
+│   │   │   │       └── index.md
+│   │   │   ├── en
+│   │   │   │   ├── events
+│   │   │   │   │   └── index.md
+│   │   │   │   ├── guide
+│   │   │   │   │   ├── automated-nutrient-dosing
+│   │   │   │   │   │   ├── arduino-lc-maintainer.txt
+│   │   │   │   │   │   └── automated-nutrient-and-ph-controller.md
+│   │   │   │   │   ├── edible-mycelia-production
+│   │   │   │   │   │   ├── agar-options.md
+│   │   │   │   │   │   ├── basic-microbial-testing.md
+│   │   │   │   │   │   ├── malt-extract-agar-diy-from-sprouted-grains.md
+│   │   │   │   │   │   ├── potato-dextrose-agar-diy-from-garden.md
+│   │   │   │   │   │   └── yeast-extract-diy.md
+│   │   │   │   │   ├── index.md
+│   │   │   │   │   └── mediterannean-oyster-mycelial-cake.md
+│   │   │   │   ├── guides
+│   │   │   │   │   └── example.md
+│   │   │   │   ├── index.mdx
+│   │   │   │   └── mycolab-overview.md
+│   │   │   ├── fa
+│   │   │   │   ├── events
+│   │   │   │   │   └── index.md
+│   │   │   │   ├── guide
+│   │   │   │   │   └── index.md
+│   │   │   │   ├── index.mdx
+│   │   │   │   └── resources
+│   │   │   │       └── index.md
+│   │   │   ├── hi
+│   │   │   │   ├── events
+│   │   │   │   │   └── index.md
+│   │   │   │   ├── guide
+│   │   │   │   │   └── index.md
+│   │   │   │   ├── index.mdx
+│   │   │   │   └── resources
+│   │   │   │       └── index.md
+│   │   │   ├── index.md
+│   │   │   ├── index.txt
+│   │   │   ├── nl
+│   │   │   │   ├── events
+│   │   │   │   │   └── index.md
+│   │   │   │   ├── guide
+│   │   │   │   │   └── index.md
+│   │   │   │   ├── index.mdx
+│   │   │   │   └── resources
+│   │   │   │       └── index.md
+│   │   │   ├── reference
+│   │   │   │   └── example.md
+│   │   │   ├── sw
+│   │   │   │   ├── events
+│   │   │   │   │   └── index.md
+│   │   │   │   ├── guide
+│   │   │   │   │   └── index.md
+│   │   │   │   ├── index.mdx
+│   │   │   │   └── resources
+│   │   │   │       └── index.md
+│   │   │   └── ta
+│   │   │       ├── events
+│   │   │       │   └── index.md
+│   │   │       ├── guide
+│   │   │       │   └── index.md
+│   │   │       ├── index.mdx
+│   │   │       └── resources
+│   │   │           └── index.md
+│   │   ├── en
+│   │   │   └── index.mdx
+│   │   ├── ingredients
+│   │   │   └── example.md
+│   │   ├── mycolab
+│   │   │   └── index.mdx
+│   │   ├── observations
+│   │   │   └── example.md
+│   │   ├── recipes
+│   │   │   └── example.md
+│   │   └── species
+│   ├── content.config.ts
+│   ├── data
+│   │   ├── batches.js
+│   │   ├── batches.json
+│   │   ├── ingredients.js
+│   │   ├── ingredients.json
+│   │   ├── _metadata.json
+│   │   ├── observations.js
+│   │   ├── observations.json
+│   │   ├── projects.js
+│   │   ├── projects.json
+│   │   ├── racks.js
+│   │   ├── racks.json
+│   │   ├── recipes.js
+│   │   ├── recipes.json
+│   │   ├── samples.js
+│   │   ├── samples.json
+│   │   ├── sample_types.json
+│   │   ├── species.js
+│   │   └── species.json
+│   ├── layouts
+│   │   └── Layout.astro
+│   ├── lib
+│   │   ├── DataManager.js
+│   │   ├── initData.js
+│   │   └── managers
+│   │       └── index.js
+│   ├── middleware
+│   │   └── index.ts
+│   ├── pages
+│   │   ├── batches
+│   │   │   ├── [id].astro
+│   │   │   └── index.astro
+│   │   ├── index.astro
+│   │   ├── ingredients
+│   │   │   ├── [id].astro
+│   │   │   └── index.astro
+│   │   ├── observations
+│   │   │   ├── [id].astro
+│   │   │   └── index.astro
+│   │   ├── projects
+│   │   │   ├── [id].astro
+│   │   │   └── index.astro
+│   │   ├── racks
+│   │   │   ├── [id].astro
+│   │   │   └── index.astro
+│   │   ├── recipes
+│   │   │   ├── [id].astro
+│   │   │   └── index.astro
+│   │   ├── samples
+│   │   │   ├── [id].astro
+│   │   │   └── index.astro
+│   │   └── species
+│   │       ├── [id].astro
+│   │       └── index.astro
+│   ├── schemas
+│   │   └── mycolabSchemas.ts
+│   ├── scripts
+│   │   └── recipes.js
+│   ├── styles
+│   │   ├── botanical-theme.css
+│   │   ├── custom.css
+│   │   ├── recipes.css
+│   │   └── rtl-overrides.css
+│   ├── types
+│   │   ├── database.ts
+│   │   └── index.ts
+│   ├── types.ts
+│   └── utils
+│       ├── mycolab.js
+│       ├── resolveRelations.ts
+│       ├── seedRandom.ts
+│       └── types.ts
+├── tsconfig.json
+├── update-imports.sh
+└── vercel.json
+
+353 directories, 780 files

@@ -1,409 +1,199 @@
 ---
-// src/layouts/Layout.astro - Dark Theme (matching Starlight docs)
+// src/layouts/Layout.astro - Standalone layout for custom pages
 interface Props {
-  title?: string;
+  title: string;
   description?: string;
 }
 
-const { 
-  title = 'SparkHope - MycoLab', 
-  description = 'Mushroom cultivation laboratory and tracking system' 
-} = Astro.props;
+const { title, description = 'SparkHope Mycology Lab Management' } = Astro.props;
 ---
 
-<!doctype html>
-<html lang="en" class="dark">
+<!DOCTYPE html>
+<html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <title>{title}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    
-    <!-- Import Starlight custom styles -->
-    <link rel="stylesheet" href="/src/styles/custom.css" />
-    
-    <!-- Dark theme styles matching Starlight -->
-    <style is:global>
-      /* CSS Reset */
-      *, *::before, *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-
-      /* Root variables - Dark theme like Starlight */
-      :root {
-        /* Starlight colors */
-        --sl-color-accent: #4f46e5;
-        --sl-color-accent-high: #6366f1;
-        --sl-color-accent-low: #3730a3;
-        
-        /* Dark theme colors */
-        --sl-color-gray-1: #17181c;
-        --sl-color-gray-2: #23262f;
-        --sl-color-gray-3: #2e333e;
-        --sl-color-gray-4: #383e4a;
-        --sl-color-gray-5: #8b92a1;
-        --sl-color-gray-6: #a1a9b8;
-        --sl-color-gray-7: #c4cad4;
-        
-        --color-bg: #17181c;
-        --color-bg-card: #23262f;
-        --color-bg-card-hover: #2e333e;
-        --color-text: #c4cad4;
-        --color-text-dim: #8b92a1;
-        --color-border: #383e4a;
-        
-        --color-primary: var(--sl-color-accent);
-        --color-primary-dark: var(--sl-color-accent-low);
-        --color-success: #10b981;
-        --color-warning: #f59e0b;
-        --color-danger: #ef4444;
-      }
-
-      html {
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        line-height: 1.6;
-        background: var(--color-bg);
-        color: var(--color-text);
-      }
-
-      body {
-        min-height: 100vh;
-        background: var(--color-bg);
-        color: var(--color-text);
-        display: flex;
-        flex-direction: column;
-      }
-
-      main {
-        flex: 1;
-      }
-
-      /* Typography */
-      h1, h2, h3, h4, h5, h6 {
-        font-weight: 600;
-        line-height: 1.2;
-        color: var(--color-text);
-      }
-
-      h1 { font-size: 2.5rem; margin-bottom: 1rem; }
-      h2 { font-size: 2rem; margin-bottom: 0.875rem; }
-      h3 { font-size: 1.5rem; margin-bottom: 0.75rem; }
-
-      /* Links */
-      a {
-        color: var(--sl-color-accent-high);
-        text-decoration: none;
-        transition: color 0.2s ease;
-      }
-
-      a:hover {
-        color: var(--sl-color-accent);
-      }
-
-      /* Utility Classes */
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 1.5rem;
-      }
-
-      .text-center { text-align: center; }
-      .font-bold { font-weight: 700; }
-      .font-semibold { font-weight: 600; }
-
-      /* Spacing */
-      .mt-2 { margin-top: 0.5rem; }
-      .mt-4 { margin-top: 1rem; }
-      .mt-8 { margin-top: 2rem; }
-      .mb-2 { margin-bottom: 0.5rem; }
-      .mb-4 { margin-bottom: 1rem; }
-      .mb-8 { margin-bottom: 2rem; }
-      .p-4 { padding: 1rem; }
-      .p-6 { padding: 1.5rem; }
-
-      /* Grid */
-      .grid {
-        display: grid;
-        gap: 1.5rem;
-      }
-
-      /* Cards */
-      .card {
-        background: var(--color-bg-card);
-        border-radius: 0.75rem;
-        border: 1px solid var(--color-border);
-        padding: 1.5rem;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-        transition: all 0.2s ease;
-      }
-
-      .card:hover {
-        background: var(--color-bg-card-hover);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-        transform: translateY(-2px);
-        border-color: var(--sl-color-accent);
-      }
-
-      /* Badges */
-      .badge {
-        display: inline-block;
-        padding: 0.25rem 0.75rem;
-        border-radius: 0.25rem;
-        font-size: 0.875rem;
-        font-weight: 500;
-      }
-
-      .badge-primary {
-        background: var(--sl-color-accent);
-        color: white;
-      }
-
-      .badge-success {
-        background: #065f46;
-        color: #d1fae5;
-      }
-
-      .badge-warning {
-        background: #78350f;
-        color: #fef3c7;
-      }
-
-      .badge-danger {
-        background: #7f1d1d;
-        color: #fee2e2;
-      }
-
-      /* Buttons */
-      .btn {
-        display: inline-block;
-        padding: 0.75rem 1.5rem;
-        border-radius: 0.5rem;
-        font-weight: 500;
-        transition: all 0.2s ease;
-        cursor: pointer;
-        border: none;
-      }
-
-      .btn-primary {
-        background: var(--sl-color-accent);
-        color: white;
-      }
-
-      .btn-primary:hover {
-        background: var(--sl-color-accent-high);
-        transform: translateY(-2px);
-      }
-
-      .btn-secondary {
-        background: var(--color-bg-card);
-        color: var(--color-text);
-        border: 1px solid var(--color-border);
-      }
-
-      .btn-secondary:hover {
-        background: var(--color-bg-card-hover);
-        border-color: var(--sl-color-accent);
-      }
-
-      /* Page animations */
-      .page-content {
-        animation: fadeIn 0.3s ease;
-      }
-
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-
-      /* Responsive */
-      @media (max-width: 768px) {
-        h1 { font-size: 2rem; }
-        h2 { font-size: 1.5rem; }
-        h3 { font-size: 1.25rem; }
-        
-        .container {
-          padding: 0 1rem;
-        }
-      }
-    </style>
   </head>
   <body>
-    <!-- Navigation -->
-    <nav class="main-nav">
-      <div class="nav-container">
-        <a href="/" class="nav-logo">
-          <span class="logo-icon">🍄</span>
-          <span class="logo-text">SparkHope</span>
-        </a>
-        
-        <table><tr><td>
-        <ul class="nav-links">
-          <li><a href="/observations">Observations</a></li>
-          <li><a href="/samples">Samples</a></li>
-          <li><a href="/racks">Racks</a></li>
-          
-        </ul>
-        </td></tr><tr><td>
-        <ul class="nav-links">
-
-          <li><a href="/species">Species</a></li>
-          <li><a href="/ingredients">Ingredients</a></li>
-          <li><a href="/recipes">Recipes</a></li>
-          <li><a href="/docs" class="docs-link">📚 Docs</a></li>
-        </ul>
-        </td></tr></table>
+    <header class="site-header">
+      <div class="header-container">
+        <a href="/" class="logo">🍄 SparkHope</a>
+        <nav class="main-nav">
+          <a href="/species">Species</a>
+          <a href="/samples">Samples</a>
+          <a href="/racks">Racks</a>
+          <a href="/recipes">Recipes</a>
+          <a href="/projects">Projects</a>
+          <a href="/observations">Observations</a>
+          <a href="/ingredients">Ingredients</a>
+        </nav>
       </div>
-    </nav>
+    </header>
 
-    <main class="page-content">
+    <main>
       <slot />
     </main>
 
-    <footer class="main-footer">
+    <footer class="site-footer">
       <div class="footer-container">
-        <p>&copy; {new Date().getFullYear()} SparkHope. Cultivating knowledge.</p>
-        <div class="footer-links">
-          <a href="/">Home</a>
-          <a href="/docs">Documentation</a>
-          <a href="https://hub.approvideo.org" target="_blank">Hub</a>
-        </div>
+        <p>&copy; {new Date().getFullYear()} SparkHope Mycology Lab</p>
       </div>
     </footer>
   </body>
 </html>
 
+<style is:global>
+  :root {
+    /* Color Variables - Light Theme */
+    --color-bg: #ffffff;
+    --color-bg-card: #f8f9fa;
+    --color-bg-card-hover: #f1f3f5;
+    --color-text: #212529;
+    --color-text-dim: #6c757d;
+    --color-border: #dee2e6;
+    
+    /* Accent Colors */
+    --sl-color-accent: #7c3aed;
+    --sl-color-accent-high: #6d28d9;
+    --sl-color-accent-low: #8b5cf6;
+  }
+
+  /* Dark theme */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-bg: #0f172a;
+      --color-bg-card: #1e293b;
+      --color-bg-card-hover: #334155;
+      --color-text: #f1f5f9;
+      --color-text-dim: #94a3b8;
+      --color-border: #334155;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, 
+                 Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--color-bg);
+    color: var(--color-text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  main {
+    flex: 1;
+  }
+
+  a {
+    color: var(--sl-color-accent-high);
+  }
+
+  a:hover {
+    color: var(--sl-color-accent);
+  }
+</style>
+
 <style>
-  /* Navigation - Dark theme */
-  .main-nav {
-    background: var(--color-bg-card);
-    border-bottom: 1px solid var(--color-border);
+  .site-header {
+    background: linear-gradient(135deg, var(--sl-color-accent) 0%, var(--sl-color-accent-low) 100%);
+    color: white;
+    padding: 1rem 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
   }
 
-  .nav-container {
-    max-width: 1200px;
+  .header-container {
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 1rem 1.5rem;
+    padding: 0 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 2rem;
   }
 
-  .nav-logo {
+  .logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    text-decoration: none;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    text-decoration: none;
-    color: var(--color-text);
-    font-weight: 700;
-    font-size: 1.25rem;
   }
 
-  .logo-icon {
-    font-size: 1.5rem;
+  .logo:hover {
+    opacity: 0.9;
   }
 
-  .nav-links {
+  .main-nav {
     display: flex;
-    list-style: none;
-    gap: 1.5rem;
-    margin: 0;
-    padding: 0;
+    gap: 2rem;
+    align-items: center;
   }
 
-  .nav-links a {
+  .main-nav a {
+    color: white;
     text-decoration: none;
-    color: var(--color-text-dim);
     font-weight: 500;
-    transition: all 0.2s ease;
-    padding: 0.5rem 0.75rem;
+    font-size: 0.95rem;
+    padding: 0.5rem 1rem;
     border-radius: 0.375rem;
+    transition: all 0.2s;
   }
 
-  .nav-links a:hover {
-    color: var(--color-text);
-    background: var(--color-bg-card-hover);
+  .main-nav a:hover {
+    background: rgba(255, 255, 255, 0.15);
   }
 
-  .docs-link {
-    background: var(--sl-color-accent);
-    color: white !important;
-  }
-
-  .docs-link:hover {
-    background: var(--sl-color-accent-high) !important;
-  }
-
-  /* Footer - Dark theme */
-  .main-footer {
+  .site-footer {
     background: var(--color-bg-card);
     border-top: 1px solid var(--color-border);
-    padding: 2rem 1.5rem;
+    padding: 2rem 0;
     margin-top: 4rem;
   }
 
   .footer-container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
+    padding: 0 2rem;
+    text-align: center;
+    color: var(--color-text-dim);
   }
 
   .footer-container p {
-    color: var(--color-text-dim);
+    margin: 0;
   }
 
-  .footer-links {
-    display: flex;
-    gap: 1.5rem;
-  }
-
-  .footer-links a {
-    color: var(--color-text-dim);
-    text-decoration: none;
-    transition: color 0.2s ease;
-  }
-
-  .footer-links a:hover {
-    color: var(--sl-color-accent-high);
-  }
-
-  /* Responsive */
   @media (max-width: 768px) {
-    .nav-container {
+    .header-container {
       flex-direction: column;
       gap: 1rem;
-      padding: 1rem;
     }
 
-    .nav-links {
+    .main-nav {
       flex-wrap: wrap;
       justify-content: center;
-      gap: 0.5rem;
+      gap: 1rem;
     }
 
-    .nav-links a {
+    .main-nav a {
+      padding: 0.4rem 0.8rem;
       font-size: 0.875rem;
-      padding: 0.5rem;
-    }
-
-    .footer-container {
-      flex-direction: column;
-      text-align: center;
-    }
-
-    .footer-links {
-      justify-content: center;
-      flex-wrap: wrap;
     }
   }
 </style>

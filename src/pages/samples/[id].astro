@@ -1,0 +1,375 @@
+---
+// src/pages/samples/[id].astro - Sample Detail Page
+import Layout from '../../layouts/Layout.astro';
+import { initializeDataStore } from '../../lib/initData.js';
+import type { Sample, Rack } from '../../types/database';
+
+const { id } = Astro.params;
+
+const store = await initializeDataStore();
+const sample: Sample | undefined = await store.samples.getById(id);
+
+if (!sample) {
+  return Astro.redirect('/404');
+}
+
+export async function getStaticPaths() {
+  const store = await initializeDataStore();
+  const samples = await store.samples.getAll();
+  
+  return samples.map((sample: Sample) => ({
+    params: { id: sample.id },
+  }));
+}
+
+// Get related data
+const allRacks = await store.racks.getAll();
+const allSpecies = await store.species.getAll();
+
+const rack = allRacks.find((r: Rack) => r.id === sample.location_id);
+const species = allSpecies.find((s: any) => s.id === sample.species_id);
+---
+
+<Layout title={`Sample ${sample.id} - SparkHope`}>
+  <div class="botanical-container">
+    <div class="specimen-sheet">
+      <div class="sheet-border">
+        
+        <!-- Header -->
+        <div class="sheet-header">
+          <div class="header-ornament">✤ ❦ ✤</div>
+          <h1 class="sheet-title">Specimen Record</h1>
+          <div class="sheet-id">ID: {sample.id}</div>
+          <div class="header-ornament">✤ ❦ ✤</div>
+        </div>
+
+        <!-- Main Info -->
+        <div class="info-section">
+          <div class="info-row">
+            <span class="info-label">Type:</span>
+            <span class="info-value">{sample.sample_type.replace(/_/g, ' ')}</span>
+          </div>
+          
+          {species && (
+            <div class="info-row">
+              <span class="info-label">Species:</span>
+              <span class="info-value">{species.common_name}</span>
+              <span class="info-latin">{species.scientific_name}</span>
+            </div>
+          )}
+
+          <div class="info-row">
+            <span class="info-label">Status:</span>
+            <span class={`status-badge status-${sample.status}`}>
+              {sample.status}
+            </span>
+          </div>
+
+          {sample.generation && (
+            <div class="info-row">
+              <span class="info-label">Generation:</span>
+              <span class="info-value">{sample.generation}</span>
+            </div>
+          )}
+
+          {rack && (
+            <div class="info-row">
+              <span class="info-label">Location:</span>
+              <span class="info-value">{rack.name}</span>
+              {sample.position && <span class="info-detail">Position {sample.position}</span>}
+            </div>
+          )}
+
+          <div class="info-row">
+            <span class="info-label">Inoculated:</span>
+            <span class="info-value">
+              {new Date(sample.inoculation_date).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })}
+            </span>
+          </div>
+
+          {sample.health_rating && (
+            <div class="info-row">
+              <span class="info-label">Health Rating:</span>
+              <span class="health-stars">
+                {'★'.repeat(sample.health_rating)}{'☆'.repeat(5 - sample.health_rating)}
+              </span>
+            </div>
+          )}
+
+          <div class="info-row">
+            <span class="info-label">Contamination:</span>
+            <span class={`contamination-status ${sample.contamination ? 'contaminated' : 'clean'}`}>
+              {sample.contamination ? '⚠ Detected' : '✓ Clean'}
+            </span>
+          </div>
+        </div>
+
+        {sample.notes && (
+          <div class="notes-section">
+            <div class="section-title">
+              <span class="title-ornament">❦</span>
+              Notes
+              <span class="title-ornament">❦</span>
+            </div>
+            <div class="notes-content">
+              {sample.notes}
+            </div>
+          </div>
+        )}
+
+        <!-- Footer -->
+        <div class="sheet-footer">
+          <div class="footer-decoration">~ ✤ ~</div>
+          <div class="footer-date">
+            Created: {new Date(sample.created_at).toLocaleDateString()}
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions">
+          <a href="/samples" class="btn-secondary">← Back to Samples</a>
+          <a href={`/samples/${sample.id}/edit`} class="btn-primary">Edit Record</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .botanical-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+  }
+
+  .specimen-sheet {
+    background: #faf8f3;
+    border: 3px solid #8b7355;
+    border-radius: 8px;
+    box-shadow: 8px 8px 20px rgba(0,0,0,0.15);
+  }
+
+  .sheet-border {
+    padding: 2rem;
+  }
+
+  .sheet-header {
+    text-align: center;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid #8b7355;
+    margin-bottom: 2rem;
+  }
+
+  .header-ornament {
+    font-size: 1.5rem;
+    color: #d4a574;
+    margin: 0.5rem 0;
+    letter-spacing: 1rem;
+  }
+
+  .sheet-title {
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin: 1rem 0;
+    color: #3d3027;
+    font-family: 'EB Garamond', serif;
+    letter-spacing: 0.1em;
+  }
+
+  .sheet-id {
+    font-size: 1.125rem;
+    color: #8b7355;
+    font-variant: small-caps;
+    letter-spacing: 0.15em;
+  }
+
+  .info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .info-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: rgba(139, 115, 85, 0.05);
+    border-left: 4px solid #87a878;
+    border-radius: 4px;
+  }
+
+  .info-label {
+    font-weight: 600;
+    color: #8b7355;
+    min-width: 150px;
+    font-size: 1rem;
+  }
+
+  .info-value {
+    font-size: 1.125rem;
+    color: #3d3027;
+    text-transform: capitalize;
+  }
+
+  .info-latin {
+    font-style: italic;
+    color: #8b7355;
+    margin-left: 0.5rem;
+  }
+
+  .info-detail {
+    font-size: 0.95rem;
+    color: #8b7355;
+    margin-left: 0.5rem;
+  }
+
+  .status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+  }
+
+  .status-ready {
+    background: #87a878;
+    color: white;
+  }
+
+  .status-colonizing {
+    background: #5a6e4f;
+    color: white;
+  }
+
+  .status-contaminated {
+    background: #b87560;
+    color: white;
+  }
+
+  .health-stars {
+    font-size: 1.25rem;
+    color: #d4a574;
+  }
+
+  .contamination-status {
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .contamination-status.clean {
+    color: #87a878;
+  }
+
+  .contamination-status.contaminated {
+    color: #b87560;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    margin: 2rem 0 1rem 0;
+    color: #3d3027;
+  }
+
+  .title-ornament {
+    color: #d4a574;
+    margin: 0 1rem;
+  }
+
+  .notes-section {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: rgba(135, 168, 120, 0.05);
+    border: 2px dashed #8b7355;
+    border-radius: 8px;
+  }
+
+  .notes-content {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #3d3027;
+    text-align: justify;
+    font-family: 'Crimson Text', serif;
+  }
+
+  .sheet-footer {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid #8b7355;
+    text-align: center;
+  }
+
+  .footer-decoration {
+    color: #d4a574;
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .footer-date {
+    font-size: 0.95rem;
+    color: #8b7355;
+    font-variant: small-caps;
+  }
+
+  .actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    justify-content: center;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s;
+    font-size: 1rem;
+  }
+
+  .btn-primary {
+    background: #87a878;
+    color: white;
+    border: 2px solid #87a878;
+  }
+
+  .btn-primary:hover {
+    background: #5a6e4f;
+    border-color: #5a6e4f;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: #8b7355;
+    border: 2px solid #8b7355;
+  }
+
+  .btn-secondary:hover {
+    background: #8b7355;
+    color: white;
+  }
+
+  @media (max-width: 768px) {
+    .info-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .info-label {
+      min-width: auto;
+    }
+
+    .actions {
+      flex-direction: column;
+    }
+  }
+</style>

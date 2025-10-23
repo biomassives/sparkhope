@@ -1,0 +1,11 @@
+---
+// packages/site-en/src/layouts/SiteLayout.astro
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout {...Astro.props}>
+  <Fragment slot="nav-extra">
+    <LanguageSwitcher currentLang="en" currentPath={Astro.url.pathname} />
+  </Fragment>
+  <slot />
+</Layout>

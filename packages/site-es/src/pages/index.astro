@@ -1,0 +1,60 @@
+---
+import Layout from '../layouts/Layout.astro';
+import IngredientBuilder from '../components/IngredientBuilder.astro';
+import { getAllBatches, getAllSpecies, getAllSamples } from '../utils/loadData';
+
+const batches = getAllBatches();
+const species = getAllSpecies();
+const samples = getAllSamples();
+---
+
+<Layout title="MycoLab - Home">
+  <IngredientBuilder />
+  
+  <div style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+    <div style="text-align: center; margin-bottom: 3rem;">
+      <h1 style="font-family: 'Press Start 2P', monospace; font-size: 2rem; color: #00ff00; text-shadow: 0 0 20px currentColor; margin-bottom: 1rem;">
+        MYCOLAB ARCADE
+      </h1>
+      <p style="font-family: 'VT323', monospace; font-size: 1.5rem; color: #00cc00;">
+        SPECIMEN COLLECTION & RESEARCH
+      </p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+      <div style="background: #000; border: 3px solid #00ff00; padding: 1.5rem; text-align: center; box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);">
+        <div style="font-family: 'Press Start 2P', monospace; font-size: 2rem; color: #00ff00; margin-bottom: 0.5rem;">
+          {species.length}
+        </div>
+        <div style="font-family: 'VT323', monospace; font-size: 1.2rem; color: #00cc00;">SPECIES</div>
+      </div>
+      
+      <div style="background: #000; border: 3px solid #00ffff; padding: 1.5rem; text-align: center; box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);">
+        <div style="font-family: 'Press Start 2P', monospace; font-size: 2rem; color: #00ffff; margin-bottom: 0.5rem;">
+          {batches.length}
+        </div>
+        <div style="font-family: 'VT323', monospace; font-size: 1.2rem; color: #00cccc;">BATCHES</div>
+      </div>
+      
+      <div style="background: #000; border: 3px solid #ffff00; padding: 1.5rem; text-align: center; box-shadow: 0 0 20px rgba(255, 255, 0, 0.3);">
+        <div style="font-family: 'Press Start 2P', monospace; font-size: 2rem; color: #ffff00; margin-bottom: 0.5rem;">
+          {samples.length}
+        </div>
+        <div style="font-family: 'VT323', monospace; font-size: 1.2rem; color: #cccc00;">SAMPLES</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 3rem; padding: 2rem; background: #0a0a0a; border: 3px solid #333; border-radius: 8px;">
+      <h2 style="font-family: 'Press Start 2P', monospace; font-size: 1.2rem; color: #00ff00; margin-bottom: 1rem;">
+        HOW TO PLAY
+      </h2>
+      <ul style="font-family: 'VT323', monospace; font-size: 1.2rem; color: #00cc00; line-height: 2;">
+        <li>🛸 CLICK "LOAD CULTURE" TAB - Open the game overlay</li>
+        <li>🧪 CLICK INGREDIENTS - Mothership picks them up!</li>
+        <li>📊 WATCH NUTRIENTS - See your culture's nutrition profile</li>
+        <li>💾 SAVE RECIPE - Store your formula locally</li>
+        <li>🎯 OPTIMIZE MIX - Balance calories, protein, fiber!</li>
+      </ul>
+    </div>
+  </div>
+</Layout>

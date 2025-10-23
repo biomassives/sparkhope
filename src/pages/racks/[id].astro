@@ -1,0 +1,941 @@
+---
+// src/pages/racks/[id].astro - ENHANCED
+import Layout from '../../layouts/Layout.astro';
+import { initializeDataStore } from '../../lib/initData.js';
+
+const { id } = Astro.params;
+
+const store = await initializeDataStore();
+const allRacks = await store.racks.getAll();
+
+// Find the specific rack
+const rack = allRacks.find((r: any) => 
+  r.id === id
+);
+
+if (!rack) {
+  return Astro.redirect('/404');
+}
+
+// Export getStaticPaths for static site generation
+export async function getStaticPaths() {
+  const store = await initializeDataStore();
+  const racks = await store.racks.getAll();
+  
+  return racks.map((rack: any) => ({
+    params: { id: rack.id },
+  }));
+}
+
+// Get related data
+const allSpecies = await store.species.getAll();
+const allProjects = await store.projects.getAll();
+const allRecipes = await store.recipes.getAll();
+
+// Get species currently on this rack
+const speciesOnRack = rack.current_species 
+  ? allSpecies.filter((s: any) => rack.current_species.includes(s.species_id || s.id))
+  : [];
+
+// Get projects using this rack
+const relatedProjects = rack.project_ids
+  ? allProjects.filter((p: any) => rack.project_ids.includes(p.id))
+  : [];
+
+// Calculate occupancy percentage
+const occupancyPercentage = rack.capacity && rack.current_occupancy !== undefined
+  ? Math.round((rack.current_occupancy / rack.capacity) * 100)
+  : 0;
+
+// Get contamination stats
+const contaminatedContainers = rack.containers?.filter((c: any) => c.status === 'contaminated').length || 0;
+const activeContainers = rack.containers?.filter((c: any) => c.status === 'occupied' || c.status === 'active').length || 0;
+
+// Get recipes used in this rack
+const usedRecipeIds = rack.containers?.map((c: any) => c.recipe_id).filter(Boolean) || [];
+const uniqueRecipeIds = [...new Set(usedRecipeIds)];
+const usedRecipes = uniqueRecipeIds.map(recipeId => 
+  allRecipes.find((r: any) => r.id === recipeId)
+).filter(Boolean);
+---
+
+<Layout title={`${rack.name || 'Rack'} - SparkHope`}>
+  <div class="container">
+    <div class="rack-header">
+      <div class="header-content">
+        <h1>{rack.name || 'Untitled Rack'}</h1>
+        <div class="header-badges">
+          {rack.status && (
+            <span class={`badge badge-status badge-${rack.status}`}>
+              {rack.status}
+            </span>
+          )}
+          {rack.type && (
+            <span class="badge badge-type">{rack.type}</span>
+          )}
+          {rack.zone && (
+            <span class="badge badge-zone">{rack.zone}</span>
+          )}
+        </div>
+      </div>
+    </div>
+
+    {rack.description && (
+      <div class="section">
+        <h2>Description</h2>
+        <p>{rack.description}</p>
+      </div>
+    )}
+
+    <!-- Enhanced Stats Overview -->
+    <div class="stats-overview">
+      <div class="stat-card">
+        <div class="stat-value">{occupancyPercentage}%</div>
+        <div class="stat-label">Occupancy</div>
+        <div class="progress-bar">
+          <div class="progress-fill" style={`width: ${occupancyPercentage}%`}></div>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-value">{activeContainers}</div>
+        <div class="stat-label">Active Containers</div>
+      </div>
+      
+      {contaminatedContainers > 0 && (
+        <div class="stat-card warning">
+          <div class="stat-value">{contaminatedContainers}</div>
+          <div class="stat-label">Contaminated</div>
+        </div>
+      )}
+      
+      <div class="stat-card">
+        <div class="stat-value">{speciesOnRack.length}</div>
+        <div class="stat-label">Species Types</div>
+      </div>
+    </div>
+
+    <!-- Environmental Conditions -->
+    <div class="section environmental-section">
+      <h2>Environmental Conditions</h2>
+      <div class="environment-grid">
+        {rack.temperature !== undefined && (
+          <div class="env-card">
+            <div class="env-icon">🌡️</div>
+            <div class="env-info">
+              <div class="env-value">{rack.temperature}°C</div>
+              <div class="env-label">Temperature</div>
+              {rack.temp_range && (
+                <div class="env-range">Range: {rack.temp_range}</div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {rack.humidity !== undefined && (
+          <div class="env-card">
+            <div class="env-icon">💧</div>
+            <div class="env-info">
+              <div class="env-value">{rack.humidity}%</div>
+              <div class="env-label">Humidity</div>
+              {rack.humidity_range && (
+                <div class="env-range">Range: {rack.humidity_range}</div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {rack.light_cycle && (
+          <div class="env-card">
+            <div class="env-icon">💡</div>
+            <div class="env-info">
+              <div class="env-value">{rack.light_cycle}</div>
+              <div class="env-label">Light Cycle</div>
+              {rack.light_intensity && (
+                <div class="env-range">Intensity: {rack.light_intensity}</div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {rack.co2_level !== undefined && (
+          <div class="env-card">
+            <div class="env-icon">🌬️</div>
+            <div class="env-info">
+              <div class="env-value">{rack.co2_level} ppm</div>
+              <div class="env-label">CO₂ Level</div>
+            </div>
+          </div>
+        )}
+
+        {rack.air_exchange && (
+          <div class="env-card">
+            <div class="env-icon">🔄</div>
+            <div class="env-info">
+              <div class="env-value">{rack.air_exchange}</div>
+              <div class="env-label">Air Exchange</div>
+            </div>
+          </div>
+        )}
+
+        {rack.location && (
+          <div class="env-card">
+            <div class="env-icon">📍</div>
+            <div class="env-info">
+              <div class="env-value">{rack.location}</div>
+              <div class="env-label">Location</div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+
+    <!-- Rack Details -->
+    <div class="info-grid">
+      {rack.capacity && (
+        <div class="info-card">
+          <h3>Total Capacity</h3>
+          <p>{rack.capacity} containers</p>
+        </div>
+      )}
+
+      {rack.current_occupancy !== undefined && (
+        <div class="info-card">
+          <h3>Current Occupancy</h3>
+          <p>{rack.current_occupancy} / {rack.capacity || '?'}</p>
+        </div>
+      )}
+
+      {rack.available_slots !== undefined && (
+        <div class="info-card">
+          <h3>Available Slots</h3>
+          <p>{rack.available_slots}</p>
+        </div>
+      )}
+
+      {rack.shelf_count && (
+        <div class="info-card">
+          <h3>Shelf Count</h3>
+          <p>{rack.shelf_count} shelves</p>
+        </div>
+      )}
+
+      {rack.dimensions && (
+        <div class="info-card">
+          <h3>Dimensions</h3>
+          <p>{rack.dimensions}</p>
+        </div>
+      )}
+
+      {rack.material && (
+        <div class="info-card">
+          <h3>Material</h3>
+          <p>{rack.material}</p>
+        </div>
+      )}
+    </div>
+
+    <!-- Enhanced Containers Section -->
+    {rack.containers && rack.containers.length > 0 && (
+      <div class="section">
+        <h2>Containers ({rack.containers.length})</h2>
+        <div class="container-filters">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="occupied">Occupied</button>
+          <button class="filter-btn" data-filter="available">Available</button>
+          <button class="filter-btn" data-filter="contaminated">Contaminated</button>
+        </div>
+        <div class="container-grid">
+          {rack.containers.map((container: any, index: number) => (
+            <div class={`container-card container-${container.status || 'empty'}`} data-status={container.status}>
+              <div class="container-header">
+                <h3>Position {container.position || index + 1}</h3>
+                {container.status && (
+                  <span class={`badge badge-small badge-${container.status}`}>
+                    {container.status}
+                  </span>
+                )}
+              </div>
+              {container.species && (
+                <p class="container-species">{container.species}</p>
+              )}
+              {container.recipe && (
+                <p class="container-recipe">Recipe: {container.recipe}</p>
+              )}
+              {container.inoculation_date && (
+                <p class="container-date">Inoculated: {new Date(container.inoculation_date).toLocaleDateString()}</p>
+              )}
+              {container.colonization_percentage !== undefined && (
+                <div class="colonization-progress">
+                  <div class="colonization-label">Colonization: {container.colonization_percentage}%</div>
+                  <div class="progress-bar small">
+                    <div class="progress-fill" style={`width: ${container.colonization_percentage}%`}></div>
+                  </div>
+                </div>
+              )}
+              {container.expected_harvest && (
+                <p class="container-harvest">Harvest: {new Date(container.expected_harvest).toLocaleDateString()}</p>
+              )}
+              {container.notes && (
+                <p class="container-notes">{container.notes}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Recipes Used -->
+    {usedRecipes.length > 0 && (
+      <div class="section">
+        <h2>Recipes in Use ({usedRecipes.length})</h2>
+        <div class="recipe-list">
+          {usedRecipes.map((recipe: any) => (
+            <a href={`/recipes/${recipe.id}`} class="recipe-item">
+              <span class="recipe-name">{recipe.name}</span>
+              <span class="recipe-count">
+              {usedRecipeIds.filter((id: number) => id === recipe.id).length} containers              </span>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Current Species -->
+    {speciesOnRack.length > 0 && (
+      <div class="section">
+        <h2>Current Species ({speciesOnRack.length})</h2>
+        <div class="species-grid">
+          {speciesOnRack.map((species: any) => (
+            <a href={`/species/${species.species_id || species.id}`} class="species-card">
+              <div class="species-info">
+                <h3>{species.title || species.scientific_name}</h3>
+                {species.scientific_name && species.title !== species.scientific_name && (
+                  <p class="scientific-name">{species.scientific_name}</p>
+                )}
+              </div>
+              {species.difficulty && (
+                <span class={`badge badge-${species.difficulty}`}>
+                  {species.difficulty}
+                </span>
+              )}
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Maintenance Section -->
+    {(rack.maintenance_schedule || rack.last_maintenance || rack.next_maintenance) && (
+      <div class="section">
+        <h2>Maintenance</h2>
+        <div class="maintenance-info">
+          {rack.maintenance_schedule && (
+            <div class="maintenance-schedule">
+              <h3>Schedule</h3>
+              <p>{rack.maintenance_schedule}</p>
+            </div>
+          )}
+          <div class="maintenance-dates">
+            {rack.last_maintenance && (
+              <div class="maintenance-date">
+                <span class="date-label">Last Maintenance:</span>
+                <span class="date-value">{new Date(rack.last_maintenance).toLocaleDateString()}</span>
+              </div>
+            )}
+            {rack.next_maintenance && (
+              <div class="maintenance-date">
+                <span class="date-label">Next Scheduled:</span>
+                <span class="date-value next">{new Date(rack.next_maintenance).toLocaleDateString()}</span>
+              </div>
+            )}
+          </div>
+          {rack.maintenance_notes && (
+            <div class="maintenance-notes">
+              <h3>Maintenance Notes</h3>
+              <p>{rack.maintenance_notes}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    )}
+
+    <!-- Related Projects -->
+    {relatedProjects.length > 0 && (
+      <div class="section">
+        <h2>Related Projects ({relatedProjects.length})</h2>
+        <div class="project-grid">
+          {relatedProjects.map((project: any) => (
+            <a href={`/projects/${project.id}`} class="project-card">
+              <div class="project-info">
+                <h3>{project.name}</h3>
+                {project.description && (
+                  <p class="project-desc">{project.description.slice(0, 100)}...</p>
+                )}
+              </div>
+              {project.status && (
+                <span class={`badge badge-${project.status}`}>
+                  {project.status}
+                </span>
+              )}
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Notes -->
+    {rack.notes && (
+      <div class="section">
+        <h2>Notes</h2>
+        <p>{rack.notes}</p>
+      </div>
+    )}
+
+    <!-- Tags -->
+    {rack.tags && rack.tags.length > 0 && (
+      <div class="section">
+        <h2>Tags</h2>
+        <div class="tag-list">
+          {rack.tags.map((tag: string) => (
+            <span class="tag">{tag}</span>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <div class="actions">
+      <a href="/racks" class="btn-secondary">← Back to Racks</a>
+      <a href={`/racks/${rack.id}/edit`} class="btn-primary">Edit Rack</a>
+      <button class="btn-action" onclick="window.print()">Print Details</button>
+    </div>
+  </div>
+
+ 
+ 
+<script is:inline>
+  // Filter buttons functionality
+  document.addEventListener('DOMContentLoaded', () => {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const sampleCards = document.querySelectorAll('.sample-card');
+
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filter = btn.dataset.filter;
+        
+        // Update active button
+        filterButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Filter cards
+        sampleCards.forEach(card => {
+          if (filter === 'all' || card.dataset.status === filter) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  });
+</script>
+
+
+
+</Layout>
+
+<style>
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .rack-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--color-border);
+  }
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+  }
+
+  .rack-header h1 {
+    font-size: 2.5rem;
+    margin: 0;
+    flex: 1;
+  }
+
+  .header-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  /* Stats Overview */
+  .stats-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .stat-card.warning {
+    background: rgba(127, 29, 29, 0.1);
+    border-color: #7f1d1d;
+  }
+
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--sl-color-accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+    color: var(--color-text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .progress-bar {
+    height: 0.5rem;
+    background: var(--color-bg-card-hover);
+    border-radius: 0.25rem;
+    margin-top: 0.75rem;
+    overflow: hidden;
+  }
+
+  .progress-bar.small {
+    height: 0.25rem;
+    margin-top: 0.5rem;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--sl-color-accent);
+    border-radius: 0.25rem;
+    transition: width 0.3s ease;
+  }
+
+  /* Environmental Section */
+  .environmental-section {
+    background: linear-gradient(135deg, var(--color-bg-card) 0%, var(--color-bg-card-hover) 100%);
+  }
+
+  .environment-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+
+  .env-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+  }
+
+  .env-icon {
+    font-size: 2rem;
+  }
+
+  .env-info {
+    flex: 1;
+  }
+
+  .env-value {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .env-label {
+    font-size: 0.75rem;
+    color: var(--color-text-dim);
+    text-transform: uppercase;
+  }
+
+  .env-range {
+    font-size: 0.875rem;
+    color: var(--color-text-dim);
+    margin-top: 0.25rem;
+  }
+
+  /* Container Filters */
+  .container-filters {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .filter-btn {
+    padding: 0.5rem 1rem;
+    background: var(--color-bg-card-hover);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--color-text);
+  }
+
+  .filter-btn:hover {
+    background: var(--color-bg-card);
+    border-color: var(--sl-color-accent);
+  }
+
+  .filter-btn.active {
+    background: var(--sl-color-accent);
+    color: white;
+    border-color: var(--sl-color-accent);
+  }
+
+  /* Enhanced Container Cards */
+  .container-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  .container-card {
+    background: var(--color-bg-card-hover);
+    border: 2px solid var(--color-border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    transition: all 0.2s;
+  }
+
+  .container-card.container-occupied {
+    border-left: 4px solid #065f46;
+  }
+
+  .container-card.container-available {
+    border-left: 4px solid #1e40af;
+    opacity: 0.7;
+  }
+
+  .container-card.container-contaminated {
+    border-left: 4px solid #7f1d1d;
+    background: rgba(127, 29, 29, 0.05);
+  }
+
+  .colonization-progress {
+    margin-top: 0.75rem;
+  }
+
+  .colonization-label {
+    font-size: 0.875rem;
+    color: var(--color-text-dim);
+    margin-bottom: 0.25rem;
+  }
+
+  .container-recipe {
+    font-size: 0.875rem;
+    color: var(--color-text-dim);
+    font-style: italic;
+    margin: 0.25rem 0;
+  }
+
+  .container-harvest {
+    font-size: 0.875rem;
+    color: var(--sl-color-accent-high);
+    margin: 0.5rem 0;
+  }
+
+  /* Recipe List */
+  .recipe-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .recipe-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--color-bg-card-hover);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s;
+  }
+
+  .recipe-item:hover {
+    border-color: var(--sl-color-accent);
+    transform: translateX(4px);
+  }
+
+  .recipe-name {
+    font-weight: 500;
+  }
+
+  .recipe-count {
+    font-size: 0.875rem;
+    color: var(--color-text-dim);
+  }
+
+  /* Maintenance Info */
+  .maintenance-info {
+    background: var(--color-bg-card-hover);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+  }
+
+  .maintenance-schedule {
+    margin-bottom: 1.5rem;
+  }
+
+  .maintenance-schedule h3 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-text-dim);
+  }
+
+  .maintenance-dates {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .maintenance-date {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .date-label {
+    font-size: 0.875rem;
+    color: var(--color-text-dim);
+  }
+
+  .date-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .date-value.next {
+    color: var(--sl-color-accent-high);
+  }
+
+  .maintenance-notes {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .maintenance-notes h3 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-text-dim);
+  }
+
+  /* Project Cards */
+  .project-info {
+    flex: 1;
+  }
+
+  .project-desc {
+    font-size: 0.875rem;
+    color: var(--color-text-dim);
+    margin-top: 0.25rem;
+  }
+
+  /* Species Card Enhancement */
+  .species-info {
+    flex: 1;
+  }
+
+  /* Badges */
+  .badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .badge-zone {
+    background: #4c1d95;
+    color: #e9d5ff;
+  }
+
+  /* Actions */
+  .btn-action {
+    padding: 0.75rem 1.5rem;
+    background: var(--color-bg-card);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-action:hover {
+    background: var(--color-bg-card-hover);
+    border-color: var(--sl-color-accent);
+  }
+
+  /* Print Styles */
+  @media print {
+    .actions,
+    .container-filters {
+      display: none;
+    }
+  }
+
+  /* Other existing styles... */
+  .section {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--color-text);
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .info-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+  }
+
+  .info-card h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-dim);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .info-card p {
+    font-size: 1.125rem;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: var(--color-bg-card-hover);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--color-text);
+  }
+
+  .actions {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-secondary,
+  .btn-primary {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary {
+    background: var(--color-bg-card);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+  }
+
+  .btn-secondary:hover {
+    background: var(--color-bg-card-hover);
+    border-color: var(--sl-color-accent);
+  }
+
+  .btn-primary {
+    background: var(--sl-color-accent);
+    color: white;
+    border: 1px solid var(--sl-color-accent);
+  }
+
+  .btn-primary:hover {
+    background: var(--sl-color-accent-high);
+    border-color: var(--sl-color-accent-high);
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      padding: 1rem;
+    }
+
+    .header-content {
+      flex-direction: column;
+    }
+
+    .rack-header h1 {
+      font-size: 2rem;
+    }
+
+    .stats-overview {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .environment-grid,
+    .container-grid,
+    .species-grid,
+    .project-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .actions {
+      flex-direction: column;
+    }
+
+    .btn-secondary,
+    .btn-primary,
+    .btn-action {
+      width: 100%;
+      text-align: center;
+    }
+  }
+</style>

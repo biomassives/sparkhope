@@ -1,0 +1,43 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getAllProjects } from '../../utils/loadData';
+
+const projects = getAllProjects();
+const activeProjects = projects.filter((p: any) => p.status === 'Active');
+---
+
+<Layout title="Research Projects - SparkHope MycoLab">
+  <div style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 2rem;">🔬 Research Projects</h1>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+      <div style="background: white; border: 2px solid #8b7355; padding: 1.5rem; text-align: center;">
+        <div style="font-size: 2rem; font-weight: 700; color: #87a878;">{projects.length}</div>
+        <div style="font-size: 0.9rem; color: #666;">Total Projects</div>
+      </div>
+      <div style="background: white; border: 2px solid #8b7355; padding: 1.5rem; text-align: center;">
+        <div style="font-size: 2rem; font-weight: 700; color: #87a878;">{activeProjects.length}</div>
+        <div style="font-size: 0.9rem; color: #666;">Active</div>
+      </div>
+    </div>
+
+    <div style="display: grid; gap: 1.5rem;">
+      {projects.map((project: any) => (
+        <a href={`/projects/${project.id}`} style="text-decoration: none; color: inherit;">
+          <div style="background: white; border: 2px solid #8b7355; padding: 1.5rem; border-radius: 8px; transition: all 0.2s;">
+            <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: #5a6e4f;">{project.name}</h3>
+            <p style="color: #666; margin-bottom: 1rem;">{project.description || 'No description'}</p>
+            <div style="display: flex; gap: 1rem; font-size: 0.85rem;">
+              <span style={`padding: 0.25rem 0.75rem; border-radius: 4px; background: ${project.status === 'Active' ? '#d1fae5' : '#f3f4f6'}; color: ${project.status === 'Active' ? '#065f46' : '#666'};`}>
+                {project.status}
+              </span>
+              {project.start_date && (
+                <span style="color: #999;">Started: {new Date(project.start_date).toLocaleDateString()}</span>
+              )}
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</Layout>

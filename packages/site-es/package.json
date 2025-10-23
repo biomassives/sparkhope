@@ -1,0 +1,16 @@
+{
+  "name": "@sparkhope/site-es",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev --port 4322",
+    "build": "astro build",
+    "preview": "astro preview --port 4323"
+  },
+  "dependencies": {
+    "@sparkhope/core": "workspace:*",
+    "astro": "^4.16.18",
+    "@astrojs/starlight": "^0.28.4"
+  }
+}

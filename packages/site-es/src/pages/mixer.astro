@@ -1,0 +1,26 @@
+---
+import Layout from '../layouts/Layout.astro';
+import MycoMixer from '../components/MycoMixer';
+---
+
+<Layout title="Recipe Mixer - MycoLab">
+  <div class="page-container">
+    <MycoMixer client:load />
+  </div>
+</Layout>
+
+<style>
+  .page-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 2rem;
+    background: #000;
+    min-height: 100vh;
+  }
+
+  @media (max-width: 768px) {
+    .page-container {
+      padding: 1rem;
+    }
+  }
+</style>

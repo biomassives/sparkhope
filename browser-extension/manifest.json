@@ -1,0 +1,17 @@
+{
+"manifest_version": 2,
+"name": "MycoLab",
+"version": "1.0",
+"description": "Lab manager",
+"icons": {
+"48": "icons/icon48.png",
+"96": "icons/icon96.png"
+},
+"browser_action": {
+"default_popup": "popup.html",
+"default_icon": "icons/icon48.png"
+},
+"permissions": [
+"storage"
+]
+}

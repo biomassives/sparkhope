@@ -1,0 +1,522 @@
+---
+// src/pages/projects/[id].astro - COMPLETED & ADAPTED FOR PROJECT
+import Layout from '../../layouts/Layout.astro';
+import { getAllSamples, getSampleById, getAllProjects, getProjectById, getAllSpecies, getSpeciesById, getAllBatches, getBatchById, getAllRecipes, getRecipeById, getAllObservations, getObservationById, getAllRacks, getRackById, getAllIngredients, getIngredientById } from '../../utils/loadData';
+// It's good practice to import types if you use TypeScript in your datastore
+// import type { DataStore, Project, Species, Rack, Recipe } from '../../lib/datastore';
+
+const { id } = Astro.params;
+
+// 1. Load Data Store
+const allProjects = getAllProjects();
+
+// 2. Find the specific project (renamed from rack)
+const project = allProjects.find((p: any) => p.id === id); // Use 'p' for project
+
+if (!project) {
+    return Astro.redirect('/404');
+}
+
+// 3. Export getStaticPaths for static site generation
+export async function getStaticPaths() {
+    const projects = getAllProjects();
+
+    return projects.map((p: any) => ({ // Use 'p' for project
+        params: { id: p.id },
+    }));
+}
+
+// 4. Get related data (Focus on Project-level relationships)
+const allSpecies = getAllSpecies();
+const allRacks = getAllRacks();
+const allRecipes = getAllRecipes();
+// Note: We don't need all recipes unless the project tracks them at a high level.
+
+// 5. Calculate Project-Specific Data
+
+// Get species associated with this project (used your original logic, but project is the source)
+const speciesOnProject = project.current_species
+    ? allSpecies.filter((s: any) => project.current_species.includes(s.species_id || s.id))
+    : [];
+
+// Get Racks associated with this project (A project is often linked to one or more racks)
+// Assuming project data has a property `associated_racks` which is an array of rack IDs
+const associatedRacks = project.associated_racks
+    ? allRacks.filter((r: any) => project.associated_racks.includes(r.id))
+    : [];
+
+// Simple metric for the project: Total samples/containers across all associated racks
+// **NOTE:** You'll need to fetch containers if you want real numbers,
+// but for a simple view, we'll use placeholder logic or rack-level data.
+// Here we'll show the number of associated racks.
+const associatedRacksCount = associatedRacks.length;
+
+// You can repurpose `usedRecipes` logic to track Recipes used *across* the project's associated racks
+// This requires fetching all containers/samples on those racks, which can be complex.
+// For now, we'll skip the complex container/recipe stats, as they belong on the Rack page.
+
+// Let's create some simplified stat properties for the template to avoid breaking it completely
+const projectStatus = project.status || 'Active';
+const projectStartDate = project.start_date ? new Date(project.start_date).toLocaleDateString() : 'N/A';
+const projectEndDate = project.end_date ? new Date(project.end_date).toLocaleDateString() : 'Ongoing';
+const projectProgress = project.progress_percentage !== undefined ? project.progress_percentage : 0; // Assuming a field for progress
+
+// The template expects 'rack' and related variables, so we need to pass a 'project' object
+// that mimics the structure where necessary, or, better, change the template.
+// I will change the template below, but for now, we'll expose the key variable:
+// The template uses variables like `occupancyPercentage`, `activeContainers`, `contaminatedContainers`,
+// `speciesOnRack`, `usedRecipes`, `usedRecipeIds`, and `relatedProjects`.
+// We will replace these with logical equivalents for a Project, or simply remove the complex parts.
+// I'll simplify the stats section to be Project-focused.
+
+// Stat placeholders (simplified for a project)
+const projectComplexity = project.complexity || 'Medium'; // New project field
+const totalSpecies = speciesOnProject.length;
+const totalRacks = associatedRacksCount;
+
+// Filter projects for a simple "related" list (e.g., projects with the same zone or type)
+const relatedProjects = allProjects.filter((p: any) => p.id !== project.id && p.type === project.type).slice(0, 3);
+
+---
+
+<Layout title={`${project.name || 'Project'} - SparkHope`}>
+  <div class="container">
+    <div class="project-header rack-header">
+      <div class="header-content">
+        <h1>{project.name || 'Untitled Project'}</h1>
+        <div class="header-badges">
+          {project.status && (
+            <span class={`badge badge-status badge-${project.status.toLowerCase()}`}>
+              {project.status}
+            </span>
+          )}
+          {project.type && (
+            <span class="badge badge-type">{project.type}</span>
+          )}
+          {project.priority && (
+            <span class={`badge badge-priority badge-${project.priority.toLowerCase()}`}>{project.priority}</span>
+          )}
+        </div>
+      </div>
+    </div>
+
+    {project.description && (
+      <div class="section">
+        <h2>Description</h2>
+        <p>{project.description}</p>
+      </div>
+    )}
+
+    <div class="stats-overview">
+      <div class="stat-card">
+        <div class="stat-value">{projectProgress}%</div>
+        <div class="stat-label">Progress</div>
+        <div class="progress-bar">
+          <div class="progress-fill" style={`width: ${projectProgress}%`}></div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-value">{totalRacks}</div>
+        <div class="stat-label">Associated Racks</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-value">{totalSpecies}</div>
+        <div class="stat-label">Species Involved</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-value">{projectComplexity}</div>
+        <div class="stat-label">Complexity Level</div>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>Start Date</h3>
+        <p>{projectStartDate}</p>
+      </div>
+
+      <div class="info-card">
+        <h3>Expected End Date</h3>
+        <p>{projectEndDate}</p>
+      </div>
+
+      {project.manager && (
+        <div class="info-card">
+          <h3>Project Manager</h3>
+          <p>{project.manager}</p>
+        </div>
+      )}
+
+      {project.budget && (
+        <div class="info-card">
+          <h3>Budget</h3>
+          <p>{project.budget}</p>
+        </div>
+      )}
+      
+      {project.goal && (
+        <div class="info-card full-width">
+          <h3>Project Goal</h3>
+          <p>{project.goal}</p>
+        </div>
+      )}
+    </div>
+
+    {speciesOnProject.length > 0 && (
+      <div class="section">
+        <h2>Target Species ({speciesOnProject.length})</h2>
+        <div class="species-grid">
+          {speciesOnProject.map((species: any) => (
+            <a href={`/species/${species.species_id || species.id}`} class="species-card">
+              <div class="species-info">
+                <h3>{species.title || species.scientific_name}</h3>
+                {species.scientific_name && species.title !== species.scientific_name && (
+                  <p class="scientific-name">{species.scientific_name}</p>
+                )}
+              </div>
+              {species.difficulty && (
+                <span class={`badge badge-${species.difficulty}`}>
+                  {species.difficulty}
+                </span>
+              )}
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {associatedRacks.length > 0 && (
+      <div class="section">
+        <h2>Associated Racks ({associatedRacks.length})</h2>
+        <div class="project-grid"> {/* Reusing project-grid style */}
+          {associatedRacks.map((rack: any) => (
+            <a href={`/racks/${rack.id}`} class="project-card">
+              <div class="project-info">
+                <h3>{rack.name}</h3>
+                {rack.location && (
+                  <p class="project-desc">Location: {rack.location}</p>
+                )}
+                <p class="project-desc">Capacity: {rack.current_occupancy} / {rack.capacity}</p>
+              </div>
+              {rack.status && (
+                <span class={`badge badge-${rack.status.toLowerCase()}`}>
+                  {rack.status}
+                </span>
+              )}
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {project.notes && (
+      <div class="section">
+        <h2>Notes</h2>
+        <p>{project.notes}</p>
+      </div>
+    )}
+    
+    {project.tags && project.tags.length > 0 && (
+      <div class="section">
+        <h2>Tags</h2>
+        <div class="tag-list">
+          {project.tags.map((tag: string) => (
+            <span class="tag">{tag}</span>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <div class="actions">
+      <a href="/projects" class="btn-secondary">← Back to Projects</a>
+      <a href={`/projects/${project.id}/edit`} class="btn-primary">Edit Project</a>
+      <button class="btn-action" onclick="window.print()">Print Details</button>
+    </div>
+  </div>
+
+  <script is:inline>
+    // Remove client-side script for container filtering, as it's not relevant for projects.
+    // However, if you add any other vanilla JS for project interactions, place it here!
+  </script>
+</Layout>
+
+<style>
+  /* --- STYLES: Adapting the existing rack styles for the project view --- */
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  /* Renamed to project-header for clarity, but kept existing styles */
+  .project-header, .rack-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--color-border);
+  }
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+  }
+
+  .project-header h1 {
+    font-size: 2.5rem;
+    margin: 0;
+    flex: 1;
+  }
+  
+  .header-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  /* Stats Overview */
+  .stats-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    text-align: center;
+  }
+  
+  /* Project-specific badges */
+  .badge-low { background: #15803d; color: #dcfce7; }
+  .badge-medium { background: #f59e0b; color: #fffbeb; }
+  .badge-high { background: #dc2626; color: #fee2e2; }
+  .badge-priority { background: #4f46e5; color: #eef2ff; }
+
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--sl-color-accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+    color: var(--color-text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .progress-bar {
+    height: 0.5rem;
+    background: var(--color-bg-card-hover);
+    border-radius: 0.25rem;
+    margin-top: 0.75rem;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--sl-color-accent);
+    border-radius: 0.25rem;
+    transition: width 0.3s ease;
+  }
+
+  /* General Section/Card Styles */
+  .section {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--color-text);
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .info-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+  }
+  
+  .info-card.full-width {
+      grid-column: 1 / -1;
+  }
+
+  .info-card h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-dim);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .info-card p {
+    font-size: 1.125rem;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  /* Species & Associated Racks Grids (Reusing/Adapting styles) */
+  .species-grid,
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  .species-card,
+  .project-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: var(--color-bg-card-hover);
+    border: 2px solid var(--color-border);
+    border-left: 4px solid var(--sl-color-accent);
+    border-radius: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s;
+  }
+
+  .species-card:hover,
+  .project-card:hover {
+    border-color: var(--sl-color-accent);
+    transform: translateY(-2px);
+  }
+  
+  .project-info {
+    flex: 1;
+    margin-right: 1rem;
+  }
+
+  .project-info h3 {
+    font-size: 1.125rem;
+    margin: 0 0 0.25rem 0;
+  }
+
+  .project-desc {
+    font-size: 0.875rem;
+    color: var(--color-text-dim);
+    margin-top: 0.25rem;
+  }
+
+  .scientific-name {
+    font-style: italic;
+    font-size: 0.875rem;
+    color: var(--color-text-dim);
+  }
+  
+  /* Badge styles (reused) */
+  .badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .badge-zone { /* Keeping this style, even if zone isn't used on project, for robustness */
+    background: #4c1d95;
+    color: #e9d5ff;
+  }
+
+  /* Tags */
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: var(--color-bg-card-hover);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--color-text);
+  }
+
+  /* Actions */
+  .actions {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-secondary,
+  .btn-primary,
+  .btn-action {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary {
+    background: var(--color-bg-card);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+  }
+
+  .btn-primary {
+    background: var(--sl-color-accent);
+    color: white;
+    border: 1px solid var(--sl-color-accent);
+  }
+
+  .btn-action {
+    background: var(--color-bg-card);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+  }
+
+
+  @media (max-width: 768px) {
+    .stats-overview {
+      grid-template-columns: 1fr 1fr;
+    }
+    .actions {
+      flex-direction: column;
+    }
+    .btn-secondary, .btn-primary, .btn-action {
+      width: 100%;
+      text-align: center;
+    }
+  }
+
+  /* Print Styles */
+  @media print {
+    .actions,
+    .container-filters {
+      display: none;
+    }
+  }
+</style>

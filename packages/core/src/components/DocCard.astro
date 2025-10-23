@@ -1,0 +1,142 @@
+---
+// Define the props for a single research document card
+const { 
+    doc, // The document object containing all metadata
+    labelType = "Type", 
+    labelDate = "Date",
+    labelReference = "Reference"
+} = Astro.props;
+
+// Mock structure for a document object:
+// doc: {
+//     id: 'D-2025001',
+//     title: 'In-vitro synthesis of novel chitin structures',
+//     author: 'Dr. A. Mycell, K. Spore',
+//     type: 'Journal Article',
+//     publication_date: '2025-01-15',
+//     link: '/docs/D-2025001'
+// }
+
+const dateFormatted = new Date(doc.publication_date).toLocaleDateString('es-ES', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+});
+---
+
+<a href={doc.link} class="doc-card">
+    <div class="doc-icon-container">
+        <!-- Icon based on document type -->
+        {doc.type.includes('Journal') && <span class="doc-icon">📰</span>}
+        {doc.type.includes('Protocol') && <span class="doc-icon">🧪</span>}
+        {doc.type.includes('Book') && <span class="doc-icon">📚</span>}
+        {doc.type.includes('Whitepaper') && <span class="doc-icon">📜</span>}
+        {!doc.type.includes('Journal') && !doc.type.includes('Protocol') && !doc.type.includes('Book') && !doc.type.includes('Whitepaper') && <span class="doc-icon">📄</span>}
+    </div>
+    
+    <div class="doc-info">
+        <h3 class="doc-title">{doc.title}</h3>
+        <p class="doc-author">por {doc.author}</p>
+        
+        <div class="doc-details">
+            <span>
+                <span class="detail-label">{labelType}:</span> {doc.type}
+            </span>
+            <span>
+                <span class="detail-label">{labelDate}:</span> {dateFormatted}
+            </span>
+        </div>
+    </div>
+
+    <div class="doc-reference">
+        <span class="detail-label">{labelReference}:</span> {doc.id}
+    </div>
+</a>
+
+<style>
+    .doc-card {
+        display: flex;
+        align-items: flex-start;
+        gap: 1.5rem;
+        background: var(--botanical-paper, #faf8f3);
+        padding: 1.5rem;
+        border: 1px solid var(--botanical-sepia, #8b7355);
+        border-left: 6px solid var(--botanical-sage, #87a878);
+        text-decoration: none;
+        color: var(--botanical-ink, #3d3027);
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .doc-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        border-color: var(--botanical-moss, #5a6e4f);
+    }
+    
+    .doc-icon-container {
+        flex-shrink: 0;
+        padding-top: 0.25rem;
+    }
+    
+    .doc-icon {
+        font-size: 2.5rem;
+        line-height: 1;
+        opacity: 0.85;
+    }
+    
+    .doc-info {
+        flex-grow: 1;
+    }
+    
+    .doc-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-top: 0;
+        margin-bottom: 0.25rem;
+        color: var(--botanical-moss, #5a6e4f);
+    }
+    
+    .doc-author {
+        font-size: 0.95rem;
+        font-style: italic;
+        color: var(--botanical-sepia, #8b7355);
+        margin-bottom: 0.75rem;
+    }
+    
+    .doc-details {
+        display: flex;
+        gap: 1.5rem;
+        font-size: 0.9rem;
+        flex-wrap: wrap;
+    }
+    
+    .detail-label {
+        font-weight: 600;
+        color: var(--botanical-ink, #3d3027);
+        font-variant: small-caps;
+    }
+
+    .doc-reference {
+        font-family: 'VT323', monospace;
+        font-size: 0.85rem;
+        color: var(--pixel-green, #00ff41);
+        align-self: flex-end;
+    }
+
+    @media (max-width: 640px) {
+        .doc-card {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 1rem;
+        }
+        .doc-icon-container {
+            align-self: flex-start;
+        }
+        .doc-reference {
+            align-self: flex-start;
+            margin-top: 0.5rem;
+        }
+    }
+</style>
+

@@ -1,0 +1,55 @@
+<!-- Trigger Button -->
+<button id="openModalBtn" class="open-modal">🧪 Open MycoMixer</button>
+
+<!-- Modal -->
+<div id="mycoModal" class="modal">
+  <div class="modal-content">
+    <span id="closeModalBtn" class="close">&times;</span>
+    <div id="mycoMixerContainer">
+      <!-- MycoMixer interface will be injected here -->
+    </div>
+  </div>
+</div>
+
+<style>
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+  .modal-content {
+    background: #0d0f11;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 16px;
+    width: 80%;
+    max-width: 900px;
+    color: #fff;
+    font-family: system-ui, sans-serif;
+    box-shadow: 0 0 30px rgba(0, 255, 150, 0.3);
+  }
+  .close {
+    float: right;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  const modal = document.getElementById('mycoModal');
+  const openBtn = document.getElementById('openModalBtn');
+  const closeBtn = document.getElementById('closeModalBtn');
+
+  openBtn.onclick = () => {
+    modal.style.display = 'block';
+    initMycoMixer(); // Initialize your interface only when opened
+  };
+  closeBtn.onclick = () => (modal.style.display = 'none');
+  window.onclick = (e) => {
+    if (e.target === modal) modal.style.display = 'none';
+  };
+</script>
+

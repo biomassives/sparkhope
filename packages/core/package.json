@@ -1,0 +1,14 @@
+{
+  "name": "@sparkhope/core",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    "./Layout.astro": "./src/layouts/Layout.astro",
+    "./LanguageSwitcher.astro": "./src/components/LanguageSwitcher.astro",
+    "./botanical-theme.css": "./src/styles/botanical-theme.css",
+    "./lib/initData.js": "./src/lib/initData.js",
+    "./lib/DataManager.js": "./src/lib/DataManager.js",
+    "./lib/managers": "./src/lib/managers/index.js",
+    "./types": "./src/types/index.ts"
+  }
+}

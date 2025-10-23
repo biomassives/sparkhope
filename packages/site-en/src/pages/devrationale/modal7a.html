@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coprophilous Culture Lab - Substrate Mixer</title>
+    <style>
+        /* CSS from original file is kept for style consistency */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0a0a0a;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            min-height: 100vh;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 255, 0, 0.03) 2px,
+                    rgba(0, 255, 0, 0.03) 4px
+                );
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #000;
+            border: 4px solid #8b4513;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 0 40px rgba(139, 69, 19, 0.4);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #8b4513;
+        }
+        .title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ffaa00;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .title::before {
+            content: "🍄";
+            font-size: 32px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: 2px solid;
+            background: transparent;
+            color: inherit;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .btn-clear {
+            border-color: #00ff00;
+            color: #00ff00;
+        }
+        .btn-clear:hover {
+            background: #00ff00;
+            color: #000;
+        }
+        .btn-save {
+            border-color: #ffaa00;
+            background: #ffaa00;
+            color: #000;
+        }
+        .btn-save:hover {
+            background: #ff8800;
+        }
+        .btn-close {
+            border-color: #ff0000;
+            color: #ff0000;
+            padding: 8px;
+        }
+        .btn-close:hover {
+            background: #ff0000;
+            color: #fff;
+        }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        .section {
+            border: 2px solid;
+            border-radius: 4px;
+            padding: 16px;
+        }
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid;
+        }
+        .spawn-section {
+            border-color: #00ff88;
+        }
+        .spawn-section .section-title {
+            color: #00ff88;
+            border-color: #00ff88;
+        }
+        .fruit-section {
+            border-color: #ff8800;
+        }
+        .fruit-section .section-title {
+            color: #ff8800;
+            border-color: #ff8800;
+        }
+        .mix-display {
+            border-color: #00ffff;
+        }
+        .mix-display .section-title {
+            color: #00ffff;
+            border-color: #00ffff;
+        }
+        .ingredient-list {
+            max-height: 320px;
+            overflow-y: auto;
+            padding: 12px;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            border-radius: 4px;
+        }
+        .ingredient-item {
+            margin-bottom: 12px;
+        }
+        .ingredient-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        .ingredient-name {
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .ingredient-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .ingredient-amount {
+            font-size: 12px;
+        }
+        .btn-adjust {
+            width: 20px;
+            height: 20px;
+            border: 1px solid;
+            background: transparent;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        .btn-minus {
+            border-color: #ff4444;
+            color: #ff4444;
+        }
+        .btn-minus:hover {
+            background: #ff4444;
+            color: #000;
+        }
+        .btn-plus {
+            border-color: #00ff00;
+            color: #00ff00;
+        }
+        .btn-plus:hover {
+            background: #00ff00;
+            color: #000;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #111;
+            border: 1px solid;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        .jar-container {
+            position: relative;
+            width: 100%;
+            height: 320px;
+            border: 3px solid #8b4513;
+            border-radius: 0 0 20px 20px;
+            overflow: hidden;
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.5));
+        }
+        .jar-lid {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 110%;
+            height: 30px;
+            background: #8b4513;
+            border-radius: 50% 50% 0 0;
+            border: 2px solid #654321;
+        }
+        .layer {
+            position: absolute;
+            left: 0;
+            right: 0;
+            transition: all 0.5s ease;
+        }
+        .substrate-label {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            opacity: 0.8;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+        .colonization-particles {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            animation: float 3s infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0.5; }
+            50% { transform: translateY(-20px) translateX(10px); opacity: 1; }
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        .stat-card {
+            padding: 12px;
+            border: 1px solid rgba(255, 170, 0, 0.3);
+            border-radius: 4px;
+            background: rgba(255, 170, 0, 0.05);
+        }
+        .stat-label {
+            font-size: 11px;
+            color: #ffaa00;
+            margin-bottom: 4px;
+        }
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .stat-unit {
+            font-size: 12px;
+            color: #888;
+            margin-left: 4px;
+        }
+        .shelf {
+            border-top: 4px solid #8b4513;
+            padding-top: 16px;
+        }
+        .shelf-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .shelf-title {
+            font-size: 14px;
+            color: #ffaa00;
+        }
+        .shelf-hint {
+            font-size: 11px;
+            color: #666;
+        }
+        .bottles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 12px;
+            padding: 16px;
+            border: 2px solid #8b4513;
+            border-radius: 8px;
+            background: linear-gradient(to bottom, transparent, rgba(139,69,19,0.1));
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .bottle {
+            cursor: pointer;
+            transition: transform 0.2s;
+            text-align: center;
+        }
+        .bottle:hover {
+            transform: scale(1.1);
+        }
+        .bottle.clicked {
+            transform: scale(0.95);
+        }
+        .bottle-icon {
+            width: 60px;
+            height: 80px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .bottle-label {
+            font-size: 10px;
+            margin-top: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .bottle-amount {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ffaa00;
+            color: #000;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        .warning {
+            padding: 12px;
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid #ff0000;
+            border-radius: 4px;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #ff6666;
+        }
+        .success {
+            padding: 12px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #00ff00;
+            border-radius: 4px;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #00ff00;
+        }
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #8b4513;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a0522d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">COPROPHILOUS CULTURE LAB</h1>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn btn-clear" id="clearBtn">CLEAR</button>
+                <button class="btn btn-save" id="saveBtn">SAVE MIX</button>
+                <button class="btn btn-close" id="closeBtn">✕</button>
+            </div>
+        </div>
+        <div class="main-grid">
+            <div class="section spawn-section">
+                <h2 class="section-title">SPAWN SUBSTRATE</h2>
+                <div class="ingredient-list" id="spawnList"></div>
+                <div style="margin-top: 12px; text-align: center;">
+                    <div style="color: #00ff88; font-size: 14px;">Total: <span id="spawnTotal">0</span>g</div>
+                </div>
+            </div>
+            <div class="section">
+                <h2 class="section-title" style="color: #ffaa00; border-color: #ffaa00;">SUBSTRATE LAYERS</h2>
+                <div class="jar-container" id="jarVisual">
+                    <div class="jar-lid"></div>
+                </div>
+                <div class="stats-grid" style="margin-top: 16px;">
+                    <div class="stat-card">
+                        <div class="stat-label">MOISTURE</div>
+                        <div class="stat-value"><span id="moistureStat">0</span><span class="stat-unit">%</span></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">NITROGEN (Avg.)</div>
+                        <div class="stat-value"><span id="nitrogenStat">0.0</span><span class="stat-unit">%</span></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">pH LEVEL</div>
+                        <div class="stat-value"><span id="phStat">7.0</span></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">COLONIZATION</div>
+                        <div class="stat-value"><span id="colonizationStat">0</span><span class="stat-unit">days</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="section fruit-section">
+                <h2 class="section-title">FRUITING SUBSTRATE</h2>
+                <div class="ingredient-list" id="fruitList"></div>
+                <div style="margin-top: 12px; text-align: center;">
+                    <div style="color: #ff8800; font-size: 14px;">Total: <span id="fruitTotal">0</span>g</div>
+                </div>
+            </div>
+        </div>
+        <div class="shelf">
+            <div class="shelf-header">
+                <h3 class="shelf-title">🧫 SUBSTRATE LIBRARY</h3>
+                <div class="shelf-hint">Click to add • Shift+Click for bulk</div>
+            </div>
+            <div class="bottles-grid" id="bottlesGrid"></div>
+        </div>
+        <div id="messageArea"></div>
+    </div>
+    <script>
+        // Substrate Database (Combined from the original and the new JSON data)
+        const allSubstrates = [
+            { id: 'rye', name: 'Rye Grain', color: '#8B7355', category: 'spawn', increment: 50, moisture: 45, ph: 6.5, nutrients: { nitrogen: 1.8, water_holding_capacity: 1.0, energy_density: 16.5 } },
+            { id: 'millet', name: 'Millet', color: '#F0E68C', category: 'spawn', increment: 30, moisture: 40, ph: 6.6, nutrients: { nitrogen: 1.9, water_holding_capacity: 0.9, energy_density: 16.0 } },
+            { id: 'wbs', name: 'Wild Bird Seed', color: '#DEB887', category: 'spawn', increment: 40, moisture: 42, ph: 6.5, nutrients: { nitrogen: 2.1, water_holding_capacity: 1.2, energy_density: 16.8 } },
+            { id: 'brice', name: 'Brown Rice', color: '#D2B48C', category: 'spawn', increment: 40, moisture: 43, ph: 6.3, nutrients: { nitrogen: 1.4, water_holding_capacity: 1.0, energy_density: 15.6 } },
+            
+            { id: 'soy_hulls', name: 'Soy Hulls', color: '#A0522D', category: 'additive', increment: 25, moisture: 10, ph: 6.5, nutrients: { nitrogen: 3.0, water_holding_capacity: 1.5, energy_density: 17.0 } },
+            { id: 'wheat_bran', name: 'Wheat Bran', color: '#D2691E', category: 'additive', increment: 25, moisture: 15, ph: 6.4, nutrients: { nitrogen: 2.5, water_holding_capacity: 1.4, energy_density: 16.5 } },
+            { id: 'sawdust', name: 'Hardwood Sawdust', color: '#8B4513', category: 'bulk', increment: 75, moisture: 60, ph: 6.0, nutrients: { nitrogen: 0.3, water_holding_capacity: 2.0, energy_density: 17.5 } },
+            { id: 'straw', name: 'Straw', color: '#F5DEB3', category: 'bulk', increment: 50, moisture: 10, ph: 6.8, nutrients: { nitrogen: 0.6, water_holding_capacity: 2.2, energy_density: 16.8 } },
+            { id: 'coir', name: 'Coco Coir', color: '#A52A2A', category: 'bulk', increment: 75, moisture: 20, ph: 6.0, nutrients: { nitrogen: 0.6, water_holding_capacity: 2.8, energy_density: 17.2 } },
+            { id: 'vermiculite', name: 'Vermiculite', color: '#CD853F', category: 'structural', increment: 50, moisture: 5, ph: 7.0, nutrients: { nitrogen: 0.0, water_holding_capacity: 3.5, energy_density: 0.0 } },
+            { id: 'gypsum', name: 'Gypsum', color: '#FFFAF0', category: 'mineral', increment: 10, moisture: 0, ph: 7.5, nutrients: { nitrogen: 0.0, water_holding_capacity: 0.5, energy_density: 0.0 } },
+            { id: 'coffee', name: 'Coffee Grounds', color: '#3B2F2F', category: 'additive', increment: 25, moisture: 50, ph: 5.2, nutrients: { nitrogen: 2.1, water_holding_capacity: 2.0, energy_density: 16.9 } },
+            { id: 'manure', name: 'Composted Manure', color: '#654321', category: 'compost', increment: 100, moisture: 65, ph: 7.2, nutrients: { nitrogen: 2.5, water_holding_capacity: 2.5, energy_density: 15.0 } },
+            { id: 'rice_bran', name: 'Rice Bran', color: '#CCAA66', category: 'additive', increment: 15, moisture: 10, ph: 6.4, nutrients: { nitrogen: 2.8, water_holding_capacity: 1.3, energy_density: 16.7 } },
+            { id: 'mmix', name: 'Master’s Mix', color: '#B8860B', category: 'blend', increment: 100, moisture: 65, ph: 6.5, nutrients: { nitrogen: 1.6, water_holding_capacity: 2.2, energy_density: 17.0 } }
+        ];
+
+        const substrateDB = {
+            spawn: allSubstrates.filter(i => i.category === 'spawn'),
+            fruiting: allSubstrates.filter(i => i.category !== 'spawn')
+        };
+        
+        const getIngredientById = (id) => {
+            return allSubstrates.find(item => item.id === id);
+        };
+
+        // Main Mixer Class
+        class SubstrateMixer {
+            constructor() {
+                this.spawnMix = {};
+                this.fruitingMix = {};
+                this.initializeMixes();
+                this.setupEventListeners();
+                this.render();
+            }
+
+            initializeMixes() {
+                allSubstrates.forEach(item => {
+                    const mix = item.category === 'spawn' ? this.spawnMix : this.fruitingMix;
+                    mix[item.id] = 0;
+                });
+            }
+
+            setupEventListeners() {
+                document.getElementById('clearBtn').addEventListener('click', () => this.clearAll());
+                document.getElementById('saveBtn').addEventListener('click', () => this.saveMix());
+                document.getElementById('closeBtn').addEventListener('click', () => alert('Window closed (simulated).'));
+            }
+
+            addIngredient(id, isSpawn, shiftKey = false) {
+                const item = getIngredientById(id);
+                const mix = isSpawn ? this.spawnMix : this.fruitingMix;
+                                
+                if (item) {
+                    const amount = shiftKey ? item.increment * 5 : item.increment;
+                    mix[id] = (mix[id] || 0) + amount;
+                    this.render();
+                    this.animateBottle(id);
+                }
+            }
+
+            removeIngredient(id, isSpawn) {
+                const item = getIngredientById(id);
+                const mix = isSpawn ? this.spawnMix : this.fruitingMix;
+                                
+                if (item && mix[id] > 0) {
+                    mix[id] = Math.max(0, mix[id] - item.increment);
+                    this.render();
+                }
+            }
+
+            calculateStats() {
+                let totalMoistureAmount = 0;
+                let totalNitrogenAmount = 0;
+                let totalPhAmount = 0;
+                let totalEnergyDensityAmount = 0;
+                let totalWeight = 0;
+
+                allSubstrates.forEach(item => {
+                    const mix = item.category === 'spawn' ? this.spawnMix : this.fruitingMix;
+                    const amount = mix[item.id] || 0;
+                    totalWeight += amount;
+
+                    if (amount > 0) {
+                        // Weighted Averages
+                        totalMoistureAmount += amount * (item.moisture / 100); // Moisture is in %
+                        totalNitrogenAmount += amount * item.nutrients.nitrogen; // N is in %
+                        totalPhAmount += amount * item.ph; // pH is a log scale, but we'll use weighted average for simplicity
+                        totalEnergyDensityAmount += amount * item.nutrients.energy_density;
+                    }
+                });
+
+                if (totalWeight === 0) {
+                    return { moisture: 0, nitrogen: 0, ph: 7.0, colonization: 0 };
+                }
+
+                // Final Averages
+                const avgMoisture = Math.round((totalMoistureAmount / totalWeight) * 100);
+                const avgNitrogen = totalNitrogenAmount / totalWeight;
+                const avgPh = totalPhAmount / totalWeight;
+                const avgEnergyDensity = totalEnergyDensityAmount / totalWeight;
+                const spawnRatio = this.getSpawnTotal() / totalWeight;
+                
+                // --- NEW DATA-DRIVEN COLONIZATION ESTIMATE ---
+                // Base Colonization Time (for a balanced, average mix)
+                const BASE_TIME = 21; 
+                
+                // Mix Performance Score: Higher score = Faster colonization
+                // N is usually more critical than ED, so give N a higher weight.
+                const performanceScore = (avgNitrogen * 10) + (avgEnergyDensity / 10); 
+                
+                // Base Modifier: 
+                // For a good mix (e.g., avg N 1.5, avg ED 16.5) score is (1.5*10) + (16.5/10) = 16.65
+                // Let's set the target optimal score to roughly 17
+                const OPTIMAL_SCORE = 17;
+
+                // Adjust colonization time based on performance score and spawn ratio
+                let timeModifier = OPTIMAL_SCORE / Math.max(performanceScore, 1); // Avoid division by zero
+                
+                // Factor in spawn ratio: High spawn ratio speeds up colonization
+                // 10% ratio = 1.0 modifier (no change); 50% ratio = 0.8 modifier (faster)
+                const spawnModifier = 1 - (Math.min(spawnRatio, 0.5) * 0.4); 
+
+                const colonization = Math.round(BASE_TIME * timeModifier * spawnModifier);
+
+                return {
+                    moisture: avgMoisture,
+                    nitrogen: avgNitrogen.toFixed(1),
+                    ph: avgPh.toFixed(1),
+                    colonization: Math.max(7, colonization) // Minimum of 7 days
+                };
+            }
+
+            getSpawnTotal() {
+                return Object.entries(this.spawnMix).reduce((sum, [id, amount]) => sum + amount, 0);
+            }
+
+            getFruitingTotal() {
+                return Object.entries(this.fruitingMix).reduce((sum, [id, amount]) => sum + amount, 0);
+            }
+
+            renderJar() {
+                const jar = document.getElementById('jarVisual');
+                const totalHeight = 280; 
+                const total = this.getSpawnTotal() + this.getFruitingTotal();
+                jar.querySelectorAll('.layer').forEach(l => l.remove());
+                jar.querySelectorAll('.colonization-particles').forEach(p => p.remove());
+                                
+                if (total === 0) return;
+                let currentBottom = 0;                                
+
+                // Sort layers to render fruiting on bottom, then spawn on top
+                const allMixItems = Object.entries({...this.fruitingMix, ...this.spawnMix})
+                    .filter(([id, amount]) => amount > 0)
+                    .map(([id, amount]) => ({ ...getIngredientById(id), amount }))
+                    .sort((a, b) => {
+                        // Put fruiting layers (not 'spawn') first (bottom)
+                        if (a.category !== 'spawn' && b.category === 'spawn') return -1;
+                        if (a.category === 'spawn' && b.category !== 'spawn') return 1;
+                        // For same categories, sort by density/color for better visual layering (simplified)
+                        return (b.nutrients.energy_density || 0) - (a.nutrients.energy_density || 0);
+                    });
+
+
+                allMixItems.forEach(item => {
+                    const amount = item.amount;
+                    const isSpawn = item.category === 'spawn';
+
+                    const height = (amount / total) * totalHeight;
+                    const layer = document.createElement('div');
+                    layer.className = 'layer';
+                    layer.style.bottom = `${currentBottom}px`;
+                    layer.style.height = `${height}px`;
+                    layer.style.background = `linear-gradient(to top, ${item.color}CC, ${item.color}88)`;
+                    layer.style.borderTop = `1px solid ${item.color}`;
+
+                    const label = document.createElement('div');
+                    label.className = 'substrate-label';
+                    label.textContent = `${item.name} ${amount}g`;
+                    label.style.color = isSpawn ? '#fff' : item.color;
+                    layer.appendChild(label);
+
+                    if (isSpawn) {
+                        // Add colonization particles for spawn
+                        for (let i = 0; i < 3; i++) {
+                            const particle = document.createElement('div');
+                            particle.className = 'colonization-particles';
+                            particle.style.background = '#fff';
+                            particle.style.left = `${10 + i * 20 + (Math.random() * 10)}%`;
+                            particle.style.bottom = `${currentBottom + height/2 + (Math.random() * 20 - 10)}px`;
+                            particle.style.animationDelay = `${i * 0.5 + Math.random()}s`;
+                            jar.appendChild(particle);
+                        }
+                    }
+
+                    jar.appendChild(layer);
+                    currentBottom += height;
+                });
+            }
+
+            renderIngredientList(mixType) {
+                const isSpawn = mixType === 'spawn';
+                const mix = isSpawn ? this.spawnMix : this.fruitingMix;
+                const listEl = document.getElementById(isSpawn ? 'spawnList' : 'fruitList');
+                const totalEl = document.getElementById(isSpawn ? 'spawnTotal' : 'fruitTotal');
+                                
+                listEl.innerHTML = '';                                
+
+                const activeIngredients = allSubstrates.filter(item => {
+                    const matchesCategory = isSpawn ? item.category === 'spawn' : item.category !== 'spawn';
+                    return matchesCategory && (mix[item.id] || 0) > 0;
+                });
+
+                if (activeIngredients.length === 0) {
+                    listEl.innerHTML = `<div style="text-align: center; opacity: 0.5; padding: 40px 0;">
+                        Click ingredients below to add ${isSpawn ? 'spawn' : 'fruiting'} substrates
+                    </div>`;
+                } else {
+                    activeIngredients.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'ingredient-item';                                                
+
+                        const total = this.getSpawnTotal() + this.getFruitingTotal();
+                        const amount = mix[item.id];
+                        const percentage = total > 0 ? ((amount / total) * 100).toFixed(1) : 0;                                                
+
+                        div.innerHTML = `
+                            <div class="ingredient-header">
+                                <span class="ingredient-name" style="color: ${item.color}">${item.name}</span>
+                                <div class="ingredient-controls">
+                                    <span class="ingredient-amount" style="color: ${item.color}">${amount}g (${percentage}%)</span>
+                                    <button class="btn-adjust btn-minus" data-id="${item.id}" data-spawn="${isSpawn}">-</button>
+                                    <button class="btn-adjust btn-plus" data-id="${item.id}" data-spawn="${isSpawn}">+</button>
+                                </div>
+                            </div>
+                            <div class="progress-bar" style="border-color: ${item.color}">
+                                <div class="progress-fill" style="width: ${percentage}%; background: ${item.color}"></div>
+                            </div>
+                        `;                                                
+
+                        listEl.appendChild(div);
+                    });                                        
+
+                    // Add event listeners to buttons
+                    listEl.querySelectorAll('.btn-minus').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const id = e.target.dataset.id;
+                            const isSpawn = e.target.dataset.spawn === 'true';
+                            this.removeIngredient(id, isSpawn);
+                        });
+                    });                                        
+
+                    listEl.querySelectorAll('.btn-plus').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const id = e.target.dataset.id;
+                            const isSpawn = e.target.dataset.spawn === 'true';
+                            this.addIngredient(id, isSpawn);
+                        });
+                    });
+                }                                
+
+                totalEl.textContent = isSpawn ? this.getSpawnTotal() : this.getFruitingTotal();
+            }
+
+            renderBottles() {
+                const grid = document.getElementById('bottlesGrid');
+                grid.innerHTML = '';                                
+
+                // Render all substrates
+                allSubstrates.forEach(item => {
+                    const isSpawn = item.category === 'spawn';
+                    const mix = isSpawn ? this.spawnMix : this.fruitingMix;
+                    const amount = mix[item.id];                                        
+
+                    const bottle = document.createElement('div');
+                    bottle.className = 'bottle';
+                    bottle.dataset.id = item.id;                                        
+
+                    bottle.innerHTML = `
+                        <div class="bottle-icon">
+                            ${amount > 0 ? `<div class="bottle-amount">${amount}g</div>` : ''}
+                            <svg viewBox="0 0 60 80" style="width: 100%; height: 100%;">
+                                ${isSpawn ? 
+                                     // Grain jar (spawn)
+                                    `<rect x="10" y="20" width="40" height="55" fill="none" stroke="${item.color}" stroke-width="2" rx="3"/>
+                                     <rect x="12" y="${75 - (Math.min(amount/300, 1) * 50)}" width="36" height="${Math.min(amount/300, 1) * 50}" fill="${item.color}" opacity="0.7"/>
+                                     <rect x="8" y="15" width="44" height="8" fill="${item.color}" rx="2"/>
+                                     <circle cx="30" cy="19" r="2" fill="#888"/>`
+                                    :
+                                    // Substrate bag/container (fruiting/additive)
+                                    `<path d="M 15 25 L 15 70 L 45 70 L 45 25 L 35 20 L 25 20 Z" fill="none" stroke="${item.color}" stroke-width="2"/>
+                                     <path d="M 15 ${70 - (Math.min(amount/600, 1) * 40)} L 45 ${70 - (Math.min(amount/600, 1) * 40)}" stroke="${item.color}" stroke-width="1" opacity="0.5"/>
+                                     <rect x="15" y="${70 - (Math.min(amount/600, 1) * 40)}" width="30" height="${Math.min(amount/600, 1) * 40}" fill="${item.color}" opacity="0.6"/>
+                                     <rect x="25" y="15" width="10" height="10" fill="${item.color}" opacity="0.8"/>`
+                                }
+                            </svg>
+                        </div>
+                        <div class="bottle-label" style="color: ${item.color}">${item.name}</div>
+                    `;                                        
+
+                    bottle.addEventListener('click', (e) => {
+                        this.addIngredient(item.id, isSpawn, e.shiftKey);
+                    });                                        
+
+                    grid.appendChild(bottle);
+                });
+            }
+
+            animateBottle(id) {
+                const bottle = document.querySelector(`[data-id="${id}"]`);
+                if (bottle) {
+                    bottle.classList.add('clicked');
+                    setTimeout(() => bottle.classList.remove('clicked'), 200);
+                }
+            }
+
+            render() {
+                this.renderIngredientList('spawn');
+                this.renderIngredientList('fruiting');
+                this.renderJar();
+                this.renderBottles();                                
+
+                // Update stats
+                const stats = this.calculateStats();
+                document.getElementById('moistureStat').textContent = stats.moisture;
+                document.getElementById('nitrogenStat').textContent = stats.nitrogen;
+                document.getElementById('phStat').textContent = stats.ph;
+                document.getElementById('colonizationStat').textContent = stats.colonization;                                
+
+                // Check for warnings/success
+                this.checkMixQuality();
+            }
+            
+            checkMixQuality() {
+                const messageArea = document.getElementById('messageArea');
+                messageArea.innerHTML = '';                                
+
+                const stats = this.calculateStats();
+                const spawnTotal = this.getSpawnTotal();
+                const fruitingTotal = this.getFruitingTotal();
+                const totalWeight = spawnTotal + fruitingTotal;
+
+                if (totalWeight === 0) return;
+
+                // Check spawn to substrate ratio
+                if (spawnTotal > 0 && fruitingTotal > 0) {
+                    const ratio = spawnTotal / fruitingTotal; // Spawn to Bulk Ratio
+                                        
+                    if (ratio < 0.1) {
+                        messageArea.innerHTML += '<div class="warning">⚠️ Low spawn ratio - colonization may be slow and vulnerable to contamination.</div>';
+                    } else if (ratio > 0.5) {
+                        messageArea.innerHTML += '<div class="warning">⚠️ Very high spawn ratio - may be wasteful; 1:2 to 1:4 (20-33%) is typically optimal.</div>';
+                    } else if (ratio >= 0.2 && ratio <= 0.33) {
+                        messageArea.innerHTML += '<div class="success">✓ Excellent spawn ratio (1:3 to 1:5) for dung-loving species!</div>';
+                    }
+                }                                
+
+                // Check moisture
+                if (stats.moisture < 55) {
+                    messageArea.innerHTML += '<div class="warning">⚠️ Low moisture - add water, coir, or composted manure (Target: 60-70%).</div>';
+                } else if (stats.moisture > 75) {
+                    messageArea.innerHTML += '<div class="warning">⚠️ High moisture - risk of contamination, add dry materials (e.g., vermiculite, straw).</div>';
+                }                                
+
+                // Check pH
+                if (stats.ph < 6.0 && fruitingTotal > 0) {
+                    messageArea.innerHTML += '<div class="warning">⚠️ pH too low - consider adding gypsum or limestone.</div>';
+                } else if (stats.ph > 8.0) {
+                    messageArea.innerHTML += '<div class="warning">⚠️ pH too high - may inhibit mycelial growth.</div>';
+                }
+            }
+
+            // Dummy functions for buttons
+            clearAll() {
+                this.spawnMix = {};
+                this.fruitingMix = {};
+                this.initializeMixes(); // Re-initialize amounts to 0
+                this.render();
+                document.getElementById('messageArea').innerHTML = '<div class="success">Mix cleared! Start a new culture.</div>';
+            }
+
+            saveMix() {
+                const mixData = {
+                    timestamp: new Date().toISOString(),
+                    spawn: this.spawnMix,
+                    fruiting: this.fruitingMix,
+                    stats: this.calculateStats(),
+                    total: {
+                        spawn: this.getSpawnTotal(),
+                        fruiting: this.getFruitingTotal()
+                    }
+                };
+                console.log('Mix Saved:', mixData);
+                document.getElementById('messageArea').innerHTML = '<div class="success">Mix saved! Data logged to console (in a real app, this would be your Postgres API call).</div>';
+            }
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            new SubstrateMixer();
+        });
+    </script>
+</body>
+</html>

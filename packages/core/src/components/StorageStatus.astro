@@ -1,0 +1,149 @@
+---
+// Defines props: calculated metrics and localized text
+const { 
+    totalOccupied, 
+    totalCapacity, 
+    occupancyRate, 
+    title, 
+    header, 
+    separator, 
+    label, 
+    percentLabel, 
+    latin 
+} = Astro.props;
+---
+
+<section class="storage-section">
+    <h2 class="section-title">
+        <span class="title-ornament">❦</span>
+        <span class="title-text">{title}</span>
+        <span class="title-ornament">❦</span>
+    </h2>
+
+    <div class="storage-display">
+        <div class="storage-header">{header}</div>
+        <div class="storage-stats">
+            <span class="storage-value">{totalOccupied}</span>
+            <span class="storage-sep">{separator}</span>
+            <span class="storage-value">{totalCapacity}</span>
+            <span class="storage-label">{label}</span>
+        </div>
+        <div class="storage-bar">
+            <div class="storage-fill" style={`width: ${occupancyRate}%`}></div>
+        </div>
+        <div class="storage-percent">{occupancyRate}{percentLabel}</div>
+        <div class="storage-latin">{latin}</div>
+    </div>
+</section>
+
+<style>
+    /* Styling for the storage section moved from index.astro */
+    .storage-section {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 3rem 2rem;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    .title-ornament {
+        font-size: 1.5rem;
+        color: var(--botanical-sepia, #8b7355);
+    }
+
+    .title-text {
+        font-size: 2rem;
+        font-weight: 600;
+        color: var(--botanical-ink, #3d3027);
+        letter-spacing: 0.1em;
+        font-variant: small-caps;
+    }
+
+    .storage-display {
+        background: white;
+        border: 3px solid var(--botanical-sepia, #8b7355);
+        border-radius: 8px;
+        padding: 2rem;
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+        box-shadow: 4px 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .storage-header {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        font-variant: small-caps;
+    }
+
+    .storage-stats {
+        display: flex;
+        justify-content: center;
+        align-items: baseline;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .storage-value {
+        font-size: 3rem;
+        font-weight: 700;
+        color: var(--botanical-sage, #87a878);
+    }
+
+    .storage-sep {
+        font-size: 1.25rem;
+        color: var(--botanical-sepia, #8b7355);
+    }
+
+    .storage-label {
+        font-size: 1rem;
+        color: var(--botanical-sepia, #8b7355);
+        font-style: italic;
+    }
+
+    .storage-bar {
+        width: 100%;
+        height: 24px;
+        background: rgba(139, 115, 85, 0.15);
+        border: 2px solid var(--botanical-sepia, #8b7355);
+        border-radius: 12px;
+        overflow: hidden;
+        margin: 1rem 0;
+    }
+
+    .storage-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--botanical-sage, #87a878), var(--botanical-moss, #5a6e4f));
+        transition: width 0.5s ease;
+    }
+
+    .storage-percent {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0.75rem 0;
+    }
+
+    .storage-latin {
+        font-size: 0.875rem;
+        font-style: italic;
+        color: var(--botanical-sepia, #8b7355);
+        opacity: 0.8;
+    }
+
+    @media (max-width: 768px) {
+        .storage-stats {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+    }
+</style>
+

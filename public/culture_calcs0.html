@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MycoMixer App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" />
+</head>
+<body>
+    <div id="root"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/lucide-react/dist/lucide-react.umd.js"></script>
+    <script>
+        const { useState, useEffect } = React;
+        const { X, Droplet, Plus } = lucideReact;
+
+        const MycoMixer = () => {
+            // Your existing component code here
+            return (
+                <div className="p-4">
+                    <h1 className="text-2xl font-bold">MycoMixer</h1>
+                    <button>
+                        <Plus />
+                        Add
+                    </button>
+                    <button>
+                        <Droplet />
+                        Drop
+                    </button>
+                    <button>
+                        <X />
+                        Close
+                    </button>
+                </div>
+            );
+        };
+
+        const App = () => {
+            return (
+                <div>
+                    <MycoMixer />
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,351 @@
+/* ============================================
+   POSTER ART - EARLY POSTMODERN THEME
+   Super fun, bold, energetic vibes
+   ============================================ */
+
+:root {
+  /* Poster Colors - Bold & Vibrant */
+  --poster-crimson: #E63946;
+  --poster-sunshine: #F4A261;
+  --poster-ocean: #2A9D8F;
+  --poster-midnight: #264653;
+  --poster-cream: #F8F4E3;
+  --poster-coral: #FF6B6B;
+  --poster-lime: #A8E6CF;
+  --poster-purple: #6A4C93;
+  
+  /* Typography - Bold & Expressive */
+  --font-poster-display: 'Impact', 'Franklin Gothic Bold', sans-serif;
+  --font-poster-body: 'Arial Rounded MT Bold', 'Helvetica Rounded', sans-serif;
+  --font-poster-script: 'Brush Script MT', cursive;
+  
+  /* Spacing - Dramatic */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 2rem;
+  --space-lg: 4rem;
+  --space-xl: 6rem;
+  
+  /* Borders - Chunky */
+  --border-thick: 6px;
+  --border-medium: 4px;
+  --border-thin: 2px;
+  
+  /* Shadows - Deep & Dramatic */
+  --shadow-poster: 8px 8px 0px rgba(0, 0, 0, 0.8);
+  --shadow-hover: 12px 12px 0px rgba(0, 0, 0, 0.8);
+  --shadow-card: 6px 6px 0px var(--poster-midnight);
+}
+
+/* ============================================
+   POSTER TYPOGRAPHY
+   ============================================ */
+
+.poster-heading-xl {
+  font-family: var(--font-poster-display);
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 900;
+  line-height: 0.9;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: var(--poster-crimson);
+  text-shadow: 4px 4px 0px var(--poster-midnight);
+  transform: rotate(-2deg);
+}
+
+.poster-heading-lg {
+  font-family: var(--font-poster-display);
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 900;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--poster-midnight);
+  text-shadow: 3px 3px 0px var(--poster-sunshine);
+}
+
+.poster-heading-md {
+  font-family: var(--font-poster-body);
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--poster-ocean);
+}
+
+.poster-script {
+  font-family: var(--font-poster-script);
+  font-size: clamp(1.8rem, 4vw, 3.5rem);
+  color: var(--poster-coral);
+  transform: rotate(-5deg);
+}
+
+.poster-body {
+  font-family: var(--font-poster-body);
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--poster-midnight);
+}
+
+/* ============================================
+   POSTER CONTAINERS
+   ============================================ */
+
+.poster-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--space-md);
+}
+
+.poster-section {
+  padding: var(--space-lg) var(--space-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.poster-section--crimson {
+  background: var(--poster-crimson);
+  color: var(--poster-cream);
+}
+
+.poster-section--cream {
+  background: var(--poster-cream);
+  color: var(--poster-midnight);
+}
+
+.poster-section--ocean {
+  background: var(--poster-ocean);
+  color: var(--poster-cream);
+}
+
+/* ============================================
+   POSTER CARDS
+   ============================================ */
+
+.poster-card {
+  background: white;
+  border: var(--border-thick) solid var(--poster-midnight);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-md);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  position: relative;
+}
+
+.poster-card:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 10px 10px 0px var(--poster-midnight);
+}
+
+.poster-card--featured {
+  border-color: var(--poster-crimson);
+  border-width: var(--border-thick);
+  transform: rotate(-1deg);
+}
+
+.poster-card--featured::before {
+  content: '★';
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  font-size: 3rem;
+  color: var(--poster-sunshine);
+  text-shadow: 2px 2px 0px var(--poster-midnight);
+  animation: starBounce 2s ease-in-out infinite;
+}
+
+@keyframes starBounce {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.2) rotate(180deg); }
+}
+
+/* ============================================
+   POSTER BUTTONS
+   ============================================ */
+
+.poster-btn {
+  font-family: var(--font-poster-body);
+  font-size: 1.25rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 1rem 2.5rem;
+  border: var(--border-medium) solid var(--poster-midnight);
+  background: var(--poster-sunshine);
+  color: var(--poster-midnight);
+  box-shadow: 4px 4px 0px var(--poster-midnight);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.poster-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--poster-midnight);
+}
+
+.poster-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px var(--poster-midnight);
+}
+
+.poster-btn--primary {
+  background: var(--poster-crimson);
+  color: white;
+}
+
+.poster-btn--secondary {
+  background: var(--poster-ocean);
+  color: white;
+}
+
+.poster-btn--outline {
+  background: transparent;
+  color: var(--poster-midnight);
+}
+
+/* ============================================
+   POSTER BADGES & TAGS
+   ============================================ */
+
+.poster-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: var(--poster-lime);
+  border: 3px solid var(--poster-midnight);
+  font-family: var(--font-poster-body);
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  transform: rotate(3deg);
+  box-shadow: 3px 3px 0px var(--poster-midnight);
+}
+
+.poster-badge--urgent {
+  background: var(--poster-coral);
+  color: white;
+  animation: wiggle 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes wiggle {
+  0% { transform: rotate(-3deg); }
+  100% { transform: rotate(3deg); }
+}
+
+/* ============================================
+   POSTER PROGRESS BAR
+   ============================================ */
+
+.poster-progress {
+  width: 100%;
+  height: 40px;
+  background: var(--poster-cream);
+  border: var(--border-medium) solid var(--poster-midnight);
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.poster-progress__fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--poster-ocean), var(--poster-lime));
+  border-right: 3px solid var(--poster-midnight);
+  position: relative;
+  transition: width 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.poster-progress__fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(255,255,255,0.1) 10px,
+    rgba(255,255,255,0.1) 20px
+  );
+  animation: barberPole 1s linear infinite;
+}
+
+@keyframes barberPole {
+  0% { background-position: 0 0; }
+  100% { background-position: 28px 0; }
+}
+
+/* ============================================
+   POSTER DECORATIVE ELEMENTS
+   ============================================ */
+
+.poster-starburst {
+  position: relative;
+}
+
+.poster-starburst::before {
+  content: '💥';
+  position: absolute;
+  font-size: 4rem;
+  top: -20px;
+  right: -20px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.poster-arrow {
+  display: inline-block;
+  font-size: 2rem;
+  color: var(--poster-crimson);
+  animation: bounce 1s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* ============================================
+   POSTER GRID
+   ============================================ */
+
+.poster-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-md);
+  margin: var(--space-md) 0;
+}
+
+.poster-grid--tight {
+  gap: var(--space-sm);
+}
+
+.poster-grid--loose {
+  gap: var(--space-lg);
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: 768px) {
+  .poster-heading-xl {
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 0px var(--poster-midnight);
+  }
+  
+  .poster-section {
+    padding: var(--space-md) var(--space-sm);
+  }
+  
+  .poster-card {
+    border-width: 4px;
+  }
+  
+  .poster-btn {
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+  }
+}

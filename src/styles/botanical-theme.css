@@ -1,0 +1,464 @@
+/* src/styles/botanical-theme.css - Unified Botanical Theme for Starlight */
+
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
+:root {
+  /* Botanical Color Palette */
+  --botanical-cream: #f8f5f0;
+  --botanical-paper: #faf8f3;
+  --botanical-sepia: #8b7355;
+  --botanical-sage: #87a878;
+  --botanical-dusty-rose: #c4a69d;
+  --botanical-moss: #5a6e4f;
+  --botanical-terracotta: #b87560;
+  --botanical-ink: #3d3027;
+  --botanical-gold: #d4a574;
+
+  /* Override Starlight colors */
+  --sl-color-accent-low: #87a878;
+  --sl-color-accent: #5a6e4f;
+  --sl-color-accent-high: #3d3027;
+  --sl-color-white: #faf8f3;
+  --sl-color-gray-1: #f8f5f0;
+  --sl-color-gray-2: #f0ebe3;
+  --sl-color-gray-3: #d9d1c4;
+  --sl-color-gray-4: #8b7355;
+  --sl-color-gray-5: #6b5d4f;
+  --sl-color-gray-6: #3d3027;
+  --sl-color-black: #2c2416;
+
+  /* Typography */
+  --sl-font: 'EB Garamond', 'Crimson Text', serif;
+  --sl-font-system: 'EB Garamond', serif;
+  --sl-line-height-headings: 1.4;
+
+  /* Borders and shadows */
+  --sl-color-border: var(--botanical-sepia);
+}
+
+/* Dark theme overrides */
+:root[data-theme='dark'] {
+  --sl-color-accent-low: #5a6e4f;
+  --sl-color-accent: #87a878;
+  --sl-color-accent-high: #a8c99a;
+  --sl-color-white: #2c2416;
+  --sl-color-gray-1: #fff;
+  --sl-color-gray-2: #4a3e35;
+  --sl-color-gray-3: #6b5d4f;
+  --sl-color-gray-4: #8b7355;
+  --sl-color-gray-5: #a89885;
+  --sl-color-gray-6: #d9d1c4;
+  --sl-color-black: #f8f5f0;
+}
+
+/* Global Typography */
+body {
+  font-family: 'EB Garamond', 'Crimson Text', serif;
+  background: var(--botanical-cream);
+  background-image: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(139, 115, 85, 0.03) 2px,
+      rgba(139, 115, 85, 0.03) 4px
+    );
+}
+
+/* Header Customization */
+.site-title {
+  font-family: 'EB Garamond', serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  letter-spacing: 0.1em;
+}
+
+/* Sidebar Styling */
+.sidebar {
+  border-right: 3px solid var(--botanical-sepia);
+}
+
+.sidebar-content {
+  background: var(--botanical-paper);
+}
+
+.sidebar-pane h2 {
+  font-family: 'EB Garamond', serif;
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: var(--botanical-ink);
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--botanical-sepia);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Navigation Links */
+.sidebar a {
+  transition: all 0.2s;
+  border-radius: 4px;
+}
+
+.sidebar a:hover {
+  background: rgba(135, 168, 120, 0.1);
+  border-left: 3px solid var(--botanical-sage);
+  padding-left: 0.75rem;
+}
+
+.sidebar a[aria-current='page'] {
+  background: rgba(135, 168, 120, 0.15);
+  border-left: 4px solid var(--botanical-sage);
+  font-weight: 600;
+  color: var(--botanical-moss);
+}
+
+/* Main Content Area */
+.main-frame {
+  background: var(--botanical-paper);
+}
+
+main {
+  max-width: 900px;
+}
+
+/* Content Styling */
+.content-panel h1 {
+  font-family: 'EB Garamond', serif;
+  font-weight: 700;
+  font-size: 2.5rem;
+  color: var(--botanical-ink);
+  letter-spacing: 0.05em;
+  margin-bottom: 1.5rem;
+  border-bottom: 3px solid var(--botanical-sage);
+  padding-bottom: 1rem;
+  position: relative;
+}
+
+.content-panel h1::after {
+  content: '❦';
+  position: absolute;
+  right: 0;
+  bottom: -0.5rem;
+  color: var(--botanical-gold);
+  font-size: 1.5rem;
+}
+
+.content-panel h2 {
+  font-family: 'EB Garamond', serif;
+  font-weight: 600;
+  font-size: 1.75rem;
+  color: var(--botanical-ink);
+  letter-spacing: 0.05em;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--botanical-sepia);
+  padding-bottom: 0.5rem;
+}
+
+.content-panel h2::before {
+  content: '✤ ';
+  color: var(--botanical-sage);
+  margin-right: 0.5rem;
+}
+
+.content-panel h3 {
+  font-family: 'EB Garamond', serif;
+  font-weight: 600;
+  font-size: 1.35rem;
+  color: var(--botanical-moss);
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.content-panel p {
+  font-size: 1.125rem;
+  line-height: 1.8;
+  color: var(--botanical-ink);
+  text-align: justify;
+  margin-bottom: 1.25rem;
+}
+
+/* Code blocks */
+.content-panel pre {
+  background: rgba(61, 48, 39, 0.05);
+  border: 2px solid var(--botanical-sepia);
+  border-left: 6px solid var(--botanical-sage);
+  border-radius: 6px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  box-shadow: 4px 4px 12px rgba(0,0,0,0.08);
+}
+
+.content-panel code {
+  font-family: 'Courier New', monospace;
+  background: rgba(135, 168, 120, 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  color: var(--botanical-moss);
+  font-size: 0.95em;
+}
+
+.content-panel pre code {
+  background: transparent;
+  padding: 0;
+}
+
+/* Blockquotes */
+.content-panel blockquote {
+  border-left: 6px solid var(--botanical-sage);
+  background: rgba(135, 168, 120, 0.05);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+  color: var(--botanical-ink);
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.05);
+}
+
+.content-panel blockquote::before {
+  content: '❝';
+  font-size: 3rem;
+  color: var(--botanical-gold);
+  opacity: 0.3;
+  position: absolute;
+  margin-left: -2rem;
+  margin-top: -1rem;
+}
+
+/* Lists */
+.content-panel ul,
+.content-panel ol {
+  font-size: 1.125rem;
+  line-height: 1.8;
+  margin: 1rem 0 1.5rem 0;
+}
+
+.content-panel li {
+  margin-bottom: 0.75rem;
+  position: relative;
+  padding-left: 0.5rem;
+}
+
+.content-panel ul li::marker {
+  content: '❦ ';
+  color: var(--botanical-sage);
+}
+
+/* Tables */
+.content-panel table {
+  border: 3px solid var(--botanical-sepia);
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.5rem 0;
+  background: var(--botanical-paper);
+  box-shadow: 4px 4px 12px rgba(0,0,0,0.08);
+}
+
+.content-panel th {
+  background: var(--botanical-sage);
+  color: white;
+  font-weight: 600;
+  text-align: left;
+  padding: 1rem;
+  border: 2px solid var(--botanical-moss);
+  font-variant: small-caps;
+  letter-spacing: 0.1em;
+}
+
+.content-panel td {
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--botanical-sepia);
+}
+
+.content-panel tr:nth-child(even) {
+  background: rgba(135, 168, 120, 0.03);
+}
+
+.content-panel tr:hover {
+  background: rgba(135, 168, 120, 0.08);
+}
+
+/* Links */
+.content-panel a {
+  color: var(--botanical-moss);
+  text-decoration: underline;
+  text-decoration-color: var(--botanical-sage);
+  text-decoration-thickness: 2px;
+  transition: all 0.2s;
+}
+
+.content-panel a:hover {
+  color: var(--botanical-sage);
+  text-decoration-color: var(--botanical-moss);
+}
+
+/* Admonitions / Callouts */
+.starlight-aside {
+  border-left: 6px solid var(--botanical-sage);
+  background: rgba(135, 168, 120, 0.08);
+  border-radius: 6px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.05);
+}
+
+.starlight-aside--note {
+  border-left-color: var(--botanical-sage);
+}
+
+.starlight-aside--tip {
+  border-left-color: var(--botanical-moss);
+  background: rgba(90, 110, 79, 0.08);
+}
+
+.starlight-aside--caution {
+  border-left-color: var(--botanical-terracotta);
+  background: rgba(184, 117, 96, 0.08);
+}
+
+.starlight-aside__title {
+  font-weight: 600;
+  color: var(--botanical-ink);
+  font-variant: small-caps;
+  letter-spacing: 0.1em;
+}
+
+/* Search */
+.search-input {
+  background: var(--botanical-paper);
+  border: 2px solid var(--botanical-sepia);
+  border-radius: 6px;
+  font-family: 'EB Garamond', serif;
+}
+
+.search-input:focus {
+  border-color: var(--botanical-sage);
+  box-shadow: 0 0 0 3px rgba(135, 168, 120, 0.2);
+}
+
+/* Page Navigation */
+.pagination-links {
+  border-top: 2px solid var(--botanical-sepia);
+  padding-top: 2rem;
+  margin-top: 3rem;
+}
+
+.pagination-links a {
+  background: var(--botanical-paper);
+  border: 2px solid var(--botanical-sepia);
+  border-radius: 6px;
+  padding: 1rem 1.5rem;
+  transition: all 0.2s;
+}
+
+.pagination-links a:hover {
+  background: var(--botanical-sage);
+  color: white;
+  border-color: var(--botanical-moss);
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Table of Contents */
+.right-sidebar-panel {
+  background: var(--botanical-paper);
+  border-left: 2px solid var(--botanical-sepia);
+}
+
+.right-sidebar h2 {
+  font-family: 'EB Garamond', serif;
+  font-weight: 600;
+  color: var(--botanical-ink);
+  font-variant: small-caps;
+  letter-spacing: 0.1em;
+  border-bottom: 2px solid var(--botanical-sage);
+  padding-bottom: 0.5rem;
+}
+
+.right-sidebar a {
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+  padding-left: 0.75rem;
+}
+
+.right-sidebar a:hover {
+  border-left-color: var(--botanical-sage);
+  color: var(--botanical-moss);
+}
+
+.right-sidebar a[aria-current='true'] {
+  border-left-color: var(--botanical-sage);
+  font-weight: 600;
+  color: var(--botanical-moss);
+}
+
+/* Buttons */
+.sl-button {
+  background: var(--botanical-sage);
+  color: white;
+  border: 2px solid var(--botanical-sage);
+  border-radius: 4px;
+  font-family: 'EB Garamond', serif;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.2s;
+}
+
+.sl-button:hover {
+  background: var(--botanical-moss);
+  border-color: var(--botanical-moss);
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Decorative Elements */
+.content-panel hr {
+  border: none;
+  border-top: 2px solid var(--botanical-sepia);
+  margin: 2.5rem 0;
+  position: relative;
+}
+
+.content-panel hr::after {
+  content: '❦';
+  position: absolute;
+  left: 50%;
+  top: -0.75rem;
+  transform: translateX(-50%);
+  background: var(--botanical-paper);
+  padding: 0 1rem;
+  color: var(--botanical-gold);
+  font-size: 1.5rem;
+}
+
+/* Mobile Navigation */
+@media (max-width: 768px) {
+  .mobile-menu-toggle {
+    background: var(--botanical-sage);
+    color: white;
+    border-radius: 4px;
+  }
+  
+  .mobile-menu-content {
+    background: var(--botanical-paper);
+    border: 3px solid var(--botanical-sepia);
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--botanical-cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--botanical-sepia);
+  border-radius: 6px;
+  border: 2px solid var(--botanical-cream);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--botanical-moss);
+}

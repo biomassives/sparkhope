@@ -1,0 +1,32 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getAllSpecies } from '../../utils/loadData';
+
+const species = getAllSpecies();
+---
+
+<Layout title="Species - SparkHope MycoLab">
+  <div style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 2rem;">🍄 Colección de Especies</h1>
+    
+    <div style="background: white; border: 2px solid #8b7355; padding: 1.5rem; margin-bottom: 2rem; text-align: center;">
+      <div style="font-size: 2rem; font-weight: 700; color: #87a878;">{species.length}</div>
+      <div style="font-size: 0.9rem; color: #666;">Especies Catalogadas</div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+      {species.map((sp: any) => (
+        <a href={`/species/${sp.id}`} style="text-decoration: none; color: inherit;">
+          <div style="background: white; border: 2px solid #8b7355; padding: 1.5rem; border-radius: 8px; transition: all 0.2s; height: 100%;">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🍄</div>
+            <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: #5a6e4f;">{sp.common_name}</h3>
+            <p style="font-style: italic; color: #999; margin-bottom: 0.5rem; font-size: 0.9rem;">{sp.scientific_name}</p>
+            {sp.family && (
+              <p style="color: #666; font-size: 0.85rem;">Familia: {sp.family}</p>
+            )}
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</Layout>

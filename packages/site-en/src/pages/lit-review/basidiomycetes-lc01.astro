@@ -1,0 +1,218 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Basidiomycetes Liquid Cultures - MycoLab">
+  <div class="page-container invaders-ui">
+    <h1 class="page-title">👾 BASIDIOMYCETES LIQUID CULTURES</h1>
+    
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tab active" data-tab="1">Overview</div>
+      <div class="tab" data-tab="2">Standard LC Media</div>
+      <div class="tab" data-tab="3">Inoculation</div>
+      <div class="tab" data-tab="4">Observation</div>
+    </div>
+
+    <!-- Tab content -->
+    <div id="tab-contents">
+      <div class="tab-content active" data-tab="1">
+        <div class="content-card">
+          <h2>Overview</h2>
+          <p>Basidiomycetes represent the primary group for culinary and medicinal mushroom cultivation. Liquid Culture (LC) production is essential for rapidly expanding mycelial mass and accelerating colonization times, offering substantially faster results than spore syringes (7–14 days versus 14–30 days) with lower contamination risk when proper aseptic technique is maintained.</p>
+        </div>
+      </div>
+
+      <div class="tab-content" data-tab="2">
+        <div class="content-card">
+          <h2>Standard LC Media</h2>
+          <p>Typical recipes include 4% light malt extract or a combination of 2% honey and 0.2% peptone in distilled water. Sterilize via pressure cooker (15 PSI for 20–25 min). Optionally, include trace yeast extract to improve nutrient diversity.</p>
+        </div>
+      </div>
+
+      <div class="tab-content" data-tab="3">
+        <div class="content-card">
+          <h2>Inoculation</h2>
+          <p>Transfer a wedge of mycelium from an agar plate using sterile technique. Use magnetic stirring or occasional shaking to ensure even mycelial distribution.</p>
+        </div>
+      </div>
+
+      <div class="tab-content" data-tab="4">
+        <div class="content-card">
+          <h2>Observation</h2>
+          <p>Inspect daily for uniform white mycelial growth. Contamination manifests as discoloration or turbidity. Store mature LC in refrigeration (4°C) to slow metabolism until needed.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-arrows">
+      <button id="prev-btn" class="arrow-btn">← PREV</button>
+      <button id="next-btn" class="arrow-btn">NEXT →</button>
+    </div>
+  </div>
+
+  <style>
+    /* --- Space Invaders Tribute --- */
+    .invaders-ui {
+      background: radial-gradient(circle at 50% 30%, #030303 0%, #000 90%);
+      color: #39ff14;
+      font-family: "Press Start 2P", monospace;
+      min-height: 100vh;
+      text-align: center;
+      padding: 2rem;
+      letter-spacing: 1px;
+      text-shadow: 0 0 4px #00ff99, 0 0 8px #00ff99;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* subtle CRT scanline overlay */
+    .invaders-ui::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(0,0,0,0) 0px,
+        rgba(0,0,0,0) 1px,
+        rgba(0,0,0,0.05) 2px
+      );
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .page-title {
+      font-size: 1rem;
+      margin-bottom: 2rem;
+      text-transform: uppercase;
+      color: #7fffd4;
+      text-shadow: 0 0 4px #7fffd4, 0 0 10px #0ff;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      border-bottom: 2px solid #0f0;
+      padding-bottom: 0.5rem;
+    }
+
+    .tab {
+      padding: 0.6rem 1rem;
+      cursor: pointer;
+      border: 1px solid #0f0;
+      border-radius: 4px;
+      background: rgba(0, 255, 0, 0.1);
+      color: #39ff14;
+      transition: all 0.2s;
+      text-shadow: 0 0 3px #39ff14;
+    }
+
+    .tab.active {
+      background: rgba(57, 255, 20, 0.3);
+      border-color: #7fff00;
+      box-shadow: 0 0 8px #7fff00;
+    }
+
+    .tab:hover {
+      background: rgba(0,255,100,0.2);
+    }
+
+    .tab-content {
+      display: none;
+      margin-top: 1rem;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .tab-content.active { display: block; }
+
+    .content-card {
+      border: 1px solid #0f0;
+      background: rgba(0, 20, 0, 0.6);
+      padding: 1rem;
+      border-radius: 4px;
+      max-width: 700px;
+      margin: 0 auto;
+      box-shadow: inset 0 0 10px #0f0;
+    }
+
+    h2 {
+      color: #adff2f;
+      text-shadow: 0 0 4px #adff2f;
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      color: #caffc9;
+      line-height: 1.6;
+      font-size: 0.7rem;
+    }
+
+    .nav-arrows {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1.5rem;
+      padding: 0 2rem;
+    }
+
+    .arrow-btn {
+      background: rgba(0,255,0,0.1);
+      border: 1px solid #0f0;
+      border-radius: 4px;
+      color: #00ff99;
+      padding: 0.5rem 1rem;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-shadow: 0 0 4px #00ff99;
+    }
+
+    .arrow-btn:hover {
+      background: rgba(0,255,0,0.2);
+      box-shadow: 0 0 8px #0f0;
+    }
+
+    .arrow-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const tabs = document.querySelectorAll('.tab');
+      const contents = document.querySelectorAll('.tab-content');
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      let current = 0;
+
+      function showTab(index) {
+        tabs.forEach(t => t.classList.remove('active'));
+        contents.forEach(c => c.classList.remove('active'));
+        tabs[index].classList.add('active');
+        contents[index].classList.add('active');
+        current = index;
+        prevBtn.disabled = current === 0;
+        nextBtn.disabled = current === tabs.length - 1;
+      }
+
+      tabs.forEach((tab, i) => tab.addEventListener('click', () => showTab(i)));
+      prevBtn.addEventListener('click', () => { if (current > 0) showTab(current - 1); });
+      nextBtn.addEventListener('click', () => { if (current < tabs.length - 1) showTab(current + 1); });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft' && current > 0) showTab(current - 1);
+        if (e.key === 'ArrowRight' && current < tabs.length - 1) showTab(current + 1);
+      });
+    });
+  </script>
+</Layout>
