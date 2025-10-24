@@ -1,5 +1,5 @@
 {
-  "installCommand": "npm install -g pnpm@latest && pnpm install",
+  "installCommand": "pnpm install",
   "buildCommand": "pnpm --filter site-en build", 
   "outputDirectory": "packages/site-en/dist", 
   "devCommand": "pnpm run dev:en",
