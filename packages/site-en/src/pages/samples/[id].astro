@@ -10,7 +10,7 @@ export function getStaticPaths() {
 }
 
 const { id } = Astro.params;
-const sample = getSampleById(getAllSamples(), id);
+const sample = getSampleById(id);
 
 if (!sample) {
   return Astro.redirect('/samples');
