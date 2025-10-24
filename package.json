@@ -3,10 +3,10 @@
 "version": "1.0.0",
 "private": true,
 "description": "Root package.json to manage the monorepo settings for Sparkhope Lab.",
-"packageManager": "pnpm@9.0.6",
+"packageManager": "npm",
 "engines": {
 "node": ">=18.0.0",
-"pnpm": ">=9.0.0"
+"npm": ">=11.0.0"
 },
 "dependencies": {
 "@astrojs/starlight": "^0.36.0",
@@ -29,14 +29,14 @@
 "typescript": "^5.9.2"
 },
 "scripts": {
-"build": "NODE_OPTIONS=--max-old-space-size=8192 pnpm -r --filter './packages/site-' build",
-"start": "pnpm --filter ./apps/ start",
-"dev": "pnpm --filter site-en dev",
-"dev:es": "pnpm --filter site-es dev",
-"build:en": "pnpm --filter site-en build",
-"build:es": "pnpm --filter site-es build",
-"preview:en": "pnpm --filter site-en preview",
-"preview:es": "pnpm --filter site-es preview"
+"build": "NODE_OPTIONS=--max-old-space-size=8192 npm -r --filter './packages/site-' build",
+"start": "npm --filter ./apps/ start",
+"dev": "npm --filter site-en dev",
+"dev:es": "npm --filter site-es dev",
+"build:en": "npm --filter site-en build",
+"build:es": "npm --filter site-es build",
+"preview:en": "npm --filter site-en preview",
+"preview:es": "npm --filter site-es preview"
 },
 "exports": {
 "./Layout.astro": "./src/layouts/Layout.astro",
