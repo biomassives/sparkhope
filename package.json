@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
   "dependencies": {
     "@astrojs/starlight": "^0.36.0",
     "astro": "^5.14.3",
