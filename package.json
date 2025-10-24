@@ -1,21 +1,27 @@
 {
-  "name": "sparkhope-lab",
-  "version": "1.0.0",
-  "private": true,
-  "type": "module",
-  "engines": {
-    "node": ">=18.0.0",
-    "pnpm": ">=8.0.0"
-  },
-  "dependencies": {
+"name": "sparkhope-monorepo-root",
+"version": "1.0.0",
+"private": true,
+"description": "Root package.json to manage the monorepo settings for Sparkhope Lab.",
+"packageManager": "pnpm@9.0.6",
+
+"scripts": {
+"build": "pnpm -r build",
+"start": "pnpm --filter ./apps/* start"
+},
+"engines": {
+"node": ">=18.0.0",
+"pnpm": ">=9.0.0"
+},
+"dependencies": {
     "@astrojs/starlight": "^0.36.0",
     "astro": "^5.14.3",
     "chart.js": "^4.5.0",
     "gray-matter": "^4.0.3",
     "mermaid": "^11.10.1",
     "sharp": "^0.34.2"
-  },
-  "devDependencies": {
+},
+"devDependencies": {
     "@astrojs/check": "^0.9.4",
     "@astrojs/rss": "^4.0.12",
     "@astrojs/sitemap": "^3.5.0",
@@ -26,8 +32,8 @@
     "prettier": "^3.2.5",
     "prettier-plugin-astro": "^0.13.0",
     "typescript": "^5.9.2"
-  },
-  "scripts": {
+},
+"scripts": {
     "dev": "pnpm --filter site-en dev",
     "dev:es": "pnpm --filter site-es dev",
     "build": "pnpm -r --filter './packages/site-*' build",
@@ -35,8 +41,8 @@
     "build:es": "pnpm --filter site-es build",
     "preview:en": "pnpm --filter site-en preview",
     "preview:es": "pnpm --filter site-es preview"
-  },
-  "exports": {
+},
+"exports": {
     "./Layout.astro": "./src/layouts/Layout.astro",
     "./LanguageSwitcher.astro": "./src/components/LanguageSwitcher.astro",
     "./botanical-theme.css": "./src/styles/botanical-theme.css",
