@@ -1,5 +1,4 @@
-export const resourceData ="
-            },
+export const resourceData = `
             {
                 "title": "Mushroom Production for Nutritional Security and Economic Development",
                 "url": "https://www.easpublisher.com/get-articles/4510",
@@ -110,4 +109,4 @@ export const resourceData ="
             }
         ]
     }
-];
+]`;
