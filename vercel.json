@@ -1,7 +1,7 @@
 {
   "buildCommand": "pnpm --filter site-en build",
   "outputDirectory": "packages/site-en/dist",
-  "installCommand": "pnpm install", // Use pnpm for installation
-  "devCommand": "pnpm run dev:en",  // Optional: use pnpm for dev command
+  "installCommand": "pnpm install",
+  "devCommand": "pnpm run dev:en", 
   "framework": "astro"
 }
