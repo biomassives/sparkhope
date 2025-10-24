@@ -3,7 +3,7 @@
 "version": "1.0.0",
 "private": true,
 "description": "Root package.json to manage the monorepo settings for Sparkhope Lab.",
-"packageManager": "npm",
+"packageManager": "npm@20.19.4",
 "engines": {
 "node": ">=18.0.0",
 "npm": ">=11.0.0"
